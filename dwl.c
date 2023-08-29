@@ -2315,6 +2315,7 @@ setsel(struct wl_listener *listener, void *data)
 void
 setup(void)
 {
+	char cursorsize_str[10];
 	int i, sig[] = {SIGCHLD, SIGINT, SIGTERM, SIGPIPE};
 	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = handlesig};
 	sigemptyset(&sa.sa_mask);
@@ -2433,7 +2434,8 @@ setup(void)
 	 * images are available at all scale factors on the screen (necessary for
 	 * HiDPI support). Scaled cursors will be loaded with each output. */
 	cursor_mgr = wlr_xcursor_manager_create(cursortheme, cursorsize);
-	setenv("XCURSOR_SIZE", cursorsize, 1);
+	snprintf(cursorsize_str, sizeof(cursorsize_str), "%d", cursorsize);
+	setenv("XCURSOR_SIZE", cursorsize_str, 1);
 
 	/*
 	 * wlr_cursor *only* displays an image on screen. It does not move around
