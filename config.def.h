@@ -41,6 +41,7 @@ static const Layout layouts[] = {
 	{ "|M|",      centeredmaster },
 	{ "HHH",      grid },
 	{ "[@]",      spiral },
+	{ "@|@",      snail },
 	{ "[\\]",      dwindle },
 	{ NULL,       NULL },
 };
@@ -52,7 +53,7 @@ static const MonitorRule monrules[] = {
 	{ "eDP-1",    0.5,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	*/
 	/* defaults */
-	{ NULL,       0.55, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ NULL,       0.64, 1,      1,    &layouts[3], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 };
 
 /* keyboard */
@@ -162,6 +163,7 @@ static const Keychord keychords[] = {
 	{ 1, {{MODKEY, XKB_KEY_m}},                               setlayout,        {.v = &layouts[2]} },
 	{ 1, {{MODKEY, XKB_KEY_c}},                               setlayout,        {.v = &layouts[3]} },
 	{ 1, {{MODKEY, XKB_KEY_g}},                               setlayout,        {.v = &layouts[4]} },
+	{ 1, {{MODKEY, XKB_KEY_s}},                               setlayout,        {.v = &layouts[6]} },
 	{ 1, {{MODKEY|WLR_MODIFIER_CTRL, XKB_KEY_comma}},         cyclelayout,      {.i = -1 } },
 	{ 1, {{MODKEY|WLR_MODIFIER_CTRL, XKB_KEY_period}},        cyclelayout,      {.i = +1 } },
 	{ 1, {{MODKEY, XKB_KEY_space}},                           setlayout,        {0} },
