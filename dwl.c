@@ -132,9 +132,14 @@ typedef struct {
 typedef struct {
 	uint32_t mod;
 	xkb_keysym_t keysym;
+} Key;
+
+typedef struct {
+	unsigned int n;
+	const Key keys[5];
 	void (*func)(const Arg *);
 	const Arg arg;
-} Key;
+} Keychord;
 
 typedef struct {
 	struct wl_list link;
@@ -382,6 +387,8 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
+
+unsigned int currentkey = 0;
 
 /* global event handlers */
 static struct wl_listener cursor_axis = {.notify = axisnotify};
@@ -1607,14 +1614,27 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	 * processing.
 	 */
 	int handled = 0;
-	const Key *k;
-	for (k = keys; k < END(keys); k++) {
-		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
-				sym == k->keysym && k->func) {
-			k->func(&k->arg);
+	int done = 0;
+	const Keychord *k;
+
+	for (k = keychords; k < END(keychords) && !handled; k++) {
+		if (k->n > currentkey &&
+				CLEANMASK(mods) == CLEANMASK(k->keys[currentkey].mod) &&
+				sym == k->keys[currentkey].keysym) {
 			handled = 1;
+
+			if (currentkey == k->n - 1 && k->func) {
+				k->func(&k->arg);
+				done = 1;
+			}
 		}
 	}
+
+	if (handled)
+		currentkey = done ? 0 : (currentkey + 1);
+	else
+		currentkey = 0;
+
 	return handled;
 }
 

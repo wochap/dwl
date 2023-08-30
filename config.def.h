@@ -111,12 +111,20 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_ALT
+#define MOD_ALT WLR_MODIFIER_ALT
+#define MOD_CONTROL WLR_MODIFIER_CTRL
+#define MOD_SHIFT WLR_MODIFIER_SHIFT
+#define MOD_LOGO WLR_MODIFIER_LOGO
+#define MOD_NONE 0
+
+/* Prefix key */
+#define PREFIXKEY XKB_KEY_t
 
 #define TAGKEYS(KEY,SKEY,TAG) \
-	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_CTRL,  KEY,            toggleview,      {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_SHIFT, SKEY,           tag,             {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,SKEY,toggletag, {.ui = 1 << TAG} }
+	{ 1, {{MODKEY,  KEY}},                      view,       {.ui = 1 << TAG} }, \
+	{ 1, {{MODKEY|MOD_CONTROL, KEY}},           toggleview, {.ui = 1 << TAG} }, \
+	{ 1, {{MODKEY|MOD_SHIFT, SKEY}},            tag,        {.ui = 1 << TAG} }, \
+	{ 1, {{MODKEY|MOD_CONTROL|MOD_SHIFT, KEY}}, toggletag,  {.ui = 1 << TAG} } 
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -130,41 +138,41 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 /* named scratchpads - First arg only serves to match against key in rules*/
 static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
 
-static const Key keys[] = {
+static const Keychord keychords[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
-	/* modifier                  key                 function        argument */
-	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_grave,      togglescratch,  {.v = scratchpadcmd } },
-	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
-	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
-	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
-	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
-	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
-	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
-	{ MODKEY,                    XKB_KEY_a,          shiftview,      { .i = -1 } },
-	{ MODKEY,                    XKB_KEY_semicolon,  shiftview,      { .i = 1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
-	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                    XKB_KEY_c,          setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                    XKB_KEY_g,          setlayout,      {.v = &layouts[4]} },
-	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_comma,      cyclelayout,    {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_period,     cyclelayout,    {.i = +1 } },
-	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
-	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
-	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
-	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	/* count key_sequences                                    function          argument */
+	{ 1, {{MODKEY, XKB_KEY_p}},                               spawn,            {.v = menucmd} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return}},       spawn,            {.v = termcmd} },
+	{ 1, {{MODKEY, XKB_KEY_grave}},                           togglescratch,    {.v = scratchpadcmd } },
+	{ 1, {{MODKEY, XKB_KEY_j}},                               focusstack,       {.i = +1} },
+	{ 1, {{MODKEY, XKB_KEY_k}},                               focusstack,       {.i = -1} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J}},            movestack,        {.i = +1} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K}},            movestack,        {.i = -1} },
+	{ 1, {{MODKEY, XKB_KEY_i}},                               incnmaster,       {.i = +1} },
+	{ 1, {{MODKEY, XKB_KEY_d}},                               incnmaster,       {.i = -1} },
+	{ 1, {{MODKEY, XKB_KEY_h}},                               setmfact,         {.f = -0.05} },
+	{ 1, {{MODKEY, XKB_KEY_l}},                               setmfact,         {.f = +0.05} },
+	{ 1, {{MODKEY, XKB_KEY_Return}},                          zoom,             {0} },
+	{ 1, {{MODKEY, XKB_KEY_Tab}},                             view,             {0} },
+	{ 1, {{MODKEY, XKB_KEY_a}},                               shiftview,        { .i = -1 } },
+	{ 1, {{MODKEY, XKB_KEY_semicolon}},                       shiftview,        { .i = 1 } },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C}},            killclient,       {0} },
+	{ 1, {{MODKEY, XKB_KEY_t}},                               setlayout,        {.v = &layouts[0]} },
+	{ 1, {{MODKEY, XKB_KEY_f}},                               setlayout,        {.v = &layouts[1]} },
+	{ 1, {{MODKEY, XKB_KEY_m}},                               setlayout,        {.v = &layouts[2]} },
+	{ 1, {{MODKEY, XKB_KEY_c}},                               setlayout,        {.v = &layouts[3]} },
+	{ 1, {{MODKEY, XKB_KEY_g}},                               setlayout,        {.v = &layouts[4]} },
+	{ 1, {{MODKEY|WLR_MODIFIER_CTRL, XKB_KEY_comma}},         cyclelayout,      {.i = -1 } },
+	{ 1, {{MODKEY|WLR_MODIFIER_CTRL, XKB_KEY_period}},        cyclelayout,      {.i = +1 } },
+	{ 1, {{MODKEY, XKB_KEY_space}},                           setlayout,        {0} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space}},        togglefloating,   {0} },
+	{ 1, {{MODKEY, XKB_KEY_e}},                               togglefullscreen, {0} },
+	{ 1, {{MODKEY, XKB_KEY_0}},                               view,             {.ui = ~0} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright}},   tag,              {.ui = ~0} },
+	{ 1, {{MODKEY, XKB_KEY_comma}},                           focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ 1, {{MODKEY, XKB_KEY_period}},                          focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less}},         tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ 1, {{MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater}},      tagmon,           {.i = WLR_DIRECTION_RIGHT} },
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
 	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),
@@ -174,11 +182,11 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                  6),
 	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                   7),
 	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
+	{ 1, {{MODKEY|MOD_SHIFT, XKB_KEY_Q}},            quit,           {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
-#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
+	{ 1, {{WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server}}, quit, {0} },
+#define CHVT(n) { 1, {{WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n}}, chvt, {.ui = (n)} }
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
 };
