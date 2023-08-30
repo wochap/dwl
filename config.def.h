@@ -37,6 +37,7 @@ static const Layout layouts[] = {
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "||",       column },
+	{ "|M|",      centeredmaster },
 	{ "HHH",      grid },
 	{ "[@]",      spiral },
 	{ "[\\]",      dwindle },
