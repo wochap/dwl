@@ -22,7 +22,7 @@ https://github.com/djpohly/dwl/compare/wlroots-next...Abanoub8:movestack.patch
 ~~https://github.com/dm1tz/dwl/compare/04-sticky...NikitaIvanovV:stickyrule.patch~~
 https://github.com/djpohly/dwl/compare/wlroots-next...Stivvo:customFloat.patch
 https://github.com/djpohly/dwl/compare/wlroots-next...loumray:namedscratchpads.patch
-https://github.com/djpohly/dwl/compare/wlroots-next...mewkl:swallowx.patch
+~~https://github.com/djpohly/dwl/compare/wlroots-next...mewkl:swallowx.patch~~
 
 # Input
 https://github.com/djpohly/dwl/compare/wlroots-next...sevz17:keycodes.patch
@@ -59,7 +59,7 @@ wlroots-next...PalanixYT:type_hide.patch
 wlroots-next...Stivvo:customFloat.patch
 wlroots-next...NikitaIvanovV:centeredmaster.patch
 wlroots-next...loumray:namedscratchpads.patch
-wlroots-next...mewkl:swallowx.patch
+~~wlroots-next...mewkl:swallowx.patch~~
 wlroots-next...dimkr:dwl:snail.patch
 wlroots-next...NikitaIvanovV:genericgaps.patch
 wlroots-next...sevz17:autostart.patch
