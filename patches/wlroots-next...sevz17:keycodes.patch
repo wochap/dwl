@@ -1,8 +1,305 @@
+From 4567979b16b0509bb80b6102ecb9b601b3cf6fa1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
+ <leohdz172@proton.me>
+Date: Fri, 18 Aug 2023 21:37:22 -0600
+Subject: [PATCH 1/6] don't resize clients on commit
+
+It creates an infinite commit-resize loop when scale != 1
+---
+ dwl.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 93f66efe..655ded00 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -768,12 +768,6 @@ void
+ commitnotify(struct wl_listener *listener, void *data)
+ {
+ 	Client *c = wl_container_of(listener, c, commit);
+-	struct wlr_box box = {0};
+-	client_get_geometry(c, &box);
+-
+-	if (c->mon && !wlr_box_empty(&box) && (box.width != c->geom.width - 2 * c->bw
+-			|| box.height != c->geom.height - 2 * c->bw))
+-		c->isfloating ? resize(c, c->geom, 1) : arrange(c->mon);
+ 
+ 	/* mark a pending resize as completed */
+ 	if (c->resize && c->resize <= c->surface.xdg->current.configure_serial)
+
+From 4eb54b55f36e770a42e9fc6a4701911b6aaac441 Mon Sep 17 00:00:00 2001
+From: "Devin J. Pohly" <djpohly@gmail.com>
+Date: Fri, 21 Jul 2023 20:13:38 -0400
+Subject: [PATCH 2/6] No need to send surface.leave/enter events
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The scene graph implementation sends these for us, and it does so more
+accurately than our overly-simplified approach.  Layer shell surfaces
+don't appear to receive these events at all, according to my
+WAYLAND_DEBUG experiments with bemenu and dtao.
+
+ΔSLOC: -4
+---
+ dwl.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 655ded00..ddf7cad4 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1525,7 +1525,6 @@ void
+ maplayersurfacenotify(struct wl_listener *listener, void *data)
+ {
+ 	LayerSurface *l = wl_container_of(listener, l, map);
+-	wlr_surface_send_enter(l->layer_surface->surface, l->mon->wlr_output);
+ 	motionnotify(0);
+ }
+ 
+@@ -2091,15 +2090,12 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
+ 	c->mon = m;
+ 	c->prev = c->geom;
+ 
+-	/* TODO leave/enter is not optimal but works */
+-	if (oldmon) {
+-		wlr_surface_send_leave(client_surface(c), oldmon->wlr_output);
++	/* Scene graph sends surface leave/enter events on move and resize */
++	if (oldmon)
+ 		arrange(oldmon);
+-	}
+ 	if (m) {
+ 		/* Make sure window actually overlaps with the monitor */
+ 		resize(c, c->geom, 0);
+-		wlr_surface_send_enter(client_surface(c), m->wlr_output);
+ 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
+ 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
+ 	}
+
+From d7569870b62233099af65ce6a048e2ec50d92b7b Mon Sep 17 00:00:00 2001
+From: "Devin J. Pohly" <djpohly@gmail.com>
+Date: Fri, 21 Jul 2023 20:28:12 -0400
+Subject: [PATCH 3/6] Style: use early-return to clarify code
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use an early return to avoid indenting the main logic instead of
+wrapping the tail of a function in an if statement.
+
+No functional change, except for a handful of places where printstatus()
+was being called spuriously (tag, toggletag, toggleview).
+
+ΔSLOC: 0
+---
+ dwl.c | 96 ++++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 52 insertions(+), 44 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index ddf7cad4..7f1e4719 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1132,15 +1132,16 @@ destroylocksurface(struct wl_listener *listener, void *data)
+ 	m->lock_surface = NULL;
+ 	wl_list_remove(&m->destroy_lock_surface.link);
+ 
+-	if (lock_surface->surface == seat->keyboard_state.focused_surface) {
+-		if (locked && cur_lock && !wl_list_empty(&cur_lock->surfaces)) {
+-			surface = wl_container_of(cur_lock->surfaces.next, surface, link);
+-			client_notify_enter(surface->surface, wlr_seat_get_keyboard(seat));
+-		} else if (!locked) {
+-			focusclient(focustop(selmon), 1);
+-		} else {
+-			wlr_seat_keyboard_clear_focus(seat);
+-		}
++	if (lock_surface->surface != seat->keyboard_state.focused_surface)
++		return;
++
++	if (locked && cur_lock && !wl_list_empty(&cur_lock->surfaces)) {
++		surface = wl_container_of(cur_lock->surfaces.next, surface, link);
++		client_notify_enter(surface->surface, wlr_seat_get_keyboard(seat));
++	} else if (!locked) {
++		focusclient(focustop(selmon), 1);
++	} else {
++		wlr_seat_keyboard_clear_focus(seat);
+ 	}
+ }
+ 
+@@ -1446,12 +1447,13 @@ keypress(struct wl_listener *listener, void *data)
+ 		wl_event_source_timer_update(kb->key_repeat_source, 0);
+ 	}
+ 
+-	if (!handled) {
+-		/* Pass unhandled keycodes along to the client. */
+-		wlr_seat_set_keyboard(seat, kb->wlr_keyboard);
+-		wlr_seat_keyboard_notify_key(seat, event->time_msec,
+-			event->keycode, event->state);
+-	}
++	if (handled)
++		return;
++
++	/* Pass unhandled keycodes along to the client. */
++	wlr_seat_set_keyboard(seat, kb->wlr_keyboard);
++	wlr_seat_keyboard_notify_key(seat, event->time_msec,
++		event->keycode, event->state);
+ }
+ 
+ void
+@@ -1477,13 +1479,14 @@ keyrepeat(void *data)
+ {
+ 	Keyboard *kb = data;
+ 	int i;
+-	if (kb->nsyms && kb->wlr_keyboard->repeat_info.rate > 0) {
+-		wl_event_source_timer_update(kb->key_repeat_source,
+-				1000 / kb->wlr_keyboard->repeat_info.rate);
++	if (!kb->nsyms || kb->wlr_keyboard->repeat_info.rate <= 0)
++		return 0;
+ 
+-		for (i = 0; i < kb->nsyms; i++)
+-			keybinding(kb->mods, kb->keysyms[i]);
+-	}
++	wl_event_source_timer_update(kb->key_repeat_source,
++			1000 / kb->wlr_keyboard->repeat_info.rate);
++
++	for (i = 0; i < kb->nsyms; i++)
++		keybinding(kb->mods, kb->keysyms[i]);
+ 
+ 	return 0;
+ }
+@@ -2332,11 +2335,12 @@ void
+ tag(const Arg *arg)
+ {
+ 	Client *sel = focustop(selmon);
+-	if (sel && arg->ui & TAGMASK) {
+-		sel->tags = arg->ui & TAGMASK;
+-		focusclient(focustop(selmon), 1);
+-		arrange(selmon);
+-	}
++	if (!sel || (arg->ui & TAGMASK) == 0)
++		return;
++
++	sel->tags = arg->ui & TAGMASK;
++	focusclient(focustop(selmon), 1);
++	arrange(selmon);
+ 	printstatus();
+ }
+ 
+@@ -2406,11 +2410,12 @@ toggletag(const Arg *arg)
+ 	if (!sel)
+ 		return;
+ 	newtags = sel->tags ^ (arg->ui & TAGMASK);
+-	if (newtags) {
+-		sel->tags = newtags;
+-		focusclient(focustop(selmon), 1);
+-		arrange(selmon);
+-	}
++	if (!newtags)
++		return;
++
++	sel->tags = newtags;
++	focusclient(focustop(selmon), 1);
++	arrange(selmon);
+ 	printstatus();
+ }
+ 
+@@ -2419,11 +2424,12 @@ toggleview(const Arg *arg)
+ {
+ 	uint32_t newtagset = selmon ? selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK) : 0;
+ 
+-	if (newtagset) {
+-		selmon->tagset[selmon->seltags] = newtagset;
+-		focusclient(focustop(selmon), 1);
+-		arrange(selmon);
+-	}
++	if (!newtagset)
++		return;
++
++	selmon->tagset[selmon->seltags] = newtagset;
++	focusclient(focustop(selmon), 1);
++	arrange(selmon);
+ 	printstatus();
+ }
+ 
+@@ -2580,10 +2586,11 @@ urgent(struct wl_listener *listener, void *data)
+ 	struct wlr_xdg_activation_v1_request_activate_event *event = data;
+ 	Client *c = NULL;
+ 	toplevel_from_wlr_surface(event->surface, &c, NULL);
+-	if (c && c != focustop(selmon)) {
+-		c->isurgent = 1;
+-		printstatus();
+-	}
++	if (!c || c == focustop(selmon))
++		return;
++
++	c->isurgent = 1;
++	printstatus();
+ }
+ 
+ void
+@@ -2742,10 +2749,11 @@ void
+ sethints(struct wl_listener *listener, void *data)
+ {
+ 	Client *c = wl_container_of(listener, c, set_hints);
+-	if (c != focustop(selmon)) {
+-		c->isurgent = xcb_icccm_wm_hints_get_urgency(c->surface.xwayland->hints);
+-		printstatus();
+-	}
++	if (c == focustop(selmon))
++		return;
++
++	c->isurgent = xcb_icccm_wm_hints_get_urgency(c->surface.xwayland->hints);
++	printstatus();
+ }
+ 
+ void
+
+From 4b8c1bf31e9619db58eadf593617ba060d62418d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
+ <leohdz172@proton.me>
+Date: Tue, 22 Aug 2023 14:48:29 -0600
+Subject: [PATCH 4/6] return nothing in xytonode()
+
+we do not use the node
+---
+ dwl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 7f1e4719..4ff5c37f 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -315,7 +315,7 @@ static void urgent(struct wl_listener *listener, void *data);
+ static void view(const Arg *arg);
+ static void virtualkeyboard(struct wl_listener *listener, void *data);
+ static Monitor *xytomon(double x, double y);
+-static struct wlr_scene_node *xytonode(double x, double y, struct wlr_surface **psurface,
++static void xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+ static void zoom(const Arg *arg);
+ 
+@@ -2620,7 +2620,7 @@ xytomon(double x, double y)
+ 	return o ? o->data : NULL;
+ }
+ 
+-struct wlr_scene_node *
++void
+ xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny)
+ {
+@@ -2649,7 +2649,6 @@ xytonode(double x, double y, struct wlr_surface **psurface,
+ 	if (psurface) *psurface = surface;
+ 	if (pc) *pc = c;
+ 	if (pl) *pl = l;
+-	return node;
+ }
+ 
+ void
+
 From 9c1bd1e2b4711bd2fbd3df38b84a7d49f58c354d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
  <leohdz172@proton.me>
 Date: Fri, 4 Jun 2021 16:51:01 -0500
-Subject: [PATCH 1/2] allow use keycodes instead keysyms
+Subject: [PATCH 5/6] allow use keycodes instead keysyms
 
 ---
  config.def.h |  85 +++++++++---------
@@ -12,7 +309,7 @@ Subject: [PATCH 1/2] allow use keycodes instead keysyms
  create mode 100644 keys.h
 
 diff --git a/config.def.h b/config.def.h
-index 447ba0051..aa868d27a 100644
+index 447ba005..aa868d27 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -93,11 +93,11 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
@@ -120,7 +417,7 @@ index 447ba0051..aa868d27a 100644
  
  static const Button buttons[] = {
 diff --git a/dwl.c b/dwl.c
-index 4ff5c37f7..6f0d720f1 100644
+index 4ff5c37f..6f0d720f 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -130,7 +130,7 @@ typedef struct {
@@ -230,7 +527,7 @@ index 4ff5c37f7..6f0d720f1 100644
  }
 diff --git a/keys.h b/keys.h
 new file mode 100644
-index 000000000..e732f8063
+index 00000000..e732f806
 --- /dev/null
 +++ b/keys.h
 @@ -0,0 +1,242 @@
@@ -481,7 +778,7 @@ From 4cf345c85399cc19323a49b78340560ced7bf212 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
  <leohdz172@proton.me>
 Date: Sun, 19 Mar 2023 15:50:07 -0600
-Subject: [PATCH 2/2] add program to generate keys.h
+Subject: [PATCH 6/6] add program to generate keys.h
 
 ---
  generate-keys.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -490,7 +787,7 @@ Subject: [PATCH 2/2] add program to generate keys.h
 
 diff --git a/generate-keys.c b/generate-keys.c
 new file mode 100644
-index 000000000..83458fb71
+index 00000000..83458fb7
 --- /dev/null
 +++ b/generate-keys.c
 @@ -0,0 +1,82 @@
