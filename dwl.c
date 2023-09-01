@@ -2307,6 +2307,7 @@ setsel(struct wl_listener *listener, void *data)
 void
 setup(void)
 {
+  char cursorsize_str[10];
 	int i, sig[] = {SIGCHLD, SIGINT, SIGTERM, SIGPIPE};
 	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = handlesig};
 	sigemptyset(&sa.sa_mask);
