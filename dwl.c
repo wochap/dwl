@@ -1387,15 +1387,17 @@ fullscreennotify(struct wl_listener *listener, void *data)
 void
 hidecursor(int hide)
 {
-	if (hide) {
-		wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
-		wlr_seat_pointer_notify_clear_focus(seat);
-		cursor_hidden = 1;
-		return;
-	}
-	wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
-	cursor_hidden = false;
-	motionnotify(0);
+  // TODO: wlr_cursor_set_image and wlr_xcursor_manager_set_cursor_image are deprecated
+  // https://gitlab.freedesktop.org/wlroots/wlroots/-/merge_requests/4232/diffs
+	// if (hide) {
+	// 	wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
+	// 	wlr_seat_pointer_notify_clear_focus(seat);
+	// 	cursor_hidden = 1;
+	// 	return;
+	// }
+	// wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
+	// cursor_hidden = false;
+	// motionnotify(0);
 }
 
 void

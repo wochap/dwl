@@ -12,7 +12,7 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 /* tagging - tagcount must be no greater than 31 */
 static const int tagcount = 9;
 
-static const int hide_type = 1;
+static const int hide_type = 0;
 
 
 static const Rule rules[] = {
