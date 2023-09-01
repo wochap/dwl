@@ -29,6 +29,7 @@ static const Layout layouts[] = {
 	{ "||",       column },
 	{ "[@]",      spiral },
 	{ "[\\]",     dwindle },
+	{ "HHH",      grid },
 	{ NULL,       NULL },
 };
 
@@ -136,6 +137,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    XKB_KEY_c,          setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                    XKB_KEY_g,          setlayout,      {.v = &layouts[6]} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_comma,      cyclelayout,    {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_period,     cyclelayout,    {.i = +1 } },
 	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
