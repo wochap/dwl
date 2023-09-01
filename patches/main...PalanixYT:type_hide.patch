@@ -1,0 +1,101 @@
+From 769bf4fc2b4c1b5cf9544eadbb033cc8f3e69514 Mon Sep 17 00:00:00 2001
+From: Palanix <palanixyt@gmail.com>
+Date: Sun, 19 Feb 2023 19:14:06 +0100
+Subject: [PATCH] Hide cursor while typing
+
+---
+ config.def.h |  3 +++
+ dwl.c        | 24 ++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 447ba0051..c9ed0681b 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -10,6 +10,9 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
+ /* tagging - tagcount must be no greater than 31 */
+ static const int tagcount = 9;
+ 
++static const int hide_type = 1;
++
++
+ static const Rule rules[] = {
+ 	/* app_id     title       tags mask     isfloating   monitor */
+ 	/* examples:
+diff --git a/dwl.c b/dwl.c
+index 93f66efe6..6451293ca 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -261,6 +261,7 @@ static void focusstack(const Arg *arg);
+ static Client *focustop(Monitor *m);
+ static void fullscreennotify(struct wl_listener *listener, void *data);
+ static void handlesig(int signo);
++static void hidecursor(int hide);
+ static void incnmaster(const Arg *arg);
+ static void inputdevice(struct wl_listener *listener, void *data);
+ static int keybinding(uint32_t mods, xkb_keysym_t sym);
+@@ -351,6 +352,7 @@ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
+ 
+ static struct wlr_cursor *cursor;
+ static struct wlr_xcursor_manager *cursor_mgr;
++static int cursor_hidden;
+ 
+ static struct wlr_session_lock_manager_v1 *session_lock_mgr;
+ static struct wlr_scene_rect *locked_bg;
+@@ -560,6 +562,8 @@ axisnotify(struct wl_listener *listener, void *data)
+ 	 * for example when you move the scroll wheel. */
+ 	struct wlr_pointer_axis_event *event = data;
+ 	IDLE_NOTIFY_ACTIVITY;
++	if(cursor_hidden)
++			hidecursor(0);
+ 	/* TODO: allow usage of scroll whell for mousebindings, it can be implemented
+ 	 * checking the event's orientation and the delta of the event */
+ 	/* Notify the client with pointer focus of the axis event. */
+@@ -578,6 +582,8 @@ buttonpress(struct wl_listener *listener, void *data)
+ 	const Button *b;
+ 
+ 	IDLE_NOTIFY_ACTIVITY;
++	if(cursor_hidden)
++		hidecursor(0);
+ 
+ 	switch (event->state) {
+ 	case WLR_BUTTON_PRESSED:
+@@ -1334,6 +1340,20 @@ fullscreennotify(struct wl_listener *listener, void *data)
+ 	setfullscreen(c, client_wants_fullscreen(c));
+ }
+ 
++void
++hidecursor(int hide)
++{
++	if (hide) {
++		wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
++		wlr_seat_pointer_notify_clear_focus(seat);
++		cursor_hidden = 1;
++		return;
++	}
++	wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
++	cursor_hidden = false;
++	motionnotify(0);
++}
++
+ void
+ handlesig(int signo)
+ {
+@@ -1458,6 +1478,8 @@ keypress(struct wl_listener *listener, void *data)
+ 		wlr_seat_keyboard_notify_key(seat, event->time_msec,
+ 			event->keycode, event->state);
+ 	}
++	if(hide_type)
++		hidecursor(1);
+ }
+ 
+ void
+@@ -1663,6 +1685,8 @@ motionnotify(uint32_t time)
+ 	/* time is 0 in internal calls meant to restore pointer focus. */
+ 	if (time) {
+ 		IDLE_NOTIFY_ACTIVITY;
++		if(cursor_hidden)
++			hidecursor(0);
+ 
+ 		/* Update selmon (even while dragging a window) */
+ 		if (sloppyfocus)
