@@ -31,11 +31,11 @@ https://github.com/djpohly/dwl/compare/wlroots-next...yveszoundi:dwl-customizati
 
 # Cursor
 https://github.com/djpohly/dwl/compare/wlroots-next...dm1tz:04-cursortheme.patch
-https://github.com/djpohly/dwl/compare/wlroots-next...PalanixYT:type_hide.patch
+~~https://github.com/djpohly/dwl/compare/wlroots-next...PalanixYT:type_hide.patch~~ (TODO: update patch)
 
 # Other
 https://github.com/djpohly/dwl/compare/wlroots-next...sevz17:autostart.patch
-https://github.com/djpohly/dwl/compare/wlroots-next...Stivvo:hide-behind-fullscreen.patch
+~~https://github.com/djpohly/dwl/compare/wlroots-next...Stivvo:hide-behind-fullscreen.patch~~
 https://github.com/djpohly/dwl/compare/wlroots-next...madcowog:ipc-v2.patch
 ~~https://github.com/djpohly/dwl/compare/wlroots-next...NikitaIvanovV:menu.patch~~
 ~~https://github.com/djpohly/dwl/compare/wlroots-next...serenevoid:uselessgaps.patch~~
@@ -64,7 +64,7 @@ wlroots-next...dimkr:dwl:snail.patch
 wlroots-next...NikitaIvanovV:genericgaps.patch
 wlroots-next...sevz17:autostart.patch
 wlroots-next...madcowog:ipc-v2.patch
-wlroots-next...Stivvo:hide-behind-fullscreen.patch
+~~wlroots-next...Stivvo:hide-behind-fullscreen.patch~~
 wlroots-next...sevz17:keycodes.patch
 wlroots-next...yveszoundi:dwl-customization:keychord-2023-03-12.patch
 
