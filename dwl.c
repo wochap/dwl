@@ -2640,7 +2640,7 @@ void
 snail(Monitor *m)
 {
 	unsigned int i = 0, n = 0, mw = m->w.width;
-	Client *c, *prev;
+	Client *c, *prev = NULL;
 	enum wlr_direction dir = WLR_DIRECTION_RIGHT;
 
 	wl_list_for_each(c, &clients, link)
