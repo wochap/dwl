@@ -9,17 +9,14 @@ https://github.com/djpohly/dwl/compare/wlroots-next...NikitaIvanovV:centeredmast
 https://github.com/djpohly/dwl/compare/wlroots-next...Abanoub8:gridmode.patch
 https://github.com/djpohly/dwl/compare/wlroots-next...dimkr:dwl:snail.patch
 https://github.com/djpohly/dwl/compare/wlroots-next...Abanoub8:fibonacci.patch
-https://github.com/djpohly/dwl/compare/wlroots-next...bencollerson:dwl:72fde16.patch
+https://github.com/djpohly/dwl/compare/wlroots-next...bencollerson:dwl:72fde16.patch (columns layout)
 https://github.com/djpohly/dwl/compare/wlroots-next...dm1tz:04-cyclelayouts.patch
 
 # Clients & tags manipulation
 https://github.com/djpohly/dwl/compare/wlroots-next...guidocella:shiftview.patch
-~~https://github.com/djpohly/dwl/compare/wlroots-next...dm1tz:04-sticky.patch~~
 https://github.com/djpohly/dwl/compare/wlroots-next...Abanoub8:movestack.patch
 
 # Rules
-~~https://github.com/djpohly/dwl/compare/wlroots-next...dm1tz:04-center.patch~~
-~~https://github.com/dm1tz/dwl/compare/04-sticky...NikitaIvanovV:stickyrule.patch~~
 https://github.com/djpohly/dwl/compare/wlroots-next...Stivvo:customFloat.patch
 https://github.com/djpohly/dwl/compare/wlroots-next...loumray:namedscratchpads.patch
 ~~https://github.com/djpohly/dwl/compare/wlroots-next...mewkl:swallowx.patch~~
@@ -31,14 +28,12 @@ https://github.com/djpohly/dwl/compare/wlroots-next...yveszoundi:dwl-customizati
 
 # Cursor
 https://github.com/djpohly/dwl/compare/wlroots-next...dm1tz:04-cursortheme.patch
-~~https://github.com/djpohly/dwl/compare/wlroots-next...PalanixYT:type_hide.patch~~ (TODO: update patch)
+~~https://github.com/djpohly/dwl/compare/wlroots-next...PalanixYT:type_hide.patch~~ (doesn't work in wlroots-next)
 
 # Other
 https://github.com/djpohly/dwl/compare/wlroots-next...sevz17:autostart.patch
 ~~https://github.com/djpohly/dwl/compare/wlroots-next...Stivvo:hide-behind-fullscreen.patch~~
-https://github.com/djpohly/dwl/compare/wlroots-next...madcowog:ipc-v2.patch
-~~https://github.com/djpohly/dwl/compare/wlroots-next...NikitaIvanovV:menu.patch~~
-~~https://github.com/djpohly/dwl/compare/wlroots-next...serenevoid:uselessgaps.patch~~
+~~https://github.com/djpohly/dwl/compare/wlroots-next...madcowog:ipc-v2.patch~~ (doesn't work in wlroots-next)
 https://github.com/djpohly/dwl/compare/wlroots-next...NikitaIvanovV:genericgaps.patch
 
 ### How to apply them
@@ -55,7 +50,7 @@ wlroots-next...dm1tz:04-cyclelayouts.patch
 wlroots-next...Abanoub8:movestack.patch
 wlroots-next...Abanoub8:fibonacci.patch
 wlroots-next...Abanoub8:gridmode.patch
-wlroots-next...PalanixYT:type_hide.patch
+~~wlroots-next...PalanixYT:type_hide.patch~~
 wlroots-next...Stivvo:customFloat.patch
 wlroots-next...NikitaIvanovV:centeredmaster.patch
 wlroots-next...loumray:namedscratchpads.patch
@@ -63,7 +58,7 @@ wlroots-next...loumray:namedscratchpads.patch
 wlroots-next...dimkr:dwl:snail.patch
 wlroots-next...NikitaIvanovV:genericgaps.patch
 wlroots-next...sevz17:autostart.patch
-wlroots-next...madcowog:ipc-v2.patch
+~~wlroots-next...madcowog:ipc-v2.patch~~
 ~~wlroots-next...Stivvo:hide-behind-fullscreen.patch~~
 wlroots-next...sevz17:keycodes.patch
 wlroots-next...yveszoundi:dwl-customization:keychord-2023-03-12.patch
