@@ -1657,7 +1657,10 @@ getparentprocess(pid_t p)
 	if (!(f = fopen(buf, "r")))
 		return 0;
 
-	fscanf(f, "%*u %*s %*c %u", &v);
+	if (fscanf(f, "%*u %*s %*c %u", &v) != 1) {
+        fclose(f);
+        return 0;
+    }
 	fclose(f);
 
 	return (pid_t)v;
