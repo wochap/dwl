@@ -19,7 +19,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 # Rules
 * https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch
 * https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
-* https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch (too many conflicts)
+* https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch
 
 # Input
 * https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
