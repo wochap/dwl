@@ -26,12 +26,12 @@ static const char *const autostart[] = {
 static const int tagcount = TAGCOUNT;
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   monitor x    y    width height  scratchkey */
+	/* app_id     title       tags mask     isfloating   monitor x    y    width height  scratchkey  isterm noswallow */
 	/* examples:
-	{ "Gimp",     NULL,       0,            1,           -1, 	 0,   0,   500,  400,    0 },
+	{ "Gimp",     NULL,       0,            1,           -1,     0,   0,   500,  400,    0,          0,     0 },
 	*/
-	{ "firefox",  NULL,       1 << 8,       0,           -1, 	 200, 100, 0,    0,      0 },
-	{ NULL,     "scratchpad", 0,            1,           -1,     0,   0,   0,    0,      's' },
+	{ "firefox",  NULL,       1 << 8,       0,           -1,     200, 100, 0,    0,      0,          0,     0 },
+	{ NULL,     "scratchpad", 0,            1,           -1,     0,   0,   0,    0,      's',        0,     0 },
 	/* x, y, width, heigh are floating only
 	* When x or y == 0 the client is placed at the center of the screen,
 	* when width or height == 0 the default size of the client is used*/
