@@ -19,7 +19,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 # Rules
 * https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch
 * https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
-* ~~https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch~~ (too many conflicts)
+* https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch (too many conflicts)
 
 # Input
 * https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
@@ -54,7 +54,7 @@ Order (smallest to largest):
 * [x] main...Stivvo:customFloat.patch
 * [x] main...NikitaIvanovV:centeredmaster.patch
 * [x] main...loumray:namedscratchpads.patch
-* [ ] ~~main...mewkl:swallowx.patch~~
+* [X] main...mewkl:swallowx.patch
 * [x] main...dimkr:dwl:snail.patch
 * [x] main...NikitaIvanovV:genericgaps.patch
 * [x] main...sevz17:autostart.patch
