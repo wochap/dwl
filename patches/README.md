@@ -45,7 +45,7 @@ https://dwm.suckless.org/customisation/patches_in_git/
 Order (smallest to largest):
 
 * [x] main...NikitaIvanovV:naturalscrolltrackpad.patch
-* [ ] main...PalanixYT:zoomswap.patch
+* [X] main...PalanixYT:zoomswap.patch
 * [x] main...dm1tz:04-cursortheme.patch
 * [x] main...bencollerson:dwl:72fde16.patch
 * [x] main...guidocella:shiftview.patch
@@ -56,7 +56,7 @@ Order (smallest to largest):
 * [ ] ~~main...PalanixYT:type_hide.patch~~
 * [x] main...Stivvo:customFloat.patch
 * [x] main...NikitaIvanovV:centeredmaster.patch
-* [ ] main...mortezadadgar:pertag.patch
+* [X] main...mortezadadgar:pertag.patch
 * [x] main...loumray:namedscratchpads.patch
 * [X] main...mewkl:swallowx.patch
 * [x] main...dimkr:dwl:snail.patch
