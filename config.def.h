@@ -31,6 +31,7 @@ static const Rule rules[] = {
 	{ "Gimp",     NULL,       0,            1,           -1,     0,   0,   500,  400,    0,          0,     0 },
 	*/
 	{ "firefox",  NULL,       1 << 8,       0,           -1,     200, 100, 0,    0,      0,          0,     0 },
+	{ "^kitty$",  NULL,       0,            0,           -1,     0,   0,   0,    0,      0,          0,     0 },
 	{ NULL,     "scratchpad", 0,            1,           -1,     0,   0,   0,    0,      's',        0,     0 },
 	/* x, y, width, heigh are floating only
 	* When x or y == 0 the client is placed at the center of the screen,

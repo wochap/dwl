@@ -11,6 +11,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+#include <regex.h>
 #include <wayland-server-core.h>
 #include <wlr/backend.h>
 #include <wlr/backend/libinput.h>
@@ -367,6 +368,7 @@ static pid_t getparentprocess(pid_t p);
 static int isdescprocess(pid_t p, pid_t c);
 static Client *termforwin(Client *w);
 static void swallow(Client *c, Client *w);
+static int regex_match(const char *pattern, const char *str);
 
 /* variables */
 static const char broken[] = "broken";
@@ -528,8 +530,8 @@ applyrules(Client *c)
 	}
 
 	for (r = rules; r < END(rules); r++) {
-		if ((!r->title || strstr(title, r->title))
-				&& (!r->id || strstr(appid, r->id))) {
+		if ((!r->title || regex_match(title, r->title))
+				&& (!r->id || regex_match(appid, r->id))) {
 			c->isfloating = r->isfloating;
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
@@ -1726,6 +1728,19 @@ swallow(Client *c, Client *w) {
 	wl_list_insert(&w->flink, &c->flink);
 	wlr_scene_node_set_enabled(&w->scene->node, 0);
 	wlr_scene_node_set_enabled(&c->scene->node, 1);
+}
+
+int
+regex_match(const char *pattern, const char *str) {
+  regex_t regex;
+  int reti;
+  if (regcomp(&regex, pattern, REG_EXTENDED) != 0)
+    return 0;
+  reti = regexec(&regex, str, (size_t)0, NULL, 0);
+  regfree(&regex);
+  if (reti == 0)
+    return 1;
+  return 0;
 }
 
 void
