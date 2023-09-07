@@ -11,6 +11,8 @@ wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
 # Clients & tags manipulation
 wget https://github.com/djpohly/dwl/compare/main...guidocella:shiftview.patch
 wget https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
+wget https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
+wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
 
 # Rules
 wget https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch
