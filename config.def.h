@@ -227,8 +227,8 @@ static const Button buttons[] = {
 };
 
 static const Gesture gestures[] = {
-	{ SWIPE_LEFT, shiftview, { .i = -1 } },
-	{ SWIPE_RIGHT, shiftview, { .i = 1 } },
-	{ SWIPE_UP, shiftview, { .i = 1 } },
-	{ SWIPE_DOWN, shiftview, { .i = -1 } },
+	// { SWIPE_LEFT, shiftview, { .i = 1 } },
+	// { SWIPE_RIGHT, shiftview, { .i = -1 } },
+	{ SWIPE_UP, focusstack, {.i = 1} },
+	{ SWIPE_DOWN, focusstack, {.i = -1} },
 };

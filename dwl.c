@@ -744,6 +744,7 @@ swipe_begin(struct wl_listener *listener, void *data)
 		return;
 	}
 
+	// Forward swipe begin event to client
 	wlr_pointer_gestures_v1_send_swipe_begin(
 		pointer_gestures, 
 		seat,
@@ -765,6 +766,7 @@ swipe_update(struct wl_listener *listener, void *data)
 		return;
 	}
 
+	// Forward swipe update event to client
 	wlr_pointer_gestures_v1_send_swipe_update(
 		pointer_gestures, 
 		seat,
@@ -808,6 +810,7 @@ swipe_end(struct wl_listener *listener, void *data)
 		return;
 	}
 
+	// Forward swipe end event to client
 	wlr_pointer_gestures_v1_send_swipe_end(
 		pointer_gestures, 
 		seat,
