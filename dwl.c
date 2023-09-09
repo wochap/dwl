@@ -81,7 +81,7 @@ enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrFS, LyrTop, LyrOverlay, LyrBlock,
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
 #endif
-enum { SWIPE_LEFT, SWIPE_RIGHT };
+enum { SWIPE_LEFT, SWIPE_RIGHT, SWIPE_DOWN, SWIPE_UP };
 
 typedef union {
 	int i;
@@ -98,7 +98,7 @@ typedef struct {
 } Button;
 
 typedef struct {
-	unsigned int type;
+	unsigned int motion;
 	void (*func)(const Arg *);
 	const Arg arg;
 } Gesture;
@@ -440,6 +440,7 @@ static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply
 
 static uint32_t swipe_fingers = 0;
 static double swipe_dx = 0;
+static double swipe_dy = 0;
 
 /* global event handlers */
 static struct wl_listener cursor_axis = {.notify = axisnotify};
@@ -503,6 +504,8 @@ struct Pertag {
 	unsigned int sellts[TAGCOUNT + 1]; /* selected layouts */
 	const Layout *ltidxs[TAGCOUNT + 1][2]; /* matrix of tags and layouts indexes  */
 };
+
+static const unsigned int abzsquare = swipe_min_threshold * swipe_min_threshold;
 
 /* function implementations */
 void
@@ -731,17 +734,44 @@ void
 swipe_begin(struct wl_listener *listener, void *data)
 {
 	struct wlr_pointer_swipe_begin_event *event = data;
-	swipe_fingers = event->fingers;
-	// Reset swipe distance at the beginning of a swipe
-	swipe_dx = 0;
+
+	if (event->fingers == swipe_fingers_count) {
+		swipe_fingers = event->fingers;
+		// Reset swipe distance at the beginning of a swipe
+		swipe_dx = 0;
+		swipe_dy = 0;
+
+		return;
+	}
+
+	wlr_pointer_gestures_v1_send_swipe_begin(
+		pointer_gestures, 
+		seat,
+		event->time_msec,
+		event->fingers
+	);
 }
 
 void
 swipe_update(struct wl_listener *listener, void *data)
 {
 	struct wlr_pointer_swipe_update_event *event = data;
-	// Accumulate swipe distance
-	swipe_dx += event->dx;	
+
+	if (swipe_fingers == swipe_fingers_count) {
+		// Accumulate swipe distance
+		swipe_dx += event->dx;
+		swipe_dy += event->dy;
+
+		return;
+	}
+
+	wlr_pointer_gestures_v1_send_swipe_update(
+		pointer_gestures, 
+		seat,
+		event->time_msec,
+		event->dx,
+		event->dy
+	);
 }
 
 void
@@ -749,25 +779,41 @@ swipe_end(struct wl_listener *listener, void *data)
 {
 	struct wlr_pointer_swipe_end_event *event = data;
 	const Gesture *g;
-	unsigned int type;
+	unsigned int motion;
+	unsigned int adx = fabs(swipe_dx);
+	unsigned int ady = fabs(swipe_dy);
 
 	if (event->cancelled) {
 		return;
 	}
 
-	if (swipe_dx > 0) {
-		type = SWIPE_RIGHT;
-	} else if (swipe_dx < 0) {
-		type = SWIPE_LEFT;
-	} else {
+	if (swipe_fingers == swipe_fingers_count) {
+		// Require absolute distance movement beyond a small thresh-hold
+		if (adx * adx + ady * ady < abzsquare) {
+			return;
+		}
+
+		if (adx > ady) {
+			motion = swipe_dx < 0 ? SWIPE_LEFT : SWIPE_RIGHT;
+		} else {
+			motion = swipe_dy < 0 ? SWIPE_UP : SWIPE_DOWN;
+		}
+
+		for (g = gestures; g < END(gestures); g++) {
+			if (motion == g->motion && g->func) {
+				g->func(&g->arg);
+			}
+		}
+
 		return;
 	}
 
-	for (g = gestures; g < END(gestures); g++) {
-		if (type == g->type && g->func) {
-			g->func(&g->arg);
-		}
-	}
+	wlr_pointer_gestures_v1_send_swipe_end(
+		pointer_gestures, 
+		seat,
+		event->time_msec,
+		event->cancelled
+	);
 }
 
 void

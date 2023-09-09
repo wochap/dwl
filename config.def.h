@@ -14,6 +14,8 @@ static const char cursortheme[]            = "capitaine-cursors"; /* theme from 
 static const unsigned int cursorsize       = 24;
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
+static const unsigned int swipe_min_threshold = 0;
+static const int swipe_fingers_count       = 3;
 
 /* Autostart */
 static const char *const autostart[] = {
@@ -224,8 +226,9 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
 
-static const Gesture gestures[] = {};
-// static const Gesture gestures[] = {
-// 	{ SWIPE_LEFT, shiftview, { .i = -1 } },
-// 	{ SWIPE_RIGHT, shiftview, { .i = 1 } },
-// };
+static const Gesture gestures[] = {
+	{ SWIPE_LEFT, shiftview, { .i = -1 } },
+	{ SWIPE_RIGHT, shiftview, { .i = 1 } },
+	{ SWIPE_UP, shiftview, { .i = 1 } },
+	{ SWIPE_DOWN, shiftview, { .i = -1 } },
+};
