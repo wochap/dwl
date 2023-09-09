@@ -23,6 +23,7 @@ wget https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch
 wget https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
 wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
 wget https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
+wget https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
 
 # Cursor
 wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
@@ -33,4 +34,5 @@ wget https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
 wget https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen.patch
 wget https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch
 wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:genericgaps.patch
+wget https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
 

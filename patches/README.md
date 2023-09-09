@@ -27,6 +27,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
 * https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
+* https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
 
 # Cursor
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
@@ -37,6 +38,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * ~~https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen.patch~~ (too many conflicts)
 * ~~https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch~~ (doesn't work in wlroots-next)
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:genericgaps.patch
+* https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
 
 ### How to apply them
 
@@ -66,6 +68,8 @@ Order (smallest to largest):
 * [ ] ~~main...Stivvo:hide-behind-fullscreen.patch~~
 * [x] main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
 * [x] main...sevz17:keycodes.patch
+* [x] main...wochap:pointer-gestures-unstable-v1.patch
+* [x] pointer-gestures-unstable-v1...wochap:gestures.patch
 
 Workflow
 
