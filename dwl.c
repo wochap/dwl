@@ -783,11 +783,11 @@ swipe_end(struct wl_listener *listener, void *data)
 	unsigned int adx = fabs(swipe_dx);
 	unsigned int ady = fabs(swipe_dy);
 
-	if (event->cancelled) {
-		return;
-	}
-
 	if (swipe_fingers == swipe_fingers_count) {
+		if (event->cancelled) {
+			return;
+		}
+
 		// Require absolute distance movement beyond a small thresh-hold
 		if (adx * adx + ady * ady < abzsquare) {
 			return;
