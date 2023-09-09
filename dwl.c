@@ -80,6 +80,7 @@ enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrFS, LyrTop, LyrOverlay, LyrBlock,
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
 #endif
+enum { SWIPE_LEFT, SWIPE_RIGHT };
 
 typedef union {
 	int i;
@@ -94,6 +95,12 @@ typedef struct {
 	void (*func)(const Arg *);
 	const Arg arg;
 } Button;
+
+typedef struct {
+	unsigned int type;
+	void (*func)(const Arg *);
+	const Arg arg;
+} Gesture;
 
 typedef struct Pertag Pertag;
 typedef struct Monitor Monitor;
@@ -254,6 +261,9 @@ static void arrangelayers(Monitor *m);
 static void autostartexec(void);
 static void axisnotify(struct wl_listener *listener, void *data);
 static void buttonpress(struct wl_listener *listener, void *data);
+static void swipe_begin(struct wl_listener *listener, void *data);
+static void swipe_update(struct wl_listener *listener, void *data);
+static void swipe_end(struct wl_listener *listener, void *data);
 static void centeredmaster(Monitor *m);
 static void chvt(const Arg *arg);
 static void checkidleinhibitor(struct wlr_surface *exclude);
@@ -423,9 +433,15 @@ unsigned int currentkey = 0;
 static int enablegaps = 1;   /* enables gaps, used by togglegaps */
 static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
 
+static uint32_t swipe_fingers = 0;
+static double swipe_dx = 0;
+
 /* global event handlers */
 static struct wl_listener cursor_axis = {.notify = axisnotify};
 static struct wl_listener cursor_button = {.notify = buttonpress};
+static struct wl_listener cursor_swipe_begin = {.notify = swipe_begin};
+static struct wl_listener cursor_swipe_update = {.notify = swipe_update};
+static struct wl_listener cursor_swipe_end = {.notify = swipe_end};
 static struct wl_listener cursor_frame = {.notify = cursorframe};
 static struct wl_listener cursor_motion = {.notify = motionrelative};
 static struct wl_listener cursor_motion_absolute = {.notify = motionabsolute};
@@ -701,6 +717,49 @@ axisnotify(struct wl_listener *listener, void *data)
 	wlr_seat_pointer_notify_axis(seat,
 			event->time_msec, event->orientation, event->delta,
 			event->delta_discrete, event->source);
+}
+
+void
+swipe_begin(struct wl_listener *listener, void *data)
+{
+	struct wlr_pointer_swipe_begin_event *event = data;
+	swipe_fingers = event->fingers;
+	// Reset swipe distance at the beginning of a swipe
+	swipe_dx = 0;
+}
+
+void
+swipe_update(struct wl_listener *listener, void *data)
+{
+	struct wlr_pointer_swipe_update_event *event = data;
+	// Accumulate swipe distance
+	swipe_dx += event->dx;	
+}
+
+void
+swipe_end(struct wl_listener *listener, void *data)
+{
+	struct wlr_pointer_swipe_end_event *event = data;
+	const Gesture *g;
+	unsigned int type;
+
+	if (event->cancelled) {
+		return;
+	}
+
+	if (swipe_dx > 0) {
+		type = SWIPE_RIGHT;
+	} else if (swipe_dx < 0) {
+		type = SWIPE_LEFT;
+	} else {
+		return;
+	}
+
+	for (g = gestures; g < END(gestures); g++) {
+		if (type == g->type && g->func) {
+			g->func(&g->arg);
+		}
+	}
 }
 
 void
@@ -2879,6 +2938,9 @@ setup(void)
 	wl_signal_add(&cursor->events.motion, &cursor_motion);
 	wl_signal_add(&cursor->events.motion_absolute, &cursor_motion_absolute);
 	wl_signal_add(&cursor->events.button, &cursor_button);
+	wl_signal_add(&cursor->events.swipe_begin, &cursor_swipe_begin);
+	wl_signal_add(&cursor->events.swipe_update, &cursor_swipe_update);
+	wl_signal_add(&cursor->events.swipe_end, &cursor_swipe_end);
 	wl_signal_add(&cursor->events.axis, &cursor_axis);
 	wl_signal_add(&cursor->events.frame, &cursor_frame);
 
