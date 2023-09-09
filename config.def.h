@@ -224,6 +224,7 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
 
+static const Gesture gestures[] = {};
 // static const Gesture gestures[] = {
 // 	{ SWIPE_LEFT, shiftview, { .i = -1 } },
 // 	{ SWIPE_RIGHT, shiftview, { .i = 1 } },
