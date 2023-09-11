@@ -26,8 +26,9 @@ https://github.com/djpohly/dwl/wiki/Patches
 # Input
 * https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
-* https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
+* ~~https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch~~ (doesn't support multiple PREFIXKEY)
 * https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
+* https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
 
 # Cursor
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
@@ -60,13 +61,14 @@ Order (smallest to largest):
 * [x] main...NikitaIvanovV:centeredmaster.patch
 * [x] main...mortezadadgar:pertag.patch
 * [x] main...loumray:namedscratchpads.patch
+* [x] main...wochap:modes.patch
 * [x] main...mewkl:swallowx.patch
 * [x] main...dimkr:dwl:snail.patch
 * [x] main...NikitaIvanovV:genericgaps.patch
 * [x] main...sevz17:autostart.patch
 * [ ] ~~main...madcowog:ipc-v2.patch~~
 * [ ] ~~main...Stivvo:hide-behind-fullscreen.patch~~
-* [x] main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
+* [ ] ~~main...yveszoundi:dwl-customization:keychord-2023-03-12.patch~~
 * [x] main...sevz17:keycodes.patch
 * [x] main...wochap:pointer-gestures-unstable-v1.patch
 * [x] pointer-gestures-unstable-v1...wochap:gestures.patch
