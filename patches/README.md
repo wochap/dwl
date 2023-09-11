@@ -66,7 +66,7 @@ Order (smallest to largest):
 * [x] main...mewkl:swallowx.patch
 * [x] main...dimkr:dwl:snail.patch
 * [ ] ~~main...NikitaIvanovV:genericgaps.patch~~
-* [x] main...sevz17:vanitygaps.patch
+* [ ] main...sevz17:vanitygaps.patch
 * [x] main...sevz17:autostart.patch
 * [ ] ~~main...madcowog:ipc-v2.patch~~
 * [ ] ~~main...Stivvo:hide-behind-fullscreen.patch~~
