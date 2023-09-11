@@ -146,14 +146,9 @@ struct Client {
 typedef struct {
 	uint32_t mod;
 	xkb_keycode_t keycode;
-} Key;
-
-typedef struct {
-	unsigned int n;
-	const Key keys[5];
 	void (*func)(const Arg *);
 	const Arg arg;
-} Keychord;
+} Key;
 
 typedef struct {
 	struct wl_list link;
@@ -432,8 +427,6 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
-
-unsigned int currentkey = 0;
 
 static int enablegaps = 1;   /* enables gaps, used by togglegaps */
 static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
@@ -2029,26 +2022,14 @@ keybinding(uint32_t mods, xkb_keycode_t keycode)
 	 * processing.
 	 */
 	int handled = 0;
-	int done = 0;
-	const Keychord *k;
-
-	for (k = keychords; k < END(keychords) && !handled; k++) {
-		if (k->n > currentkey &&
-				CLEANMASK(mods) == CLEANMASK(k->keys[currentkey].mod) &&
-				keycode == k->keys[currentkey].keycode) {
+	const Key *k;
+	for (k = keys; k < END(keys); k++) {
+		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
+				keycode == k->keycode && k->func) {
+			k->func(&k->arg);
 			handled = 1;
-
-			if (currentkey == k->n - 1 && k->func) {
-				k->func(&k->arg);
-				done = 1;
-			}
 		}
 	}
-
-	if (handled)
-		currentkey = done ? 0 : (currentkey + 1);
-	else
-		currentkey = 0;
 
 	return handled;
 }
