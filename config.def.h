@@ -216,7 +216,7 @@ static const Key keys[] = {
 	TAGKEYS(                     Key_9,                   8),
 	{ MODKEY|MOD_SHIFT, Key_q,                     quit,             {0} },
 
-	{ MODKEY,                    XKB_KEY_b,          entermode,      {.i = BROWSER} },
+	{ MODKEY,                    Key_b,            entermode,        {.i = BROWSER} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, Key_BackSpace, quit, {0} },
@@ -228,13 +228,13 @@ static const Key keys[] = {
 
 static const Modekey modekeys[] = {
 	/* mode      modifier                  key                 function        argument */
-	{ BROWSER, { 0, XKB_KEY_f, spawn, SHCMD("firefox") } },
-	{ BROWSER, { 0, XKB_KEY_f, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_b, spawn, SHCMD("brave") } },
-	{ BROWSER, { 0, XKB_KEY_b, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_g, spawn, SHCMD("google-chrome-stable") } },
-	{ BROWSER, { 0, XKB_KEY_g, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_Escape, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_f, spawn, SHCMD("firefox") } },
+	{ BROWSER, { 0, Key_f, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_b, spawn, SHCMD("brave") } },
+	{ BROWSER, { 0, Key_b, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_g, spawn, SHCMD("google-chrome-stable") } },
+	{ BROWSER, { 0, Key_g, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_Escape, entermode, {.i = NORMAL} } },
 };
 
 static const Button buttons[] = {
