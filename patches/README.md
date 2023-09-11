@@ -38,7 +38,8 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
 * ~~https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen.patch~~ (too many conflicts)
 * ~~https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch~~ (doesn't work in wlroots-next)
-* https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:genericgaps.patch
+* ~~https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:genericgaps.patch~~ (has a bug, inner gaps affects outer gaps)
+* https://github.com/djpohly/dwl/compare/main...sevz17:vanitygaps.patch
 * https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
 
 ### How to apply them
@@ -64,7 +65,8 @@ Order (smallest to largest):
 * [x] main...wochap:modes.patch
 * [x] main...mewkl:swallowx.patch
 * [x] main...dimkr:dwl:snail.patch
-* [x] main...NikitaIvanovV:genericgaps.patch
+* [ ] ~~main...NikitaIvanovV:genericgaps.patch~~
+* [x] main...sevz17:vanitygaps.patch
 * [x] main...sevz17:autostart.patch
 * [ ] ~~main...madcowog:ipc-v2.patch~~
 * [ ] ~~main...Stivvo:hide-behind-fullscreen.patch~~

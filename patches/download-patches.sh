@@ -36,4 +36,4 @@ wget https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen
 wget https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch
 wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:genericgaps.patch
 wget https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
-
+wget https://github.com/djpohly/dwl/compare/main...sevz17:vanitygaps.patch
