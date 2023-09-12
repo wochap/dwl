@@ -348,6 +348,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void movecenter(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -3179,6 +3180,28 @@ togglescratch(const Arg *arg)
 		arrange(selmon);
 	} else{
 		spawnscratch(arg);
+	}
+}
+
+void
+movecenter(const Arg *arg)
+{
+	Client *c = focustop(selmon);
+	Monitor *m = selmon;
+
+	if (!m) {
+		return;
+	}
+
+	if (c) {
+		// const int center_relative_to_monitor = arg->i;
+		struct wlr_box b = center_relative_to_monitor ? m->m : m->w; 
+		resize(c, (struct wlr_box){
+			.x = (b.width - c->geom.width) / 2 + b.x,
+			.y = (b.height - c->geom.height) / 2 + b.y,
+			.width = c->geom.width,
+			.height = c->geom.height,
+		}, 1);
 	}
 }
 

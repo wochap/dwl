@@ -10,6 +10,7 @@ static const unsigned int cursorsize       = 24;
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 static const unsigned int swipe_min_threshold = 0;
 static const int swipe_fingers_count       = 3;
+static const int center_relative_to_monitor = 1;  /* 0 means center floating relative to the window area  */
 
 /* Autostart */
 static const char *const autostart[] = {
@@ -177,6 +178,7 @@ static const Key keys[] = {
 	{ MODKEY, Key_space,                           setlayout,        {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,        togglefloating,   {0} },
 	{ MODKEY, Key_e,                               togglefullscreen, {0} },
+  { MODKEY,                    Key_x,            movecenter,       {0} },
 	{ MODKEY, Key_0,                               view,             {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,            tag,              {.ui = ~0} },
 	{ MODKEY, Key_comma,                           focusmon,         {.i = WLR_DIRECTION_LEFT} },
