@@ -7,6 +7,11 @@ wget https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
 wget https://github.com/djpohly/dwl/compare/main...Abanoub8:fibonacci.patch
 wget https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patch
 wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
+wget https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
+wget https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
+
+# Client placement
+wget https://github.com/djpohly/dwl/compare/main...wochap:alwayscenter.patch
 
 # Clients & tags manipulation
 wget https://github.com/djpohly/dwl/compare/main...guidocella:shiftview.patch
@@ -16,6 +21,7 @@ wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
 
 # Rules
 wget https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch
+wget https://github.com/djpohly/dwl/compare/main...wochap:customfloat.patch
 wget https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
 wget https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch
 
