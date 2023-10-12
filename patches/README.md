@@ -30,6 +30,8 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch
 
 # Input
+* https://github.com/djpohly/dwl/compare/main...sevz17:pointer-constraints.patch
+* https://github.com/djpohly/dwl/compare/main...youbitchoc:virtualpointer.patch
 * https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
 * ~~https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch~~ (doesn't support multiple PREFIXKEY)
@@ -41,6 +43,8 @@ https://github.com/djpohly/dwl/wiki/Patches
 * ~~https://github.com/djpohly/dwl/compare/main...PalanixYT:type_hide.patch~~ (doesn't work in wlroots-next)
 
 # Other
+* https://github.com/djpohly/dwl/compare/main...madcowog:keyboard-shortcuts-inhibit.patch
+* https://github.com/djpohly/dwl/compare/main...guidocella:output-power-management.patch
 * https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
 * ~~https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen.patch~~ (too many conflicts)
 * ~~https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch~~ (doesn't work in wlroots-next)
@@ -70,6 +74,8 @@ Order (smallest to largest):
 * [ ] ~~main...PalanixYT:type_hide.patch~~
 * [ ] ~~main...Stivvo:customFloat.patch~~
 * [x] main...NikitaIvanovV:centeredmaster.patch
+* [x] main...madcowog:keyboard-shortcuts-inhibit.patch
+* [x] main...youbitchoc:virtualpointer.patch
 * [x] main...mortezadadgar:pertag.patch
 * [x] main...loumray:namedscratchpads.patch
 * [x] main...wochap:modes.patch
@@ -81,6 +87,8 @@ Order (smallest to largest):
 * [ ] ~~main...madcowog:ipc-v2.patch~~
 * [ ] ~~main...Stivvo:hide-behind-fullscreen.patch~~
 * [ ] ~~main...yveszoundi:dwl-customization:keychord-2023-03-12.patch~~
+* [x] main...guidocella:output-power-management.patch
+* [x] main...wochap:pointer-constraints.patch
 * [x] main...sevz17:keycodes.patch
 * [x] main...wochap:pointer-gestures-unstable-v1.patch
 * [x] pointer-gestures-unstable-v1...wochap:gestures.patch

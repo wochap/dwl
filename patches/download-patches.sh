@@ -26,6 +26,8 @@ wget https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patc
 wget https://github.com/djpohly/dwl/compare/main...mewkl:swallowx.patch
 
 # Input
+wget https://github.com/djpohly/dwl/compare/main...wochap:pointer-constraints.patch
+wget https://github.com/djpohly/dwl/compare/main...youbitchoc:virtualpointer.patch
 wget https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
 wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
 wget https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
@@ -37,6 +39,8 @@ wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
 wget https://github.com/djpohly/dwl/compare/main...PalanixYT:type_hide.patch
 
 # Other
+wget https://github.com/djpohly/dwl/compare/main...madcowog:keyboard-shortcuts-inhibit.patch
+wget https://github.com/djpohly/dwl/compare/main...guidocella:output-power-management.patch
 wget https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
 wget https://github.com/djpohly/dwl/compare/main...Stivvo:hide-behind-fullscreen.patch
 wget https://github.com/djpohly/dwl/compare/main...madcowog:ipc-v2.patch
