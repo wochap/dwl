@@ -560,8 +560,8 @@ applyrules(Client *c)
 	}
 
 	for (r = rules; r < END(rules); r++) {
-		if ((!r->title || regex_match(title, r->title))
-				&& (!r->id || regex_match(appid, r->id))) {
+		if ((!r->title || regex_match(r->title, title))
+				&& (!r->id || regex_match(r->id, appid))) {
 			c->isfloating = r->isfloating;
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
