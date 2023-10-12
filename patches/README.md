@@ -24,6 +24,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
 
 # Rules
+* https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
 * ~~https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch~~ (obsolete)
 * https://github.com/djpohly/dwl/compare/main...wochap:customfloat.patch
 * https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
@@ -61,6 +62,7 @@ Order (smallest to largest):
 * [x] main...NikitaIvanovV:naturalscrolltrackpad.patch
 * [x] main...PalanixYT:zoomswap.patch
 * [x] main...dm1tz:04-cursortheme.patch
+* [x] main...wochap:regexrules.patch
 * [x] main...bencollerson:dwl:72fde16.patch
 * [x] main...guidocella:shiftview.patch
 * [x] main...wochap:movecenter.patch

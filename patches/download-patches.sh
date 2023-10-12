@@ -20,6 +20,7 @@ wget https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
 wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
 
 # Rules
+wget https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
 wget https://github.com/djpohly/dwl/compare/main...Stivvo:customFloat.patch
 wget https://github.com/djpohly/dwl/compare/main...wochap:customfloat.patch
 wget https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
