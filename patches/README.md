@@ -8,7 +8,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:centeredmaster.patch
 * https://github.com/djpohly/dwl/compare/main...Abanoub8:gridmode.patch
 * https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
-* https://github.com/djpohly/dwl/compare/main...Abanoub8:fibonacci.patch
+* ~~https://github.com/djpohly/dwl/compare/main...Abanoub8:fibonacci.patch~~
 * https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patch (columns layout)
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
@@ -69,7 +69,7 @@ Order (smallest to largest):
 * [x] main...dm1tz:04-cyclelayouts.patch
 * [x] main...wochap:customfloat.patch
 * [x] main...Abanoub8:movestack.patch
-* [x] main...Abanoub8:fibonacci.patch
+* [ ] ~~main...Abanoub8:fibonacci.patch~~
 * [x] main...wochap:moveresizekb.patch
 * [x] main...wochap:alwayscenter.patch
 * [x] main...Abanoub8:gridmode.patch
