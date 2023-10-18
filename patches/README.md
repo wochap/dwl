@@ -104,6 +104,8 @@ $ git checkout -b patches/<patch_name>
 # use one of the following commands
 $ git apply ./patches/<patch_file_name>
 # $ patch -p1 --no-backup-if-mismatch < ./patches/<patch_file_name>
+# to reverse patch
+$ patch -p1 --no-backup-if-mismatch -R < ./patches/<patch_file_name>
 
 # test build
 $ make -B
