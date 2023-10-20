@@ -37,6 +37,7 @@ wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltr
 wget https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch
 wget https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
 wget https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
+wget https://github.com/djpohly/dwl/compare/main...wochap:toggleKbLayout.patch
 
 # Cursor
 wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch

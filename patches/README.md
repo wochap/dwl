@@ -41,6 +41,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * ~~https://github.com/djpohly/dwl/compare/main...yveszoundi:dwl-customization:keychord-2023-03-12.patch~~ (doesn't support multiple PREFIXKEY)
 * https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
+* https://github.com/djpohly/dwl/compare/main...wochap:toggleKbLayout.patch
 
 # Cursor
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
@@ -102,6 +103,7 @@ Order (smallest to largest):
 * [x] main...korei999:rotatetags.patch
 * [x] https://github.com/djpohly/dwl/compare/main...XGames123:focusdir.patch
 * [x] main...schance995:dwl:relative-mouse-resize.patch
+* [x] main...wochap:toggleKbLayout.patch
 
 Workflow
 
