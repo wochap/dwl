@@ -6,7 +6,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 
 # Layouts
 * https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:centeredmaster.patch
-* https://github.com/djpohly/dwl/compare/main...Abanoub8:gridmode.patch
+* ~~https://github.com/djpohly/dwl/compare/main...Abanoub8:gridmode.patch~~
 * https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
 * ~~https://github.com/djpohly/dwl/compare/main...Abanoub8:fibonacci.patch~~
 * https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patch (columns layout)
@@ -72,7 +72,7 @@ Order (smallest to largest):
 * [ ] ~~main...Abanoub8:fibonacci.patch~~
 * [x] main...wochap:moveresizekb.patch
 * [x] main...wochap:alwayscenter.patch
-* [x] main...Abanoub8:gridmode.patch
+* [ ] ~~main...Abanoub8:gridmode.patch~~
 * [ ] ~~main...PalanixYT:type_hide.patch~~
 * [ ] ~~main...Stivvo:customFloat.patch~~
 * [x] main...NikitaIvanovV:centeredmaster.patch

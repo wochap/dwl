@@ -50,7 +50,6 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 	{ "||",       column },
 	{ "|M|",      centeredmaster },
-	{ "HHH",      grid },
 	{ "@|@",      snail },
 	{ NULL,       NULL },
 };
@@ -169,7 +168,6 @@ static const Key keys[] = {
 	{ MODKEY, Key_f,                               setlayout,        {.v = &layouts[1]} },
 	{ MODKEY, Key_m,                               setlayout,        {.v = &layouts[2]} },
 	{ MODKEY, Key_c,                               setlayout,        {.v = &layouts[3]} },
-	{ MODKEY, Key_g,                               setlayout,        {.v = &layouts[4]} },
 	{ MODKEY, Key_s,                               setlayout,        {.v = &layouts[5]} },
 	{ MODKEY|WLR_MODIFIER_CTRL, Key_comma,         cyclelayout,      {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL, Key_period,        cyclelayout,      {.i = +1 } },
