@@ -429,7 +429,7 @@ static struct wlr_seat *seat;
 static struct wl_list keyboards;
 static unsigned int cursor_mode;
 static Client *grabc;
-static int grabcx, grabcy; /* client-relative */
+static int grabcx, grabcy, grabx, graby, grabwidth, grabheight, grabcenterx, grabcentery; /* client-relative */
 
 static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
@@ -2254,8 +2254,29 @@ motionnotify(uint32_t time)
 			.width = grabc->geom.width, .height = grabc->geom.height}, 1);
 		return;
 	} else if (cursor_mode == CurResize) {
-		resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
-			.width = cursor->x - grabc->geom.x, .height = cursor->y - grabc->geom.y}, 1);
+		if (grabcenterx < grabx) {
+			/* bottom */
+			if (grabcentery < graby) {
+				/* right */
+				resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
+					.width = grabwidth + cursor->x - grabx, .height = grabheight + cursor->y - graby}, 1);
+			} else {
+				/* left */
+				resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = cursor->y - grabcy,
+					.width = grabwidth + cursor->x - grabx, .height = grabheight - cursor->y + graby}, 1);
+			}
+		} else {
+			/* top */
+			if (grabcentery < graby) {
+				/* right */
+				resize(grabc, (struct wlr_box){.x = cursor->x - grabcx, .y = grabc->geom.y,
+					.width = grabwidth - cursor->x + grabx, .height = grabheight + cursor->y - graby}, 1);
+			} else {
+				/* left */
+				resize(grabc, (struct wlr_box){.x = cursor->x - grabcx, .y = cursor->y - grabcy,
+					.width = grabwidth - cursor->x + grabx, .height = grabheight - cursor->y + graby}, 1);
+			}
+		}
 		return;
 	}
 
@@ -2316,11 +2337,31 @@ moveresize(const Arg *arg)
 	case CurResize:
 		/* Doesn't work for X11 output - the next absolute motion event
 		 * returns the cursor to where it started */
-		wlr_cursor_warp_closest(cursor, NULL,
-				grabc->geom.x + grabc->geom.width,
-				grabc->geom.y + grabc->geom.height);
-		wlr_xcursor_manager_set_cursor_image(cursor_mgr,
-				(cursor_image = "bottom_right_corner"), cursor);
+		grabx = cursor->x;
+		graby = cursor->y;
+		grabwidth = grabc->geom.width;
+		grabheight = grabc->geom.height;
+		grabcx = cursor->x - grabc->geom.x;
+		grabcy = cursor->y - grabc->geom.y;
+		grabcenterx = grabc->geom.width / 2 + grabc->geom.x;
+		grabcentery = grabc->geom.height / 2 + grabc->geom.y;
+		if (grabcenterx < grabx) {
+			if (grabcentery < graby) {
+				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
+						(cursor_image = "bottom_right_corner"), cursor);
+			} else {
+				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
+						(cursor_image = "top_right_corner"), cursor);
+			}
+		} else {
+			if (grabcentery < graby) {
+				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
+						(cursor_image = "bottom_left_corner"), cursor);
+			} else {
+				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
+						(cursor_image = "top_left_corner"), cursor);
+			}
+		}
 		break;
 	}
 }

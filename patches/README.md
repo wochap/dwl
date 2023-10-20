@@ -45,6 +45,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 # Cursor
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
 * ~~https://github.com/djpohly/dwl/compare/main...PalanixYT:type_hide.patch~~ (doesn't work in wlroots-next)
+* https://github.com/djpohly/dwl/compare/main...schance995:dwl:relative-mouse-resize.patch
 
 # Other
 * https://github.com/djpohly/dwl/compare/main...madcowog:keyboard-shortcuts-inhibit.patch
@@ -100,6 +101,7 @@ Order (smallest to largest):
 * [x] main...Abanoub8:bottomstack.patch
 * [x] main...korei999:rotatetags.patch
 * [x] https://github.com/djpohly/dwl/compare/main...XGames123:focusdir.patch
+* [x] main...schance995:dwl:relative-mouse-resize.patch
 
 Workflow
 

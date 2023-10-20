@@ -41,6 +41,7 @@ wget https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
 # Cursor
 wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
 wget https://github.com/djpohly/dwl/compare/main...PalanixYT:type_hide.patch
+wget https://github.com/djpohly/dwl/compare/main...schance995:dwl:relative-mouse-resize.patch
 
 # Other
 wget https://github.com/djpohly/dwl/compare/main...madcowog:keyboard-shortcuts-inhibit.patch
