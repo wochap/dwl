@@ -13,6 +13,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
+* https://github.com/djpohly/dwl/compare/main...Abanoub8:bottomstack.patch
 
 # Clients placement
 * https://github.com/djpohly/dwl/compare/main...wochap:alwayscenter.patch
@@ -94,6 +95,7 @@ Order (smallest to largest):
 * [x] main...sevz17:keycodes.patch
 * [x] main...wochap:pointer-gestures-unstable-v1.patch
 * [x] pointer-gestures-unstable-v1...wochap:gestures.patch
+* [x] main...Abanoub8:bottomstack.patch
 
 Workflow
 

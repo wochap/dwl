@@ -9,6 +9,7 @@ wget https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patc
 wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
 wget https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
 wget https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
+wget https://github.com/djpohly/dwl/compare/main...Abanoub8:bottomstack.patch
 
 # Client placement
 wget https://github.com/djpohly/dwl/compare/main...wochap:alwayscenter.patch
