@@ -1,0 +1,250 @@
+From 9dbdc4269c8db1b9580a153d99165aaa9cf14ad7 Mon Sep 17 00:00:00 2001
+From: korei999 <ju7t1xe@gmail.com>
+Date: Mon, 17 Jul 2023 01:02:22 +0300
+Subject: [PATCH 1/3] This patch provides the ability to rotate the tagset left
+ / right. It implements a new function rotatetags which modifies the current
+ tagset. Same as original dwm patch. Also adds ability to "shift" focused
+ client to left / right tag.
+
+---
+ config.def.h |  6 +++++-
+ dwl.c        | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 1 deletion(-)
+
+diff --git a/config.def.h b/config.def.h
+index 447ba0051..c55bf384b 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -114,7 +114,11 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
+ 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_i,          incnmaster,     {.i = -1} },
++    { MODKEY,                    XKB_KEY_a,      	 rotatetags,     {.i = -1} },
++    { MODKEY,                    XKB_KEY_d,      	 rotatetags,     {.i =  1} },
++    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_a,      	 clientshift,    {.i = -1} },
++    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_d,      	 clientshift,    {.i =  1} },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+diff --git a/dwl.c b/dwl.c
+index 93f66efe6..3928c2b9b 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -318,6 +318,8 @@ static Monitor *xytomon(double x, double y);
+ static struct wlr_scene_node *xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+ static void zoom(const Arg *arg);
++static void rotatetags(const Arg *arg);
++static void clientshift(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2687,6 +2689,52 @@ zoom(const Arg *arg)
+ 	arrange(selmon);
+ }
+ 
++static void
++rotatetags(const Arg *arg)
++{
++	Arg a;
++	size_t ntags = tagcount;
++	int i = arg->i;
++	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++
++	if (i > 0) // left circular shift
++		nextseltags = (curseltags << 1) | (curseltags >> (ntags - 1));
++	else // right circular shift
++		nextseltags = curseltags >> 1 | (curseltags << (ntags - 1));
++
++	i += arg->i;
++
++	a.i = nextseltags;
++	view(&a);
++}
++
++static void
++clientshift(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++
++	Arg a;
++	size_t ntags = tagcount;
++	int i = arg->i;
++	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++
++	if (i > 0) // left circular shift
++		nextseltags = (curseltags << 1) | (curseltags >> (ntags - 1));
++	else // right circular shift
++		nextseltags = curseltags >> 1 | (curseltags << (ntags - 1));
++
++	i += arg->i;
++
++	a.i = nextseltags;
++
++	if (sel && a.i) {
++		sel->tags = a.i;
++		focusclient(focustop(selmon), 1);
++		arrange(selmon);
++	}
++	printstatus();
++}
++
+ #ifdef XWAYLAND
+ void
+ activatex11(struct wl_listener *listener, void *data)
+
+From acc4e13d3985594a9f5ea35febd7a0e8cc3e75a3 Mon Sep 17 00:00:00 2001
+From: korei999 <ju7t1xe@gmail.com>
+Date: Thu, 12 Oct 2023 16:54:58 +0300
+Subject: [PATCH 2/3] call tags inside clientshift function
+
+---
+ dwl.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 86a982dde..bcb6ac2d0 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -2695,14 +2695,13 @@ static void
+ rotatetags(const Arg *arg)
+ {
+ 	Arg a;
+-	size_t ntags = tagcount;
+ 	int i = arg->i;
+ 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
+ 
+ 	if (i > 0) // left circular shift
+-		nextseltags = (curseltags << 1) | (curseltags >> (ntags - 1));
++		nextseltags = (curseltags << 1) | (curseltags >> (TAGCOUNT - 1));
+ 	else // right circular shift
+-		nextseltags = curseltags >> 1 | (curseltags << (ntags - 1));
++		nextseltags = curseltags >> 1 | (curseltags << (TAGCOUNT - 1));
+ 
+ 	i += arg->i;
+ 
+@@ -2713,28 +2712,18 @@ rotatetags(const Arg *arg)
+ static void
+ clientshift(const Arg *arg)
+ {
+-	Client *sel = focustop(selmon);
+-
+ 	Arg a;
+-	size_t ntags = tagcount;
+ 	int i = arg->i;
+ 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
+ 
+ 	if (i > 0) // left circular shift
+-		nextseltags = (curseltags << 1) | (curseltags >> (ntags - 1));
++		nextseltags = (curseltags << 1) | (curseltags >> (TAGCOUNT - 1));
+ 	else // right circular shift
+-		nextseltags = curseltags >> 1 | (curseltags << (ntags - 1));
++		nextseltags = curseltags >> 1 | (curseltags << (TAGCOUNT - 1));
+ 
+ 	i += arg->i;
+-
+ 	a.i = nextseltags;
+-
+-	if (sel && a.i) {
+-		sel->tags = a.i;
+-		focusclient(focustop(selmon), 1);
+-		arrange(selmon);
+-	}
+-	printstatus();
++  tag(&a);
+ }
+ 
+ #ifdef XWAYLAND
+
+From 723f21d43c77af87693f1a01d33f42d2e4dd5033 Mon Sep 17 00:00:00 2001
+From: korei999 <ju7t1xe@gmail.com>
+Date: Thu, 12 Oct 2023 18:02:16 +0300
+Subject: [PATCH 3/3] merge rotatetags and clientshift to one function
+
+---
+ config.def.h |  4 ++--
+ dwl.c        | 42 ++++++++++++++++--------------------------
+ 2 files changed, 18 insertions(+), 28 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index f77433bf5..dbc1d2f21 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -126,8 +126,8 @@ static const Key keys[] = {
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_i,          incnmaster,     {.i = -1} },
+     { MODKEY,                    XKB_KEY_a,      	 rotatetags,     {.i = -1} },
+     { MODKEY,                    XKB_KEY_d,      	 rotatetags,     {.i =  1} },
+-    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_a,      	 clientshift,    {.i = -1} },
+-    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_d,      	 clientshift,    {.i =  1} },
++    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_A,      	 rotatetags,     {.i = -2} },
++    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_D,      	 rotatetags,     {.i =  2} },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+diff --git a/dwl.c b/dwl.c
+index bcb6ac2d0..55b55fcc7 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -319,7 +319,6 @@ static void xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+ static void zoom(const Arg *arg);
+ static void rotatetags(const Arg *arg);
+-static void clientshift(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2694,36 +2693,27 @@ zoom(const Arg *arg)
+ static void
+ rotatetags(const Arg *arg)
+ {
+-	Arg a;
++	Arg newarg;
+ 	int i = arg->i;
+-	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++	int nextseltags = 0, curseltags = selmon->tagset[selmon->seltags];
++  bool shift = false;
+ 
+-	if (i > 0) // left circular shift
+-		nextseltags = (curseltags << 1) | (curseltags >> (TAGCOUNT - 1));
+-	else // right circular shift
+-		nextseltags = curseltags >> 1 | (curseltags << (TAGCOUNT - 1));
+-
+-	i += arg->i;
+-
+-	a.i = nextseltags;
+-	view(&a);
+-}
+-
+-static void
+-clientshift(const Arg *arg)
+-{
+-	Arg a;
+-	int i = arg->i;
+-	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++  if (2 <= abs(i))
++    shift = true;
+ 
+-	if (i > 0) // left circular shift
++	if (i > 0)
+ 		nextseltags = (curseltags << 1) | (curseltags >> (TAGCOUNT - 1));
+-	else // right circular shift
+-		nextseltags = curseltags >> 1 | (curseltags << (TAGCOUNT - 1));
++	else
++		nextseltags = (curseltags >> 1) | (curseltags << (TAGCOUNT - 1));
++
++	newarg.i = nextseltags;
+ 
+-	i += arg->i;
+-	a.i = nextseltags;
+-  tag(&a);
++  if (shift) {
++    tag(&newarg);
++    return;
++  }
++  else
++    view(&newarg);
+ }
+ 
+ #ifdef XWAYLAND

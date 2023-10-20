@@ -23,6 +23,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
 * https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
 * https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
+* https://github.com/djpohly/dwl/compare/main...korei999:rotatetags.patch
 
 # Rules
 * https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
@@ -96,6 +97,7 @@ Order (smallest to largest):
 * [x] main...wochap:pointer-gestures-unstable-v1.patch
 * [x] pointer-gestures-unstable-v1...wochap:gestures.patch
 * [x] main...Abanoub8:bottomstack.patch
+* [x] main...korei999:rotatetags.patch
 
 Workflow
 

@@ -19,6 +19,7 @@ wget https://github.com/djpohly/dwl/compare/main...guidocella:shiftview.patch
 wget https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
 wget https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
 wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
+wget https://github.com/djpohly/dwl/compare/main...korei999:rotatetags.patch
 
 # Rules
 wget https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
