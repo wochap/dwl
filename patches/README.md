@@ -9,7 +9,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * ~~https://github.com/djpohly/dwl/compare/main...Abanoub8:gridmode.patch~~
 * https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
 * ~~https://github.com/djpohly/dwl/compare/main...Abanoub8:fibonacci.patch~~
-* https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patch (columns layout)
+* ~~https://github.com/djpohly/dwl/compare/main...bencollerson:dwl:72fde16.patch~~ (columns layout)
 * https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
 * https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
@@ -63,7 +63,7 @@ Order (smallest to largest):
 * [x] main...PalanixYT:zoomswap.patch
 * [x] main...dm1tz:04-cursortheme.patch
 * [x] main...wochap:regexrules.patch
-* [x] main...bencollerson:dwl:72fde16.patch
+* [ ] ~~main...bencollerson:dwl:72fde16.patch~~
 * [x] main...guidocella:shiftview.patch
 * [x] main...wochap:movecenter.patch
 * [x] main...dm1tz:04-cyclelayouts.patch
