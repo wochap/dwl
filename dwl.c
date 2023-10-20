@@ -2468,7 +2468,7 @@ togglekblayout(const Arg *arg)
 		struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
 		struct xkb_keymap *keymap = xkb_map_new_from_names(context, &newrule,
 				XKB_KEYMAP_COMPILE_NO_FLAGS);
-		wlr_keyboard_set_keymap(kb->device->keyboard, keymap);
+		wlr_keyboard_set_keymap(kb->wlr_keyboard, keymap);
 		xkb_keymap_unref(keymap);
 		xkb_context_unref(context);
 	}
