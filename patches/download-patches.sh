@@ -20,6 +20,7 @@ wget https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
 wget https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
 wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
 wget https://github.com/djpohly/dwl/compare/main...korei999:rotatetags.patch
+wget https://github.com/djpohly/dwl/compare/main...XGames123:focusdir.patch
 
 # Rules
 wget https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
