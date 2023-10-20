@@ -1700,12 +1700,13 @@ void focusdir(const Arg *arg)
 {
 	/* Focus the left, right, up, down client relative to the current focused client on selmon */
 	Client *c, *sel = focustop(selmon);
+	int dist=INT_MAX;
+	Client *newsel = NULL;
+	int newdist=INT_MAX;
+
 	if (!sel || sel->isfullscreen)
 		return;
   
-  int dist=INT_MAX;
-  Client *newsel = NULL;
-  int newdist=INT_MAX;
   wl_list_for_each(c, &clients, link) {
     if (!VISIBLEON(c, selmon))
       continue; /* skip non visible windows */
