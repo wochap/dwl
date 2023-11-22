@@ -317,6 +317,7 @@ static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void togglescratch(const Arg *arg);
+static void focusortogglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
@@ -2487,6 +2488,42 @@ togglescratch(const Arg *arg)
 		c->tags = VISIBLEON(c, selmon) ? 0 : selmon->tagset[selmon->seltags];
 
 		focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
+		arrange(selmon);
+	} else{
+		spawnscratch(arg);
+	}
+}
+
+void
+focusortogglescratch(const Arg *arg)
+{
+	Client *c;
+	Client *cwithfocus;
+	unsigned int found = 0;
+
+	/* search for first window that matches the scratchkey */
+	wl_list_for_each(c, &clients, link)
+		if (c->scratchkey == ((char**)arg->v)[0][0]) {
+			found = 1;
+			break;
+		}
+
+	if (found) {
+		if (VISIBLEON(c, selmon)) {
+			cwithfocus = focustop(selmon);
+			if (cwithfocus == c) {
+				// hide
+				c->tags = 0;
+				focusclient(cwithfocus, 1);
+			} else {
+				// focus
+				focusclient(c, 1);
+			}
+		} else {
+			// show
+			c->tags = selmon->tagset[selmon->seltags];
+			focusclient(c, 1);
+		}
 		arrange(selmon);
 	} else{
 		spawnscratch(arg);
