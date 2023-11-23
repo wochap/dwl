@@ -2498,7 +2498,6 @@ void
 focusortogglescratch(const Arg *arg)
 {
 	Client *c;
-	Client *cwithfocus;
 	unsigned int found = 0;
 
 	/* search for first window that matches the scratchkey */
@@ -2510,11 +2509,10 @@ focusortogglescratch(const Arg *arg)
 
 	if (found) {
 		if (VISIBLEON(c, selmon)) {
-			cwithfocus = focustop(selmon);
-			if (cwithfocus == c) {
+			if (focustop(selmon) == c) {
 				// hide
 				c->tags = 0;
-				focusclient(cwithfocus, 1);
+				focusclient(focustop(selmon), 1);
 			} else {
 				// focus
 				focusclient(c, 1);
