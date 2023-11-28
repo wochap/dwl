@@ -69,13 +69,13 @@ Order (smallest to largest):
 * [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
 * [x] main-codeberg...sevz17:autostart.patch
 * [x] main-codeberg...Abanoub8:bottomstack.patch
-* [ ] pointer-gestures-unstable-v1...wochap:gestures.patch
 * [ ] main-codeberg...NikitaIvanovV:centeredmaster.patch
 * [ ] main-codeberg...youbitchoc:virtualpointer.patch
 * [ ] main-codeberg...mortezadadgar:pertag.patch
 * [ ] main-codeberg...loumray:namedscratchpads.patch
 * [ ] main-codeberg...wochap:modes.patch
 * [ ] main-codeberg...wochap:pointer-gestures-unstable-v1.patch
+* [ ] pointer-gestures-unstable-v1...wochap:gestures.patch
 * [ ] main-codeberg...PalanixYT:cfact.patch
 * [ ] main-codeberg...wochap:swapandfocusdir.patch
 * [ ] main-codeberg...korei999:rotatetags.patch
