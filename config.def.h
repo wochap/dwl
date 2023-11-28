@@ -21,7 +21,7 @@ static const int swipe_fingers_count       = 3;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "wbg", "/path/to/your/image", NULL,
+        // "wbg", "/path/to/your/image", NULL,
         NULL /* terminate */
 };
 
