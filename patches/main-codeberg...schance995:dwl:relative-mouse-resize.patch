@@ -1,0 +1,95 @@
+From c9a0c55daeb5c75cc0defa9b82f82eccd13f06c7 Mon Sep 17 00:00:00 2001
+From: schance995 <54919210+schance995@users.noreply.github.com>
+Date: Sat, 14 Oct 2023 15:47:08 -0400
+Subject: [PATCH] Implement relative mouse resize.
+
+When resizing windows, the mouse will no longer jump to the bottom
+right corner and only resize from that corner. Instead, the mouse will
+resize the window in the quadrant that the resize starts at. This is the
+same resize behavior as Sway and is similar to the resizehere dwm patch.
+---
+ dwl.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 49 insertions(+), 8 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 19bb6ce34..e714f2f99 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -349,7 +349,7 @@ static struct wlr_seat *seat;
+ static struct wl_list keyboards;
+ static unsigned int cursor_mode;
+ static Client *grabc;
+-static int grabcx, grabcy; /* client-relative */
++static int grabcx, grabcy, grabx, graby, grabwidth, grabheight, grabcenterx, grabcentery; /* client-relative */
+ 
+ static struct wlr_output_layout *output_layout;
+ static struct wlr_box sgeom;
+@@ -1605,8 +1605,29 @@ motionnotify(uint32_t time)
+ 			.width = grabc->geom.width, .height = grabc->geom.height}, 1);
+ 		return;
+ 	} else if (cursor_mode == CurResize) {
+-		resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
+-			.width = cursor->x - grabc->geom.x, .height = cursor->y - grabc->geom.y}, 1);
++		if (grabcenterx < grabx) {
++			/* bottom */
++			if (grabcentery < graby) {
++				/* right */
++				resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
++					.width = grabwidth + cursor->x - grabx, .height = grabheight + cursor->y - graby}, 1);
++			} else {
++				/* left */
++				resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = cursor->y - grabcy,
++					.width = grabwidth + cursor->x - grabx, .height = grabheight - cursor->y + graby}, 1);
++			}
++		} else {
++			/* top */
++			if (grabcentery < graby) {
++				/* right */
++				resize(grabc, (struct wlr_box){.x = cursor->x - grabcx, .y = grabc->geom.y,
++					.width = grabwidth - cursor->x + grabx, .height = grabheight + cursor->y - graby}, 1);
++			} else {
++				/* left */
++				resize(grabc, (struct wlr_box){.x = cursor->x - grabcx, .y = cursor->y - grabcy,
++					.width = grabwidth - cursor->x + grabx, .height = grabheight - cursor->y + graby}, 1);
++			}
++		}
+ 		return;
+ 	}
+ 
+@@ -1667,11 +1688,31 @@ moveresize(const Arg *arg)
+ 	case CurResize:
+ 		/* Doesn't work for X11 output - the next absolute motion event
+ 		 * returns the cursor to where it started */
+-		wlr_cursor_warp_closest(cursor, NULL,
+-				grabc->geom.x + grabc->geom.width,
+-				grabc->geom.y + grabc->geom.height);
+-		wlr_xcursor_manager_set_cursor_image(cursor_mgr,
+-				(cursor_image = "bottom_right_corner"), cursor);
++		grabx = cursor->x;
++		graby = cursor->y;
++		grabwidth = grabc->geom.width;
++		grabheight = grabc->geom.height;
++		grabcx = cursor->x - grabc->geom.x;
++		grabcy = cursor->y - grabc->geom.y;
++		grabcenterx = grabc->geom.width / 2 + grabc->geom.x;
++		grabcentery = grabc->geom.height / 2 + grabc->geom.y;
++		if (grabcenterx < grabx) {
++			if (grabcentery < graby) {
++				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
++						(cursor_image = "bottom_right_corner"), cursor);
++			} else {
++				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
++						(cursor_image = "top_right_corner"), cursor);
++			}
++		} else {
++			if (grabcentery < graby) {
++				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
++						(cursor_image = "bottom_left_corner"), cursor);
++			} else {
++				wlr_xcursor_manager_set_cursor_image(cursor_mgr,
++						(cursor_image = "top_left_corner"), cursor);
++			}
++		}
+ 		break;
+ 	}
+ }

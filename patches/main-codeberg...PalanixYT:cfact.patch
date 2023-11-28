@@ -1,0 +1,179 @@
+From 58d33b79f90f7060d6d338d2abf345f16b88dd47 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
+ <leohdz172@proton.me>
+Date: Sat, 25 Nov 2023 01:37:14 -0600
+Subject: [PATCH 1/2] add notice aboud Codeberg migration
+
+---
+ .github/ISSUE_TEMPLATE/bug_report.md       | 12 ++++--------
+ .github/ISSUE_TEMPLATE/enhancement-idea.md |  3 +++
+ README.md                                  |  5 +++++
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/.github/ISSUE_TEMPLATE/bug_report.md b/.github/ISSUE_TEMPLATE/bug_report.md
+index cd9bd8dcf..e6278d859 100644
+--- a/.github/ISSUE_TEMPLATE/bug_report.md
++++ b/.github/ISSUE_TEMPLATE/bug_report.md
+@@ -7,11 +7,7 @@ assignees: ''
+ 
+ ---
+ 
+-## Info
+-dwl version:
+-wlroots version:
+-## Description
+-<!--
+-Only report bugs that can be reproduced on the main line
+-Report patch issues to their respective authors
+--->
++### ⚠️ Migrated to Codeberg
++
++This project has [migrated to Codeberg](https://codeberg.org/dwl/dwl).
++
+diff --git a/.github/ISSUE_TEMPLATE/enhancement-idea.md b/.github/ISSUE_TEMPLATE/enhancement-idea.md
+index 0ac096db3..cbfd90f2d 100644
+--- a/.github/ISSUE_TEMPLATE/enhancement-idea.md
++++ b/.github/ISSUE_TEMPLATE/enhancement-idea.md
+@@ -7,4 +7,7 @@ assignees: ''
+ 
+ ---
+ 
++### ⚠️ Migrated to Codeberg
++
++This project has [migrated to Codeberg](https://codeberg.org/dwl/dwl).
+ 
+diff --git a/README.md b/README.md
+index 62ae87282..e02c9c449 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,10 @@
+ # dwl - dwm for Wayland
+ 
++> ### ⚠️ Migrated to Codeberg
++>
++> This project has [migrated to Codeberg](https://codeberg.org/dwl/dwl).
++
++
+ Join us on our IRC channel: [#dwl on Libera Chat]  
+ Or on our [Discord server].
+ 
+
+From 2366c7ee599e935b8e29bb332989fede650fcdc2 Mon Sep 17 00:00:00 2001
+From: Palanix <palanixyt@gmail.com>
+Date: Fri, 24 Nov 2023 21:16:56 +0100
+Subject: [PATCH 2/2] cweights to allow different size clients in normal
+ layouts
+
+---
+ config.def.h |  3 +++
+ dwl.c        | 32 ++++++++++++++++++++++++++++++--
+ 2 files changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index db0babc6f..a9b602116 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -126,6 +126,9 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_H,          setcfact,       {.f = +0.25} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_L,          setcfact,       {.f = -0.25} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          setcfact,       {.f = 0} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+ 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
+diff --git a/dwl.c b/dwl.c
+index ef27a1d38..9567f4005 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -130,6 +130,7 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating, isurgent, isfullscreen;
+ 	uint32_t resize; /* configure serial of a pending resize */
++	float cweight;
+ } Client;
+ 
+ typedef struct {
+@@ -295,6 +296,7 @@ static void requeststartdrag(struct wl_listener *listener, void *data);
+ static void requestmonstate(struct wl_listener *listener, void *data);
+ static void resize(Client *c, struct wlr_box geo, int interact);
+ static void run(char *startup_cmd);
++static void setcfact(const Arg *arg);
+ static void setcursor(struct wl_listener *listener, void *data);
+ static void setcursorshape(struct wl_listener *listener, void *data);
+ static void setfloating(Client *c, int floating);
+@@ -971,6 +973,7 @@ createnotify(struct wl_listener *listener, void *data)
+ 	c = xdg_surface->data = ecalloc(1, sizeof(*c));
+ 	c->surface.xdg = xdg_surface;
+ 	c->bw = borderpx;
++	c->cweight = 1.0;
+ 
+ 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
+ 			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
+@@ -2010,6 +2013,19 @@ run(char *startup_cmd)
+ 	wl_display_run(dpy);
+ }
+ 
++void
++setcfact(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++
++	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
++		return;
++	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
++	if (sel->cweight < 0)
++		sel->cweight = 0;
++	arrange(selmon);
++}
++
+ void
+ setcursor(struct wl_listener *listener, void *data)
+ {
+@@ -2408,6 +2424,7 @@ void
+ tile(Monitor *m)
+ {
+ 	unsigned int i, n = 0, mw, my, ty;
++	float mweight = 0, tweight = 0;
+ 	Client *c;
+ 
+ 	wl_list_for_each(c, &clients, link)
+@@ -2420,17 +2437,27 @@ tile(Monitor *m)
+ 		mw = m->nmaster ? m->w.width * m->mfact : 0;
+ 	else
+ 		mw = m->w.width;
++	i = 0;
++	wl_list_for_each(c, &clients, link){
++		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
++			continue;
++		if (i < m->nmaster)
++			mweight += c->cweight;
++		else
++			tweight += c->cweight;
++		i++;
++	}
+ 	i = my = ty = 0;
+ 	wl_list_for_each(c, &clients, link) {
+ 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+ 			continue;
+ 		if (i < m->nmaster) {
+ 			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
+-				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
++				.height = ((c->cweight / mweight) * m->w.height)}, 0);
+ 			my += c->geom.height;
+ 		} else {
+ 			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
+-				.width = m->w.width - mw, .height = (m->w.height - ty) / (n - i)}, 0);
++				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
+ 			ty += c->geom.height;
+ 		}
+ 		i++;
+@@ -2791,6 +2818,7 @@ createnotifyx11(struct wl_listener *listener, void *data)
+ 	c->surface.xwayland = xsurface;
+ 	c->type = xsurface->override_redirect ? X11Unmanaged : X11Managed;
+ 	c->bw = borderpx;
++	c->cweight = 1.0;
+ 
+ 	/* Listen to the various events it can emit */
+ 	LISTEN(&xsurface->events.associate, &c->associate, associatex11);

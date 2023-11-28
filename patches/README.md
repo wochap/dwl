@@ -54,36 +54,36 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (smallest to largest):
 
-* [x] main...NikitaIvanovV:naturalscrolltrackpad.patch
-* [x] main...PalanixYT:zoomswap.patch
-* [x] main...dm1tz:04-cursortheme.patch
-* [x] main...wochap:regexrules.patch
-* [x] main...wochap:shiftview.patch
-* [x] main...wochap:movecenter.patch
-* [x] main...dm1tz:04-cyclelayouts.patch
-* [x] main...wochap:customfloat.patch
-* [x] main...Abanoub8:movestack.patch
-* [x] main...wochap:moveresizekb.patch
-* [x] main...wochap:alwayscenter.patch
-* [x] main...NikitaIvanovV:centeredmaster.patch
-* [x] main...youbitchoc:virtualpointer.patch
-* [x] main...mortezadadgar:pertag.patch
-* [x] main...wochap:namedscratchpads.patch
-* [x] main...wochap:modes.patch
-* [x] main...dimkr:dwl:snail.patch
-* [x] main...sevz17:autostart.patch
-* [x] main...guidocella:output-power-management.patch
-* [x] main...sevz17:keycodes.patch
-* [x] main...wochap:pointer-gestures-unstable-v1.patch
-* [x] pointer-gestures-unstable-v1...wochap:gestures.patch
-* [x] main...Abanoub8:bottomstack.patch
-* [x] main...korei999:rotatetags.patch
-* [x] main...schance995:dwl:relative-mouse-resize.patch
-* [x] main...wochap:toggleKbLayout.patch
-* [x] main...wochap:lockedkeys
-* [x] main...wochap:genericgaps 
-* [x] main...PalanixYT:cfact.patch
-* [x] main...wochap:swapandfocusdir.patch
+* [ ] main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
+* [ ] main-codeberg...dm1tz:04-cursortheme.patch
+* [ ] main-codeberg...guidocella:shiftview.patch
+* [ ] main-codeberg...wochap:movecenter.patch
+* [ ] main-codeberg...dm1tz:04-cyclelayouts.patch
+* [ ] main-codeberg...wochap:customfloat.patch
+* [ ] main-codeberg...Abanoub8:movestack.patch
+* [ ] main-codeberg...wochap:moveresizekb.patch
+* [ ] main-codeberg...wochap:alwayscenter.patch
+* [ ] main-codeberg...wochap:regexrules.patch
+* [ ] main-codeberg...XGames123:focusdir.patch
+* [ ] main-codeberg...PalanixYT:zoomswap.patch
+* [ ] main-codeberg...wochap:toggleKbLayout.patch
+* [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
+* [ ] main-codeberg...sevz17:autostart.patch
+* [ ] main-codeberg...Abanoub8:bottomstack.patch
+* [ ] pointer-gestures-unstable-v1...wochap:gestures.patch
+* [ ] main-codeberg...NikitaIvanovV:centeredmaster.patch
+* [ ] main-codeberg...youbitchoc:virtualpointer.patch
+* [ ] main-codeberg...mortezadadgar:pertag.patch
+* [ ] main-codeberg...loumray:namedscratchpads.patch
+* [ ] main-codeberg...wochap:modes.patch
+* [ ] main-codeberg...wochap:pointer-gestures-unstable-v1.patch
+* [ ] main-codeberg...PalanixYT:cfact.patch
+* [ ] main-codeberg...wochap:swapandfocusdir.patch
+* [ ] main-codeberg...korei999:rotatetags.patch
+* [ ] main-codeberg...wochap:genericgaps.patch
+* [ ] main-codeberg...guidocella:output-power-management.patch
+* [ ] main-codeberg...dimkr:dwl:snail.patch
+* [ ] main-codeberg...sevz17:keycodes.patch
 
 Workflow
 
