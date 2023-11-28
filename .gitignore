@@ -5,3 +5,4 @@ dwl
 .ccls-cache
 config.h
 compile_commands.json
+.cache
