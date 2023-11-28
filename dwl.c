@@ -100,6 +100,7 @@ typedef struct {
 } Button;
 
 typedef struct {
+	unsigned int mod;
 	unsigned int motion;
 	void (*func)(const Arg *);
 	const Arg arg;
@@ -811,6 +812,8 @@ void
 swipe_end(struct wl_listener *listener, void *data)
 {
 	struct wlr_pointer_swipe_end_event *event = data;
+	struct wlr_keyboard *keyboard;
+	uint32_t mods;
 	const Gesture *g;
 	unsigned int motion;
 	unsigned int adx = fabs(swipe_dx);
@@ -832,8 +835,11 @@ swipe_end(struct wl_listener *listener, void *data)
 			motion = swipe_dy < 0 ? SWIPE_UP : SWIPE_DOWN;
 		}
 
+		keyboard = wlr_seat_get_keyboard(seat);
+		mods = keyboard ? wlr_keyboard_get_modifiers(keyboard) : 0;
 		for (g = gestures; g < END(gestures); g++) {
-			if (motion == g->motion && g->func) {
+			if (CLEANMASK(mods) == CLEANMASK(g->mod) &&
+				 motion == g->motion && g->func) {
 				g->func(&g->arg);
 			}
 		}
