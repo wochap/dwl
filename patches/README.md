@@ -67,8 +67,8 @@ Order (smallest to largest):
 * [x] main-codeberg...PalanixYT:zoomswap.patch
 * [x] main-codeberg...wochap:toggleKbLayout.patch
 * [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
-* [ ] main-codeberg...sevz17:autostart.patch
-* [ ] main-codeberg...Abanoub8:bottomstack.patch
+* [x] main-codeberg...sevz17:autostart.patch
+* [x] main-codeberg...Abanoub8:bottomstack.patch
 * [ ] pointer-gestures-unstable-v1...wochap:gestures.patch
 * [ ] main-codeberg...NikitaIvanovV:centeredmaster.patch
 * [ ] main-codeberg...youbitchoc:virtualpointer.patch
