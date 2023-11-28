@@ -16,6 +16,12 @@ static const unsigned int cursorsize       = 24;
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
 static const int center_relative_to_monitor = 0;  /* 0 means center floating relative to the window area  */
 
+/* Autostart */
+static const char *const autostart[] = {
+        "wbg", "/path/to/your/image", NULL,
+        NULL /* terminate */
+};
+
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
 
