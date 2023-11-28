@@ -23,7 +23,7 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:swapandfocusdi
 # Rules
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:regexrules.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:customfloat.patch
-wget https://github.com/wochap/dwl/compare/main-codeberg...loumray:namedscratchpads.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:namedscratchpads.patch
 
 # Input
 wget https://github.com/wochap/dwl/compare/main-codeberg...youbitchoc:virtualpointer.patch
