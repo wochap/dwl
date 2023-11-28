@@ -64,8 +64,8 @@ Order (smallest to largest):
 * [x] main-codeberg...wochap:moveresizekb.patch
 * [x] main-codeberg...wochap:alwayscenter.patch
 * [x] main-codeberg...wochap:regexrules.patch
-* [ ] main-codeberg...PalanixYT:zoomswap.patch
-* [ ] main-codeberg...wochap:toggleKbLayout.patch
+* [x] main-codeberg...PalanixYT:zoomswap.patch
+* [x] main-codeberg...wochap:toggleKbLayout.patch
 * [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
 * [ ] main-codeberg...sevz17:autostart.patch
 * [ ] main-codeberg...Abanoub8:bottomstack.patch
