@@ -12,7 +12,7 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:bottomstack.
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:alwayscenter.patch
 
 # Clients & tags manipulation
-wget https://github.com/wochap/dwl/compare/main-codeberg...guidocella:shiftview.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:movestack.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:zoomswap.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...mortezadadgar:pertag.patch

@@ -1,7 +1,7 @@
-From 50914b9eb9cf2bc332a1673f29aaa04ed20d4b34 Mon Sep 17 00:00:00 2001
-From: Guido Cella <guido@guidocella.xyz>
-Date: Wed, 3 May 2023 09:34:28 +0200
-Subject: [PATCH] Port shiftview
+From ef6f9aedba7316afa019e4314cfb41eceaa759f7 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 28 Nov 2023 11:31:50 -0500
+Subject: [PATCH 1/2] apply main...guidocella:shiftview.patch
 
 ---
  config.def.h |  4 ++++
@@ -10,10 +10,10 @@ Subject: [PATCH] Port shiftview
  create mode 100644 shiftview.c
 
 diff --git a/config.def.h b/config.def.h
-index 1677f6f12..6c692be5f 100644
+index 4e30885b7..b3c79b295 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -107,6 +107,8 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
+@@ -115,6 +115,8 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
  static const char *termcmd[] = { "foot", NULL };
  static const char *menucmd[] = { "bemenu-run", NULL };
  
@@ -22,7 +22,7 @@ index 1677f6f12..6c692be5f 100644
  static const Key keys[] = {
  	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
  	/* modifier                  key                 function        argument */
-@@ -120,6 +122,8 @@ static const Key keys[] = {
+@@ -128,6 +130,8 @@ static const Key keys[] = {
  	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
  	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
  	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
@@ -72,3 +72,27 @@ index 000000000..6903a5c37
 +		view(&a);
 +	}
 +}
+
+From 41ba97a0b5081e3beb7e1d2eaa46b7f62e47c60d Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 28 Nov 2023 11:32:23 -0500
+Subject: [PATCH 2/2] fix patch
+
+replace tagcount with TAGCOUNT
+---
+ shiftview.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/shiftview.c b/shiftview.c
+index 6903a5c37..dfb7c5e30 100644
+--- a/shiftview.c
++++ b/shiftview.c
+@@ -5,7 +5,7 @@ shiftview(const Arg *arg)
+ {
+ 	Arg a;
+ 	Client *c;
+-	size_t ntags = tagcount;
++	size_t ntags = TAGCOUNT;
+ 	bool visible = false;
+ 	int i = arg->i;
+ 	int count = 0;
