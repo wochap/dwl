@@ -316,6 +316,7 @@ static void incnmaster(const Arg *arg);
 static void incgaps(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keycode_t keycode);
+static int lockedkeybinding(uint32_t mods, xkb_keysym_t sym);
 static int modekeybinding(uint32_t mods, xkb_keycode_t keycode);
 static void keypress(struct wl_listener *listener, void *data);
 static void keypressmod(struct wl_listener *listener, void *data);
@@ -1989,6 +1990,21 @@ modekeybinding(uint32_t mods, xkb_keycode_t keycode)
 	return handled;
 }
 
+int
+lockedkeybinding(uint32_t mods, xkb_keysym_t sym)
+{
+	int handled = 0;
+	const Key *k;
+	for (k = lockedkeys; k < END(lockedkeys); k++) {
+		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
+				sym == k->keysym && k->func) {
+			k->func(&k->arg);
+			handled = 1;
+		}
+	}
+	return handled;
+}
+
 void
 keypress(struct wl_listener *listener, void *data)
 {
@@ -2008,6 +2024,11 @@ keypress(struct wl_listener *listener, void *data)
 	 * attempt to process a compositor keybinding. */
 	if (!locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED)
 		handled = keybinding(mods, keycode);
+
+	if ((locked || input_inhibit_mgr->active_inhibitor)
+			&& event->state == WL_KEYBOARD_KEY_STATE_PRESSED)
+		for (i = 0; i < nsyms; i++)
+			handled = lockedkeybinding(mods, syms[i]) || handled;
 
 	if (handled && kb->wlr_keyboard->repeat_info.delay > 0) {
 		kb->mods = mods;
