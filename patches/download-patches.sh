@@ -32,6 +32,7 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...NikitaIvanovV:natural
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:pointer-gestures-unstable-v1.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:modes.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:toggleKbLayout.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:lockedkeys.patch
 
 # Cursor
 wget https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cursortheme.patch
