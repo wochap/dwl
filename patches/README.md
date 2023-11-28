@@ -72,14 +72,14 @@ Order (smallest to largest):
 * [x] main-codeberg...NikitaIvanovV:centeredmaster.patch
 * [ ] main-codeberg...youbitchoc:virtualpointer.patch
 * [x] main-codeberg...mortezadadgar:pertag.patch
-* [ ] main-codeberg...wochap:namedscratchpads.patch
-* [ ] main-codeberg...wochap:modes.patch
-* [ ] main-codeberg...wochap:pointer-gestures-unstable-v1.patch
-* [ ] pointer-gestures-unstable-v1...wochap:gestures.patch
-* [ ] main-codeberg...PalanixYT:cfact.patch
-* [ ] main-codeberg...wochap:swapandfocusdir.patch
-* [ ] main-codeberg...korei999:rotatetags.patch
-* [ ] main-codeberg...wochap:genericgaps.patch
+* [x] main-codeberg...wochap:namedscratchpads.patch
+* [x] main-codeberg...wochap:modes.patch
+* [x] main-codeberg...wochap:pointer-gestures-unstable-v1.patch
+* [x] pointer-gestures-unstable-v1...wochap:gestures.patch
+* [x] main-codeberg...PalanixYT:cfact.patch
+* [x] main-codeberg...wochap:swapandfocusdir.patch
+* [x] main-codeberg...korei999:rotatetags.patch
+* [x] main-codeberg...wochap:genericgaps.patch
 * [ ] main-codeberg...guidocella:output-power-management.patch
 * [ ] main-codeberg...dimkr:dwl:snail.patch
 * [ ] main-codeberg...sevz17:keycodes.patch
