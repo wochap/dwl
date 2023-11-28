@@ -1,0 +1,257 @@
+From 6f9e5446dc223347a6060b4b5283f6ee9b64d432 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 22 Nov 2023 18:55:15 -0500
+Subject: [PATCH 1/3] apply main...loumray:namedscratchpads.patch
+
+---
+ config.def.h |  9 +++++++--
+ dwl.c        | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 2 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index 4e30885b7..afcedd1c0 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -20,11 +20,12 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can al
+ static int log_level = WLR_ERROR;
+ 
+ static const Rule rules[] = {
+-	/* app_id     title       tags mask     isfloating   monitor */
++	/* app_id     title       tags mask     isfloating   monitor scratchkey */
+ 	/* examples:
+ 	{ "Gimp",     NULL,       0,            1,           -1 },
+ 	*/
+-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
++	{ "firefox",  NULL,       1 << 8,       0,           -1,      0  },
++	{ NULL,     "scratchpad", 0,            1,           -1,     's' },
+ };
+ 
+ /* layout(s) */
+@@ -115,11 +116,15 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
+ static const char *termcmd[] = { "foot", NULL };
+ static const char *menucmd[] = { "bemenu-run", NULL };
+ 
++/* named scratchpads - First arg only serves to match against key in rules*/
++static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
++
+ static const Key keys[] = {
+ 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
+ 	/* modifier                  key                 function        argument */
+ 	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
++	{ MODKEY,                    XKB_KEY_grave,      togglescratch,  {.v = scratchpadcmd } },
+ 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
+ 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+diff --git a/dwl.c b/dwl.c
+index a7d41b085..13de9a26c 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -126,6 +126,7 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating, isurgent, isfullscreen;
+ 	uint32_t resize; /* configure serial of a pending resize */
++	char scratchkey;
+ } Client;
+ 
+ typedef struct {
+@@ -209,6 +210,7 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating;
+ 	int monitor;
++	const char scratchkey;
+ } Rule;
+ 
+ typedef struct {
+@@ -298,12 +300,14 @@ static void setpsel(struct wl_listener *listener, void *data);
+ static void setsel(struct wl_listener *listener, void *data);
+ static void setup(void);
+ static void spawn(const Arg *arg);
++static void spawnscratch(const Arg *arg);
+ static void startdrag(struct wl_listener *listener, void *data);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+ static void tile(Monitor *m);
+ static void togglefloating(const Arg *arg);
+ static void togglefullscreen(const Arg *arg);
++static void togglescratch(const Arg *arg);
+ static void toggletag(const Arg *arg);
+ static void toggleview(const Arg *arg);
+ static void unlocksession(struct wl_listener *listener, void *data);
+@@ -451,6 +455,7 @@ applyrules(Client *c)
+ 	Monitor *mon = selmon, *m;
+ 
+ 	c->isfloating = client_is_float_type(c);
++	c->scratchkey = 0;
+ 	if (!(appid = client_get_appid(c)))
+ 		appid = broken;
+ 	if (!(title = client_get_title(c)))
+@@ -460,6 +465,7 @@ applyrules(Client *c)
+ 		if ((!r->title || strstr(title, r->title))
+ 				&& (!r->id || strstr(appid, r->id))) {
+ 			c->isfloating = r->isfloating;
++			c->scratchkey = r->scratchkey;
+ 			newtags |= r->tags;
+ 			i = 0;
+ 			wl_list_for_each(m, &mons, link)
+@@ -2324,6 +2330,16 @@ spawn(const Arg *arg)
+ 	}
+ }
+ 
++void spawnscratch(const Arg *arg)
++{
++	if (fork() == 0) {
++		dup2(STDERR_FILENO, STDOUT_FILENO);
++		setsid();
++		execvp(((char **)arg->v)[1], ((char **)arg->v)+1);
++		die("dwl: execvp %s failed:", ((char **)arg->v)[1]);
++	}
++}
++
+ void
+ startdrag(struct wl_listener *listener, void *data)
+ {
+@@ -2406,6 +2422,29 @@ togglefullscreen(const Arg *arg)
+ 		setfullscreen(sel, !sel->isfullscreen);
+ }
+ 
++void
++togglescratch(const Arg *arg)
++{
++	Client *c;
++	unsigned int found = 0;
++
++	/* search for first window that matches the scratchkey */
++	wl_list_for_each(c, &clients, link)
++		if (c->scratchkey == ((char**)arg->v)[0][0]) {
++			found = 1;
++			break;
++		}
++
++	if (found) {
++		c->tags = VISIBLEON(c, selmon) ? 0 : selmon->tagset[selmon->seltags];
++
++		focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
++		arrange(selmon);
++	} else{
++		spawnscratch(arg);
++	}
++}
++
+ void
+ toggletag(const Arg *arg)
+ {
+
+From ce1d84ed64af2f27631e63223d95af969dac81cf Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 22 Nov 2023 18:58:57 -0500
+Subject: [PATCH 2/3] add focusortogglescratch function
+
+---
+ config.def.h |  1 +
+ dwl.c        | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index afcedd1c0..ea1044dc4 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -125,6 +125,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
+ 	{ MODKEY,                    XKB_KEY_grave,      togglescratch,  {.v = scratchpadcmd } },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_grave,      focusortogglescratch, {.v = scratchpadcmd } },
+ 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
+ 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+diff --git a/dwl.c b/dwl.c
+index 13de9a26c..37513a4bf 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -308,6 +308,7 @@ static void tile(Monitor *m);
+ static void togglefloating(const Arg *arg);
+ static void togglefullscreen(const Arg *arg);
+ static void togglescratch(const Arg *arg);
++static void focusortogglescratch(const Arg *arg);
+ static void toggletag(const Arg *arg);
+ static void toggleview(const Arg *arg);
+ static void unlocksession(struct wl_listener *listener, void *data);
+@@ -2445,6 +2446,42 @@ togglescratch(const Arg *arg)
+ 	}
+ }
+ 
++void
++focusortogglescratch(const Arg *arg)
++{
++	Client *c;
++	Client *cwithfocus;
++	unsigned int found = 0;
++
++	/* search for first window that matches the scratchkey */
++	wl_list_for_each(c, &clients, link)
++		if (c->scratchkey == ((char**)arg->v)[0][0]) {
++			found = 1;
++			break;
++		}
++
++	if (found) {
++		if (VISIBLEON(c, selmon)) {
++			cwithfocus = focustop(selmon);
++			if (cwithfocus == c) {
++				// hide
++				c->tags = 0;
++				focusclient(cwithfocus, 1);
++			} else {
++				// focus
++				focusclient(c, 1);
++			}
++		} else {
++			// show
++			c->tags = selmon->tagset[selmon->seltags];
++			focusclient(c, 1);
++		}
++		arrange(selmon);
++	} else{
++		spawnscratch(arg);
++	}
++}
++
+ void
+ toggletag(const Arg *arg)
+ {
+
+From 7fe2f56925422505adef09e9025fa72ed6306a48 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 22 Nov 2023 20:42:20 -0500
+Subject: [PATCH 3/3] fix focus after hiding
+
+---
+ dwl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 37513a4bf..bf6e5cda9 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -2450,7 +2450,6 @@ void
+ focusortogglescratch(const Arg *arg)
+ {
+ 	Client *c;
+-	Client *cwithfocus;
+ 	unsigned int found = 0;
+ 
+ 	/* search for first window that matches the scratchkey */
+@@ -2462,11 +2461,10 @@ focusortogglescratch(const Arg *arg)
+ 
+ 	if (found) {
+ 		if (VISIBLEON(c, selmon)) {
+-			cwithfocus = focustop(selmon);
+-			if (cwithfocus == c) {
++			if (focustop(selmon) == c) {
+ 				// hide
+ 				c->tags = 0;
+-				focusclient(cwithfocus, 1);
++				focusclient(focustop(selmon), 1);
+ 			} else {
+ 				// focus
+ 				focusclient(c, 1);
