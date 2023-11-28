@@ -5,48 +5,48 @@
 https://github.com/djpohly/dwl/wiki/Patches
 
 # Layouts
-* https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:centeredmaster.patch
-* https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
-* https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
-* https://github.com/djpohly/dwl/compare/main...Abanoub8:bottomstack.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...NikitaIvanovV:centeredmaster.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...dimkr:dwl:snail.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cyclelayouts.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:moveresizekb.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:movecenter.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:bottomstack.patch
 
 # Clients placement
-* https://github.com/djpohly/dwl/compare/main...wochap:alwayscenter.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:alwayscenter.patch
 
 # Clients & tags manipulation
-* https://github.com/djpohly/dwl/compare/main...wochap:shiftview.patch
-* https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
-* https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
-* https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
-* https://github.com/djpohly/dwl/compare/main...korei999:rotatetags.patch
-* https://github.com/djpohly/dwl/compare/main...PalanixYT:cfact.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:swapandfocusdir.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:movestack.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:zoomswap.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...mortezadadgar:pertag.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...korei999:rotatetags.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:cfact.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:swapandfocusdir.patch
 
 # Rules
-* https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:customfloat.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:namedscratchpads.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:regexrules.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:customfloat.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:namedscratchpads.patch
 
 # Input
-* https://github.com/djpohly/dwl/compare/main...youbitchoc:virtualpointer.patch
-* https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
-* https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:toggleKbLayout.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:lockedkeys.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...youbitchoc:virtualpointer.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...sevz17:keycodes.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:pointer-gestures-unstable-v1.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:modes.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:toggleKbLayout.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:lockedkeys.patch
 
 # Cursor
-* https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
-* https://github.com/djpohly/dwl/compare/main...schance995:dwl:relative-mouse-resize.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cursortheme.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...schance995:dwl:relative-mouse-resize.patch
 
 # Other
-* https://github.com/djpohly/dwl/compare/main...guidocella:output-power-management.patch
-* https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...guidocella:output-power-management.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...sevz17:autostart.patch
 * https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
-* https://github.com/djpohly/dwl/compare/main...wochap:genericgaps.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:genericgaps.patch
 
 ### How to apply them
 
@@ -90,7 +90,7 @@ Workflow
 ```
 # generate a patch
 $ git format-patch --no-signature --stdout <main_branch>..<patch_branch> > <patch_name>.patch
-# or use github url: https://github.com/wochap/dwl/compare/main...wochap:shiftview.patch
+# or use github url: https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
 
 $ git checkout <main_branch>
 $ git checkout -b patches/<patch_name>

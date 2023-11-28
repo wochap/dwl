@@ -1,46 +1,46 @@
 #!/usr/bin/env bash
 
 # Layouts
-wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:centeredmaster.patch
-wget https://github.com/djpohly/dwl/compare/main...dimkr:dwl:snail.patch
-wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cyclelayouts.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:moveresizekb.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:movecenter.patch
-wget https://github.com/djpohly/dwl/compare/main...Abanoub8:bottomstack.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...NikitaIvanovV:centeredmaster.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...dimkr:dwl:snail.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cyclelayouts.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:moveresizekb.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:movecenter.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:bottomstack.patch
 
 # Client placement
-wget https://github.com/djpohly/dwl/compare/main...wochap:alwayscenter.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:alwayscenter.patch
 
 # Clients & tags manipulation
-wget https://github.com/djpohly/dwl/compare/main...guidocella:shiftview.patch
-wget https://github.com/djpohly/dwl/compare/main...Abanoub8:movestack.patch
-wget https://github.com/djpohly/dwl/compare/main...PalanixYT:zoomswap.patch
-wget https://github.com/djpohly/dwl/compare/main...mortezadadgar:pertag.patch
-wget https://github.com/djpohly/dwl/compare/main...korei999:rotatetags.patch
-wget https://github.com/djpohly/dwl/compare/main...XGames123:focusdir.patch
-wget https://github.com/djpohly/dwl/compare/main...PalanixYT:cfact.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:swapandfocusdir.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...guidocella:shiftview.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:movestack.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:zoomswap.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...mortezadadgar:pertag.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...korei999:rotatetags.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...XGames123:focusdir.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:cfact.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:swapandfocusdir.patch
 
 # Rules
-wget https://github.com/djpohly/dwl/compare/main...wochap:regexrules.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:customfloat.patch
-wget https://github.com/djpohly/dwl/compare/main...loumray:namedscratchpads.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:regexrules.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:customfloat.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...loumray:namedscratchpads.patch
 
 # Input
-wget https://github.com/djpohly/dwl/compare/main...youbitchoc:virtualpointer.patch
-wget https://github.com/djpohly/dwl/compare/main...sevz17:keycodes.patch
-wget https://github.com/djpohly/dwl/compare/main...NikitaIvanovV:naturalscrolltrackpad.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:pointer-gestures-unstable-v1.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:modes.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:toggleKbLayout.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...youbitchoc:virtualpointer.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...sevz17:keycodes.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:pointer-gestures-unstable-v1.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:modes.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:toggleKbLayout.patch
 
 # Cursor
-wget https://github.com/djpohly/dwl/compare/main...dm1tz:04-cursortheme.patch
-wget https://github.com/djpohly/dwl/compare/main...schance995:dwl:relative-mouse-resize.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cursortheme.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...schance995:dwl:relative-mouse-resize.patch
 
 # Other
-wget https://github.com/djpohly/dwl/compare/main...guidocella:output-power-management.patch
-wget https://github.com/djpohly/dwl/compare/main...sevz17:autostart.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...guidocella:output-power-management.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...sevz17:autostart.patch
 wget https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
-wget https://github.com/djpohly/dwl/compare/main...wochap:genericgaps.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:genericgaps.patch
 
