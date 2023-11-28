@@ -112,6 +112,7 @@ typedef struct Monitor Monitor;
 typedef struct {
 	/* Must keep these three elements in this order */
 	unsigned int type; /* XDGShell or X11* */
+	int interact;
 	struct wlr_box geom; /* layout-relative, includes border */
 	Monitor *mon;
 	struct wlr_scene_tree *scene;
@@ -210,6 +211,7 @@ struct Monitor {
 	struct wlr_box w; /* window area, layout-relative */
 	struct wl_list layers[4]; /* LayerSurface::link */
 	const Layout *lt[2];
+	int gappx; /* gap between windows */
 	Pertag *pertag;
 	unsigned int seltags;
 	unsigned int sellt;
@@ -292,6 +294,7 @@ static void createmon(struct wl_listener *listener, void *data);
 static void createnotify(struct wl_listener *listener, void *data);
 static void createpointer(struct wlr_pointer *pointer);
 static void cursorframe(struct wl_listener *listener, void *data);
+static void defaultgaps(const Arg *arg);
 static void cyclelayout(const Arg *arg);
 static void destroydragicon(struct wl_listener *listener, void *data);
 static void destroyidleinhibitor(struct wl_listener *listener, void *data);
@@ -311,6 +314,7 @@ static Client *focustop(Monitor *m);
 static void fullscreennotify(struct wl_listener *listener, void *data);
 static void handlesig(int signo);
 static void incnmaster(const Arg *arg);
+static void incgaps(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
 static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
@@ -338,13 +342,15 @@ static void quit(const Arg *arg);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requeststartdrag(struct wl_listener *listener, void *data);
 static void requestmonstate(struct wl_listener *listener, void *data);
-static void resize(Client *c, struct wlr_box geo, int interact);
+static void resizeapply(Client *c, struct wlr_box geo, int interact);
+static void resizenoapply(Client *c, struct wlr_box geo, int interact);
 static void run(char *startup_cmd);
 static void setcfact(const Arg *arg);
 static void setcursor(struct wl_listener *listener, void *data);
 static void setcursorshape(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
+static void setgaps(int px);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -361,6 +367,7 @@ static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglekblayout(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void togglegaps(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void focusortogglescratch(const Arg *arg);
 static void moveresizekb(const Arg *arg);
@@ -435,6 +442,9 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
+
+static int enablegaps = 1;   /* enables gaps, used by togglegaps */
+static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
 
 static uint32_t swipe_fingers = 0;
 static double swipe_dx = 0;
@@ -538,8 +548,21 @@ applyrules(Client *c)
 }
 
 void
+applygaps(Client *c)
+{
+	struct wlr_box geom = c->geom;
+
+	geom.x      += selmon->gappx;
+	geom.y      += selmon->gappx;
+	geom.width  -= selmon->gappx;
+	geom.height -= selmon->gappx;
+	resize(c, geom, 0);
+}
+
+void
 arrange(Monitor *m)
 {
+	int save_width, save_height;
 	Client *c;
 	wl_list_for_each(c, &clients, link) {
 		if (c->mon == m) {
@@ -553,8 +576,26 @@ arrange(Monitor *m)
 
 	strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol));
 
-	if (m->lt[m->sellt]->arrange)
+	if (m->lt[m->sellt]->arrange) {
+		save_width   = m->w.width;
+		save_height  = m->w.height;
+		if (enablegaps) {
+			m->w.width  -= m->gappx;
+			m->w.height -= m->gappx;
+		}
+		resize = resizenoapply;
 		m->lt[m->sellt]->arrange(m);
+		wl_list_for_each(c, &clients, link) {
+			if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+				continue;
+			if (enablegaps)
+				applygaps(c);
+			resizeapply(c, c->geom, c->interact);
+		}
+		m->w.width  = save_width;
+		m->w.height = save_height;
+		resize = resizeapply;
+	}
 	motionnotify(0);
 	checkidleinhibitor(NULL);
 }
@@ -1207,6 +1248,7 @@ createmon(struct wl_listener *listener, void *data)
 	/* Initialize monitor state using configured rules */
 	for (i = 0; i < LENGTH(m->layers); i++)
 		wl_list_init(&m->layers[i]);
+	m->gappx = gappx;
 	m->tagset[0] = m->tagset[1] = 1;
 	for (r = monrules; r < END(monrules); r++) {
 		if (!r->name || strstr(wlr_output->name, r->name)) {
@@ -1397,6 +1439,12 @@ cyclelayout(const Arg *arg)
 		else
 			setlayout(&((Arg) { .v = &layouts[LENGTH(layouts) - 2] }));
 	}
+}
+
+void
+defaultgaps(const Arg *arg)
+{
+	setgaps(gappx);
 }
 
 void
@@ -1856,6 +1904,12 @@ incnmaster(const Arg *arg)
 		return;
 	selmon->nmaster = selmon->pertag->nmasters[selmon->pertag->curtag] = MAX(selmon->nmaster + arg->i, 0);
 	arrange(selmon);
+}
+
+void
+incgaps(const Arg *arg)
+{
+	setgaps(selmon->gappx + arg->i);
 }
 
 void
@@ -2525,7 +2579,7 @@ requestmonstate(struct wl_listener *listener, void *data)
 }
 
 void
-resize(Client *c, struct wlr_box geo, int interact)
+resizeapply(Client *c, struct wlr_box geo, int interact)
 {
 	struct wlr_box *bbox = interact ? &sgeom : &c->mon->w;
 	struct wlr_box clip;
@@ -2549,6 +2603,13 @@ resize(Client *c, struct wlr_box geo, int interact)
 			c->geom.height - 2 * c->bw);
 	client_get_clip(c, &clip);
 	wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, &clip);
+}
+
+void
+resizenoapply(Client *c, struct wlr_box geo, int interact)
+{
+	c->geom = geo;
+	c->interact = interact;
 }
 
 void
@@ -2693,6 +2754,13 @@ setgamma(struct wl_listener *listener, void *data)
 	Monitor *m = event->output->data;
 	m->gamma_lut_changed = 1;
 	wlr_output_schedule_frame(m->wlr_output);
+}
+
+void
+setgaps(int px)
+{
+	selmon->gappx = MAX(px, 0);
+	arrange(selmon);
 }
 
 void
@@ -3202,6 +3270,13 @@ focusortogglescratch(const Arg *arg)
 	} else{
 		spawnscratch(arg);
 	}
+}
+
+void
+togglegaps(const Arg *arg)
+{
+	enablegaps = !enablegaps;
+	arrange(selmon);
 }
 
 void
