@@ -54,17 +54,16 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (smallest to largest):
 
-* [ ] main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
-* [ ] main-codeberg...dm1tz:04-cursortheme.patch
-* [ ] main-codeberg...guidocella:shiftview.patch
-* [ ] main-codeberg...wochap:movecenter.patch
-* [ ] main-codeberg...dm1tz:04-cyclelayouts.patch
-* [ ] main-codeberg...wochap:customfloat.patch
-* [ ] main-codeberg...Abanoub8:movestack.patch
-* [ ] main-codeberg...wochap:moveresizekb.patch
-* [ ] main-codeberg...wochap:alwayscenter.patch
-* [ ] main-codeberg...wochap:regexrules.patch
-* [ ] main-codeberg...XGames123:focusdir.patch
+* [x] main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
+* [x] main-codeberg...dm1tz:04-cursortheme.patch
+* [x] main-codeberg...guidocella:shiftview.patch
+* [x] main-codeberg...wochap:movecenter.patch
+* [x] main-codeberg...dm1tz:04-cyclelayouts.patch
+* [x] main-codeberg...wochap:customfloat.patch
+* [x] main-codeberg...Abanoub8:movestack.patch
+* [x] main-codeberg...wochap:moveresizekb.patch
+* [x] main-codeberg...wochap:alwayscenter.patch
+* [x] main-codeberg...wochap:regexrules.patch
 * [ ] main-codeberg...PalanixYT:zoomswap.patch
 * [ ] main-codeberg...wochap:toggleKbLayout.patch
 * [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
