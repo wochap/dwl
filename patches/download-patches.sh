@@ -17,7 +17,6 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:movestack.pa
 wget https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:zoomswap.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...mortezadadgar:pertag.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...korei999:rotatetags.patch
-wget https://github.com/wochap/dwl/compare/main-codeberg...XGames123:focusdir.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...PalanixYT:cfact.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:swapandfocusdir.patch
 
