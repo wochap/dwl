@@ -405,13 +405,6 @@ static struct wlr_scene_rect *locked_bg;
 static struct wlr_session_lock_v1 *cur_lock;
 static struct wl_listener lock_listener = {.notify = locksession};
 
-static struct wl_listener cursor_swipe_begin = {.notify = swipe_begin};
-static struct wl_listener cursor_swipe_update = {.notify = swipe_update};
-static struct wl_listener cursor_swipe_end = {.notify = swipe_end};
-static struct wl_listener cursor_pinch_begin = {.notify = pinch_begin};
-static struct wl_listener cursor_pinch_update = {.notify = pinch_update};
-static struct wl_listener cursor_pinch_end = {.notify = pinch_end};
-
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
 static unsigned int kblayout = 0; /* index of kblayouts */
@@ -2671,12 +2664,12 @@ setup(void)
 	LISTEN_STATIC(&cursor->events.motion, motionrelative);
 	LISTEN_STATIC(&cursor->events.motion_absolute, motionabsolute);
 	LISTEN_STATIC(&cursor->events.button, buttonpress);
-	wl_signal_add(&cursor->events.swipe_begin, &cursor_swipe_begin);
-	wl_signal_add(&cursor->events.swipe_update, &cursor_swipe_update);
-	wl_signal_add(&cursor->events.swipe_end, &cursor_swipe_end);
-	wl_signal_add(&cursor->events.pinch_begin, &cursor_pinch_begin);
-	wl_signal_add(&cursor->events.pinch_update, &cursor_pinch_update);
-	wl_signal_add(&cursor->events.pinch_end, &cursor_pinch_end);
+	LISTEN_STATIC(&cursor->events.swipe_begin, swipe_begin);
+	LISTEN_STATIC(&cursor->events.swipe_update, swipe_update);
+	LISTEN_STATIC(&cursor->events.swipe_end, swipe_end);
+	LISTEN_STATIC(&cursor->events.pinch_begin, pinch_begin);
+	LISTEN_STATIC(&cursor->events.pinch_update, pinch_update);
+	LISTEN_STATIC(&cursor->events.pinch_end, pinch_end);
 	LISTEN_STATIC(&cursor->events.axis, axisnotify);
 	LISTEN_STATIC(&cursor->events.frame, cursorframe);
 
