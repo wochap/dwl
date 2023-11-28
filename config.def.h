@@ -15,6 +15,8 @@ static const unsigned int cursorsize       = 24;
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
 static const int center_relative_to_monitor = 0;  /* 0 means center floating relative to the window area  */
+static const unsigned int swipe_min_threshold = 0;
+static const int swipe_fingers_count       = 3;
 
 /* Autostart */
 static const char *const autostart[] = {
@@ -232,4 +234,11 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
+};
+
+static const Gesture gestures[] = {
+	// { SWIPE_LEFT, shiftview, { .i = 1 } },
+	// { SWIPE_RIGHT, shiftview, { .i = -1 } },
+	{ SWIPE_UP, focusstack, {.i = 1} },
+	{ SWIPE_DOWN, focusstack, {.i = -1} },
 };
