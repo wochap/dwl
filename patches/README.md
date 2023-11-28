@@ -82,7 +82,8 @@ Order (smallest to largest):
 * [x] main-codeberg...wochap:genericgaps.patch
 * [ ] main-codeberg...guidocella:output-power-management.patch
 * [ ] main-codeberg...dimkr:dwl:snail.patch
-* [ ] main-codeberg...sevz17:keycodes.patch
+* [x] main-codeberg...sevz17:keycodes.patch
+* [ ] main-codeberg...wochap:lockedkeys.patch
 
 Workflow
 
