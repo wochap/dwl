@@ -43,7 +43,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/wochap/dwl/compare/main-codeberg...schance995:dwl:relative-mouse-resize.patch
 
 # Other
-* https://github.com/wochap/dwl/compare/main-codeberg...guidocella:output-power-management.patch
+* https://codeberg.org/wochap/dwl/raw/branch/output-power-management/output-power-management-28-nov-2023.patch
 * https://github.com/wochap/dwl/compare/main-codeberg...sevz17:autostart.patch
 * https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
 * https://github.com/wochap/dwl/compare/main-codeberg...wochap:genericgaps.patch
@@ -80,7 +80,7 @@ Order (smallest to largest):
 * [x] main-codeberg...wochap:swapandfocusdir.patch
 * [x] main-codeberg...korei999:rotatetags.patch
 * [x] main-codeberg...wochap:genericgaps.patch
-* [ ] main-codeberg...guidocella:output-power-management.patch
+* [x] output-power-management/output-power-management-28-nov-2023.patch
 * [ ] main-codeberg...dimkr:dwl:snail.patch
 * [x] main-codeberg...sevz17:keycodes.patch
 * [x] main-codeberg...wochap:lockedkeys.patch

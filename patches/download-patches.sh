@@ -39,7 +39,7 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cursortheme.
 wget https://github.com/wochap/dwl/compare/main-codeberg...schance995:dwl:relative-mouse-resize.patch
 
 # Other
-wget https://github.com/wochap/dwl/compare/main-codeberg...guidocella:output-power-management.patch
+wget https://codeberg.org/wochap/dwl/raw/branch/output-power-management/output-power-management-28-nov-2023.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...sevz17:autostart.patch
 wget https://github.com/wochap/dwl/compare/pointer-gestures-unstable-v1...wochap:gestures.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:genericgaps.patch
