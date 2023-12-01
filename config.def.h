@@ -55,8 +55,6 @@ static const Layout layouts[] = {
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
-	{ "TTT",      bstack },
-	{ "===",      bstackhoriz },
 	{ NULL,       NULL },
 };
 
@@ -190,8 +188,6 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_f,          setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    Key_m,          setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    Key_c,          setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                    Key_u,          setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                    Key_o,          setlayout,      {.v = &layouts[4]} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_comma,      cyclelayout,    {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_period,     cyclelayout,    {.i = +1 } },
 	{ MODKEY,                    Key_space,      setlayout,      {0} },
