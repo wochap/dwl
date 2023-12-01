@@ -113,6 +113,7 @@ typedef struct Monitor Monitor;
 typedef struct {
 	/* Must keep these three elements in this order */
 	unsigned int type; /* XDGShell or X11* */
+	int interact;
 	struct wlr_box geom; /* layout-relative, includes border */
 	Monitor *mon;
 	struct wlr_scene_tree *scene;
@@ -340,7 +341,8 @@ static void quit(const Arg *arg);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requeststartdrag(struct wl_listener *listener, void *data);
 static void requestmonstate(struct wl_listener *listener, void *data);
-static void resize(Client *c, struct wlr_box geo, int interact);
+static void resizeapply(Client *c, struct wlr_box geo, int interact);
+static void resizenoapply(Client *c, struct wlr_box geo, int interact);
 static void run(char *startup_cmd);
 static void setcfact(const Arg *arg);
 static void setcursor(struct wl_listener *listener, void *data);
@@ -447,6 +449,8 @@ static double swipe_dy = 0;
 static const int NORMAL = -1;
 static int active_mode_index = NORMAL;
 
+static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
+
 #ifdef XWAYLAND
 static void activatex11(struct wl_listener *listener, void *data);
 static void associatex11(struct wl_listener *listener, void *data);
@@ -542,6 +546,35 @@ applyrules(Client *c)
 }
 
 void
+applyminimalborders(Client *c, Monitor *m)
+{
+	struct wlr_box geom = c->geom;
+
+	geom.x -= borderpx;
+	geom.width += borderpx;
+	geom.y -= borderpx;
+	geom.height += borderpx;
+
+	if (geom.x < 0) {
+		geom.x += borderpx;
+		geom.width -= borderpx;
+	}
+	if (geom.x + geom.width > m->w.width - borderpx) {
+		geom.width -= borderpx;
+	}
+
+	if (geom.y < 0) {
+		geom.y += borderpx;
+		geom.height -= borderpx;
+	}
+	if (geom.y + geom.height > m->w.height - borderpx) {
+		geom.height -= borderpx;
+	}
+
+	resize(c, geom, 0);
+}
+
+void
 arrange(Monitor *m)
 {
 	Client *c;
@@ -557,8 +590,28 @@ arrange(Monitor *m)
 
 	strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol));
 
-	if (m->lt[m->sellt]->arrange)
-		m->lt[m->sellt]->arrange(m);
+	if (m->lt[m->sellt]->arrange) {
+		if (draw_minimal_borders) {
+			int save_width = m->w.width;
+			int save_height = m->w.height;
+			m->w.width += borderpx;
+			m->w.height += borderpx;
+			resize = resizenoapply;
+			m->lt[m->sellt]->arrange(m);
+			wl_list_for_each(c, &clients, link) {
+				if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+					continue;
+				if (draw_minimal_borders)
+					applyminimalborders(c, m);
+				resizeapply(c, c->geom, c->interact);
+			}
+			m->w.width = save_width;
+			m->w.height = save_height;
+			resize = resizeapply;
+		} else {
+			m->lt[m->sellt]->arrange(m);
+		}
+	}
 	motionnotify(0);
 	checkidleinhibitor(NULL);
 }
@@ -2397,8 +2450,13 @@ pointerfocus(Client *c, struct wlr_surface *surface, double sx, double sy,
 	struct timespec now;
 	int internal_call = !time;
 
-	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c))
-		focusclient(c, 0);
+	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c)) {
+		if (c->isfloating || c->isfullscreen) {
+			focusclient(c, 0);
+		} else {
+			focusclient(c, 1);
+		}
+	}
 
 	/* If surface is NULL, clear pointer focus */
 	if (!surface) {
@@ -2550,7 +2608,7 @@ requestmonstate(struct wl_listener *listener, void *data)
 }
 
 void
-resize(Client *c, struct wlr_box geo, int interact)
+resizeapply(Client *c, struct wlr_box geo, int interact)
 {
 	struct wlr_box *bbox = interact ? &sgeom : &c->mon->w;
 	struct wlr_box clip;
@@ -2574,6 +2632,13 @@ resize(Client *c, struct wlr_box geo, int interact)
 			c->geom.height - 2 * c->bw);
 	client_get_clip(c, &clip);
 	wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, &clip);
+}
+
+void
+resizenoapply(Client *c, struct wlr_box geo, int interact)
+{
+	c->geom = geo;
+	c->interact = interact;
 }
 
 void
