@@ -6,7 +6,7 @@ wget https://github.com/wochap/dwl/compare/main-codeberg...dimkr:dwl:snail.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cyclelayouts.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:moveresizekb.patch
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:movecenter.patch
-wget https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:bottomstack.patch
+wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:bottomstack.patch
 
 # Client placement
 wget https://github.com/wochap/dwl/compare/main-codeberg...wochap:alwayscenter.patch

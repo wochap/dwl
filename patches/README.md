@@ -10,7 +10,7 @@ https://github.com/djpohly/dwl/wiki/Patches
 * https://github.com/wochap/dwl/compare/main-codeberg...dm1tz:04-cyclelayouts.patch
 * https://github.com/wochap/dwl/compare/main-codeberg...wochap:moveresizekb.patch
 * https://github.com/wochap/dwl/compare/main-codeberg...wochap:movecenter.patch
-* https://github.com/wochap/dwl/compare/main-codeberg...Abanoub8:bottomstack.patch
+* https://github.com/wochap/dwl/compare/main-codeberg...wochap:bottomstack.patch
 
 # Clients placement
 * https://github.com/wochap/dwl/compare/main-codeberg...wochap:alwayscenter.patch
@@ -56,7 +56,7 @@ Order (smallest to largest):
 
 * [x] main-codeberg...NikitaIvanovV:naturalscrolltrackpad.patch
 * [x] main-codeberg...dm1tz:04-cursortheme.patch
-* [x] main-codeberg...guidocella:shiftview.patch
+* [x] main-codeberg...wochap:shiftview.patch
 * [x] main-codeberg...wochap:movecenter.patch
 * [x] main-codeberg...dm1tz:04-cyclelayouts.patch
 * [x] main-codeberg...wochap:customfloat.patch
@@ -68,7 +68,7 @@ Order (smallest to largest):
 * [x] main-codeberg...wochap:toggleKbLayout.patch
 * [ ] main-codeberg...schance995:dwl:relative-mouse-resize.patch
 * [x] main-codeberg...sevz17:autostart.patch
-* [x] main-codeberg...Abanoub8:bottomstack.patch
+* [x] main-codeberg...wochap:bottomstack.patch
 * [x] main-codeberg...NikitaIvanovV:centeredmaster.patch
 * [ ] main-codeberg...youbitchoc:virtualpointer.patch
 * [x] main-codeberg...mortezadadgar:pertag.patch
@@ -79,7 +79,7 @@ Order (smallest to largest):
 * [x] main-codeberg...PalanixYT:cfact.patch
 * [x] main-codeberg...wochap:swapandfocusdir.patch
 * [x] main-codeberg...korei999:rotatetags.patch
-* [x] output-power-management/output-power-management-28-nov-2023.patch
+* [x] output-power-management-28-nov-2023.patch
 * [ ] main-codeberg...dimkr:dwl:snail.patch
 * [x] main-codeberg...sevz17:keycodes.patch
 * [x] main-codeberg...wochap:lockedkeys.patch

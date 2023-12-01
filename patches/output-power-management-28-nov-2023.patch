@@ -1,27 +1,19 @@
-From 8842479a1caee436c2cd79839b4e56b87c4ff295 Mon Sep 17 00:00:00 2001
-From: Guido Cella <guido@guidocella.xyz>
-Date: Sun, 20 Mar 2022 21:19:29 +0100
-Subject: [PATCH 1/2] Implement the output power management protocol.
-
-I thought wlr-randr used this, but it doesn't so I don't even know what
-this is for.
----
- Makefile                                      |   5 +-
- dwl.c                                         |  16 +++
- ...lr-output-power-management-unstable-v1.xml | 128 ++++++++++++++++++
- 3 files changed, 148 insertions(+), 1 deletion(-)
- create mode 100644 protocols/wlr-output-power-management-unstable-v1.xml
-
 diff --git a/Makefile b/Makefile
-index ccca07948..9d0a4b049 100644
+index f0ff805..a674c88 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -16,7 +16,7 @@ LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
+@@ -11,12 +11,12 @@ DWLDEVCFLAGS = -g -pedantic -Wall -Wextra -Wdeclaration-after-statement -Wno-unu
+ # CFLAGS / LDFLAGS
+ PKGS      = wlroots wayland-server xkbcommon libinput $(XLIBS)
+ DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
+-LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
++LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` -lpixman-1 $(LIBS)
+ 
  all: dwl
  dwl: dwl.o util.o
  	$(CC) dwl.o util.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
--dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h
-+dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h wlr-output-power-management-unstable-v1-protocol.h
+-dwl.o: dwl.c config.mk config.h client.h cursor-shape-v1-protocol.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h
++dwl.o: dwl.c config.mk config.h client.h cursor-shape-v1-protocol.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h wlr-output-power-management-unstable-v1-protocol.h
  util.o: util.c util.h
  
  # wayland-scanner is a tool which generates C headers and rigging for Wayland
@@ -32,14 +24,14 @@ index ccca07948..9d0a4b049 100644
 +wlr-output-power-management-unstable-v1-protocol.h:
 +	$(WAYLAND_SCANNER) server-header \
 +		protocols/wlr-output-power-management-unstable-v1.xml $@
- 
- config.h:
- 	cp config.def.h $@
+ cursor-shape-v1-protocol.h:
+ 	$(WAYLAND_SCANNER) server-header \
+ 		$(WAYLAND_PROTOCOLS)/staging/cursor-shape/cursor-shape-v1.xml $@
 diff --git a/dwl.c b/dwl.c
-index 4118fd878..784a443b9 100644
+index 69da91d..1393aad 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -32,6 +32,7 @@
+@@ -33,6 +33,7 @@
  #include <wlr/types/wlr_output.h>
  #include <wlr/types/wlr_output_layout.h>
  #include <wlr/types/wlr_output_management_v1.h>
@@ -47,7 +39,7 @@ index 4118fd878..784a443b9 100644
  #include <wlr/types/wlr_pointer.h>
  #include <wlr/types/wlr_presentation_time.h>
  #include <wlr/types/wlr_primary_selection.h>
-@@ -283,6 +284,7 @@ static void outputmgrtest(struct wl_listener *listener, void *data);
+@@ -289,6 +290,7 @@ static void outputmgrtest(struct wl_listener *listener, void *data);
  static void pointerfocus(Client *c, struct wlr_surface *surface,
  		double sx, double sy, uint32_t time);
  static void printstatus(void);
@@ -55,44 +47,74 @@ index 4118fd878..784a443b9 100644
  static void quit(const Arg *arg);
  static void rendermon(struct wl_listener *listener, void *data);
  static void requeststartdrag(struct wl_listener *listener, void *data);
-@@ -356,6 +358,9 @@ static struct wlr_session_lock_manager_v1 *session_lock_mgr;
- static struct wlr_scene_rect *locked_bg;
+@@ -366,6 +368,8 @@ static struct wlr_scene_rect *locked_bg;
  static struct wlr_session_lock_v1 *cur_lock;
+ static struct wl_listener lock_listener = {.notify = locksession};
  
 +static struct wlr_output_power_manager_v1 *power_mgr;
-+static struct wl_listener power_mgr_set_mode = {.notify = powermgrsetmodenotify};
 +
  static struct wlr_seat *seat;
  static struct wl_list keyboards;
  static unsigned int cursor_mode;
-@@ -1885,6 +1890,14 @@ printstatus(void)
+@@ -1842,6 +1846,18 @@ printstatus(void)
  	fflush(stdout);
  }
  
++#include "output.c"
++
 +void
 +powermgrsetmodenotify(struct wl_listener *listener, void *data)
 +{
 +	struct wlr_output_power_v1_set_mode_event *event = data;
 +	wlr_output_enable(event->output, event->mode);
++	if (event->mode)
++		wlr_output_damage_whole(event->output);
 +	wlr_output_commit(event->output);
 +}
 +
  void
  quit(const Arg *arg)
  {
-@@ -2192,6 +2205,9 @@ setup(void)
- 	activation = wlr_xdg_activation_v1_create(dpy);
- 	wl_signal_add(&activation->events.request_activate, &request_activate);
+@@ -2230,6 +2246,9 @@ setup(void)
+ 	gamma_control_mgr = wlr_gamma_control_manager_v1_create(dpy);
+ 	LISTEN_STATIC(&gamma_control_mgr->events.set_gamma, setgamma);
  
 +	power_mgr = wlr_output_power_manager_v1_create(dpy);
-+	wl_signal_add(&power_mgr->events.set_mode, &power_mgr_set_mode);
++	LISTEN_STATIC(&power_mgr->events.set_mode, powermgrsetmodenotify);
 +
  	/* Creates an output layout, which a wlroots utility for working with an
  	 * arrangement of screens in a physical layout. */
  	output_layout = wlr_output_layout_create();
+diff --git a/output.c b/output.c
+new file mode 100644
+index 0000000..7eb7024
+--- /dev/null
++++ b/output.c
+@@ -0,0 +1,21 @@
++#include <pixman.h>
++#include <wlr/interfaces/wlr_output.h>
++
++void wlr_output_damage_whole(struct wlr_output *output) {
++	int width, height;
++	pixman_region32_t damage;
++	struct wlr_output_event_damage event;
++
++	wlr_output_transformed_resolution(output, &width, &height);
++
++	pixman_region32_init_rect(&damage, 0, 0, width, height);
++
++	event = (struct wlr_output_event_damage){
++		.output = output,
++		.damage = &damage,
++	};
++	wl_signal_emit_mutable(&output->events.damage, &event);
++
++	pixman_region32_fini(&damage);
++}
++
 diff --git a/protocols/wlr-output-power-management-unstable-v1.xml b/protocols/wlr-output-power-management-unstable-v1.xml
 new file mode 100644
-index 000000000..a97783991
+index 0000000..a977839
 --- /dev/null
 +++ b/protocols/wlr-output-power-management-unstable-v1.xml
 @@ -0,0 +1,128 @@
@@ -224,34 +246,3 @@ index 000000000..a97783991
 +    </request>
 +  </interface>
 +</protocol>
-
-From 679138149048ed002feefa5c66de1c1606c038bd Mon Sep 17 00:00:00 2001
-From: Dima Krasner <dima@dimakrasner.com>
-Date: Mon, 4 Apr 2022 01:20:06 +0800
-Subject: [PATCH 2/2] damage the output after wlopm --on
-
----
- dwl.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/dwl.c b/dwl.c
-index 784a443b9..94e337017 100644
---- a/dwl.c
-+++ b/dwl.c
-@@ -30,6 +30,7 @@
- #include <wlr/types/wlr_keyboard.h>
- #include <wlr/types/wlr_layer_shell_v1.h>
- #include <wlr/types/wlr_output.h>
-+#include <wlr/interfaces/wlr_output.h>
- #include <wlr/types/wlr_output_layout.h>
- #include <wlr/types/wlr_output_management_v1.h>
- #include <wlr/types/wlr_output_power_management_v1.h>
-@@ -1895,6 +1896,8 @@ powermgrsetmodenotify(struct wl_listener *listener, void *data)
- {
- 	struct wlr_output_power_v1_set_mode_event *event = data;
- 	wlr_output_enable(event->output, event->mode);
-+	if (event->mode)
-+		wlr_output_damage_whole(event->output);
- 	wlr_output_commit(event->output);
- }
- 
