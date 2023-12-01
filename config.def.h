@@ -7,7 +7,6 @@
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
-static const unsigned int gappx            = 7; /* gap between windows */
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
@@ -181,10 +180,6 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_h,          setcfact,       {.f = +0.25} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,          setcfact,       {.f = -0.25} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,          setcfact,       {.f = 0} },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_h,          incgaps,       {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_l,          incgaps,       {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_0,          togglegaps,     {0} },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   Key_0,defaultgaps,    {0} },
 	{ MODKEY,                    Key_Return,     zoom,           {0} },
 	{ MODKEY,                    Key_Tab,        view,           {0} },
 	{ MODKEY,                    Key_a,          shiftview,      { .i = -1 } },
