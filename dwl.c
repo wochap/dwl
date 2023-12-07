@@ -86,6 +86,7 @@ enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
 #endif
 enum { SWIPE_LEFT, SWIPE_RIGHT, SWIPE_DOWN, SWIPE_UP };
+enum { BrdOriginal, BrdStart, BrdEnd, BrdStartEnd };
 
 typedef union {
 	int i;
@@ -118,6 +119,8 @@ typedef struct {
 	Monitor *mon;
 	struct wlr_scene_tree *scene;
 	struct wlr_scene_rect *border[4]; /* top, bottom, left, right */
+	struct wlr_scene_rect *borders[4]; /* top, bottom, left, right */
+	struct wlr_scene_rect *bordere[4]; /* top, bottom, left, right */
 	struct wlr_scene_tree *scene_surface;
 	struct wl_list link;
 	struct wl_list flink;
@@ -1620,7 +1623,7 @@ focusclient(Client *c, int lift)
 		/* Don't change border color if there is an exclusive focus or we are
 		 * handling a drag operation */
 		if (!exclusive_focus && !seat->drag)
-			client_set_border_color(c, focuscolor);
+			client_set_border_color(c, focuscolor, focuscolor, focuscolor);
 	}
 
 	/* Deactivate old client if focus is changing */
@@ -1637,7 +1640,7 @@ focusclient(Client *c, int lift)
 		/* Don't deactivate old client if the new one wants focus, as this causes issues with winecfg
 		 * and probably other clients */
 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
-			client_set_border_color(old_c, bordercolor);
+			client_set_border_color(old_c, bordercolor, borderscolor, borderecolor);
 
 			client_activate_surface(old, 0);
 		}
@@ -2156,6 +2159,12 @@ mapnotify(struct wl_listener *listener, void *data)
 	for (i = 0; i < 4; i++) {
 		c->border[i] = wlr_scene_rect_create(c->scene, 0, 0, bordercolor);
 		c->border[i]->node.data = c;
+
+		c->borders[i] = wlr_scene_rect_create(c->scene, 0, 0, borderscolor);
+		c->borders[i]->node.data = c;
+
+		c->bordere[i] = wlr_scene_rect_create(c->scene, 0, 0, borderecolor);
+		c->bordere[i]->node.data = c;
 	}
 
 	/* Initialize client geometry with room for border */
@@ -2626,6 +2635,24 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	wlr_scene_node_set_position(&c->border[1]->node, 0, c->geom.height - c->bw);
 	wlr_scene_node_set_position(&c->border[2]->node, 0, c->bw);
 	wlr_scene_node_set_position(&c->border[3]->node, c->geom.width - c->bw, c->bw);
+
+	wlr_scene_rect_set_size(c->borders[0], c->geom.width - 2 * borderspx_offset, borderspx);
+	wlr_scene_rect_set_size(c->borders[1], c->geom.width - 2 * borderspx_offset, borderspx);
+	wlr_scene_rect_set_size(c->borders[2], borderspx, c->geom.height - 2 * borderspx - 2 * borderspx_offset);
+	wlr_scene_rect_set_size(c->borders[3], borderspx, c->geom.height - 2 * borderspx - 2 * borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[0]->node, borderspx_offset, borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[1]->node, borderspx_offset, c->geom.height - borderspx - borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[2]->node, borderspx_offset, borderspx + borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[3]->node, c->geom.width - borderspx - borderspx_offset, borderspx + borderspx_offset);
+
+	wlr_scene_rect_set_size(c->bordere[0], c->geom.width - (c->bw - borderepx) * 2 + borderepx_negative_offset * 2, borderepx);
+	wlr_scene_rect_set_size(c->bordere[1], c->geom.width - (c->bw - borderepx) * 2 + borderepx_negative_offset * 2, borderepx);
+	wlr_scene_rect_set_size(c->bordere[2], borderepx, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_rect_set_size(c->bordere[3], borderepx, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[0]->node, c->bw - borderepx - borderepx_negative_offset, c->bw - borderepx - borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[1]->node, c->bw - borderepx - borderepx_negative_offset, c->geom.height - c->bw + borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[2]->node, c->bw - borderepx - borderepx_negative_offset, c->bw - borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[3]->node, c->geom.width - c->bw + borderepx_negative_offset, c->bw - borderepx_negative_offset);
 
 	/* this is a no-op if size hasn't changed */
 	c->resize = client_set_size(c, c->geom.width - 2 * c->bw,
@@ -3514,7 +3541,7 @@ urgent(struct wl_listener *listener, void *data)
 		return;
 
 	if (client_surface(c)->mapped)
-		client_set_border_color(c, urgentcolor);
+		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 	c->isurgent = 1;
 	printstatus();
 }
@@ -3770,7 +3797,7 @@ sethints(struct wl_listener *listener, void *data)
 	c->isurgent = xcb_icccm_wm_hints_get_urgency(c->surface.xwayland->hints);
 
 	if (c->isurgent && surface && surface->mapped)
-		client_set_border_color(c, urgentcolor);
+		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 
 	printstatus();
 }
