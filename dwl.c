@@ -145,6 +145,8 @@ typedef struct {
 	struct wl_listener set_hints;
 #endif
 	unsigned int bw;
+	unsigned int bws;
+	unsigned int bwe;
 	uint32_t tags;
 	int isfloating, isurgent, isfullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
@@ -1370,6 +1372,8 @@ createnotify(struct wl_listener *listener, void *data)
 	c = xdg_surface->data = ecalloc(1, sizeof(*c));
 	c->surface.xdg = xdg_surface;
 	c->bw = borderpx;
+	c->bws = borderspx;
+	c->bwe = borderepx;
 	c->cweight = 1.0;
 
 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
@@ -2636,22 +2640,22 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	wlr_scene_node_set_position(&c->border[2]->node, 0, c->bw);
 	wlr_scene_node_set_position(&c->border[3]->node, c->geom.width - c->bw, c->bw);
 
-	wlr_scene_rect_set_size(c->borders[0], c->geom.width - 2 * borderspx_offset, borderspx);
-	wlr_scene_rect_set_size(c->borders[1], c->geom.width - 2 * borderspx_offset, borderspx);
-	wlr_scene_rect_set_size(c->borders[2], borderspx, c->geom.height - 2 * borderspx - 2 * borderspx_offset);
-	wlr_scene_rect_set_size(c->borders[3], borderspx, c->geom.height - 2 * borderspx - 2 * borderspx_offset);
+	wlr_scene_rect_set_size(c->borders[0], c->geom.width - 2 * borderspx_offset, c->bws);
+	wlr_scene_rect_set_size(c->borders[1], c->geom.width - 2 * borderspx_offset, c->bws);
+	wlr_scene_rect_set_size(c->borders[2], c->bws, c->geom.height - 2 * c->bws - 2 * borderspx_offset);
+	wlr_scene_rect_set_size(c->borders[3], c->bws, c->geom.height - 2 * c->bws - 2 * borderspx_offset);
 	wlr_scene_node_set_position(&c->borders[0]->node, borderspx_offset, borderspx_offset);
-	wlr_scene_node_set_position(&c->borders[1]->node, borderspx_offset, c->geom.height - borderspx - borderspx_offset);
-	wlr_scene_node_set_position(&c->borders[2]->node, borderspx_offset, borderspx + borderspx_offset);
-	wlr_scene_node_set_position(&c->borders[3]->node, c->geom.width - borderspx - borderspx_offset, borderspx + borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[1]->node, borderspx_offset, c->geom.height - c->bws - borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[2]->node, borderspx_offset, c->bws + borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[3]->node, c->geom.width - c->bws - borderspx_offset, c->bws + borderspx_offset);
 
-	wlr_scene_rect_set_size(c->bordere[0], c->geom.width - (c->bw - borderepx) * 2 + borderepx_negative_offset * 2, borderepx);
-	wlr_scene_rect_set_size(c->bordere[1], c->geom.width - (c->bw - borderepx) * 2 + borderepx_negative_offset * 2, borderepx);
-	wlr_scene_rect_set_size(c->bordere[2], borderepx, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
-	wlr_scene_rect_set_size(c->bordere[3], borderepx, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
-	wlr_scene_node_set_position(&c->bordere[0]->node, c->bw - borderepx - borderepx_negative_offset, c->bw - borderepx - borderepx_negative_offset);
-	wlr_scene_node_set_position(&c->bordere[1]->node, c->bw - borderepx - borderepx_negative_offset, c->geom.height - c->bw + borderepx_negative_offset);
-	wlr_scene_node_set_position(&c->bordere[2]->node, c->bw - borderepx - borderepx_negative_offset, c->bw - borderepx_negative_offset);
+	wlr_scene_rect_set_size(c->bordere[0], c->geom.width - (c->bw - c->bwe) * 2 + borderepx_negative_offset * 2, c->bwe);
+	wlr_scene_rect_set_size(c->bordere[1], c->geom.width - (c->bw - c->bwe) * 2 + borderepx_negative_offset * 2, c->bwe);
+	wlr_scene_rect_set_size(c->bordere[2], c->bwe, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_rect_set_size(c->bordere[3], c->bwe, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[0]->node, c->bw - c->bwe - borderepx_negative_offset, c->bw - c->bwe - borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[1]->node, c->bw - c->bwe - borderepx_negative_offset, c->geom.height - c->bw + borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[2]->node, c->bw - c->bwe - borderepx_negative_offset, c->bw - borderepx_negative_offset);
 	wlr_scene_node_set_position(&c->bordere[3]->node, c->geom.width - c->bw + borderepx_negative_offset, c->bw - borderepx_negative_offset);
 
 	/* this is a no-op if size hasn't changed */
@@ -2787,6 +2791,8 @@ setfullscreen(Client *c, int fullscreen)
 	if (!c->mon)
 		return;
 	c->bw = fullscreen ? 0 : borderpx;
+	c->bws = fullscreen ? 0 : borderspx;
+	c->bwe = fullscreen ? 0 : borderepx;
 	client_set_fullscreen(c, fullscreen);
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfullscreen
 			? LyrFS : c->isfloating ? LyrFloat : LyrTile]);
