@@ -23,6 +23,7 @@
 #include <wlr/types/wlr_drm.h>
 #include <wlr/types/wlr_linux_dmabuf_v1.h>
 #include <wlr/types/wlr_export_dmabuf_v1.h>
+#include <wlr/types/wlr_foreign_toplevel_management_v1.h>
 #include <wlr/types/wlr_fractional_scale_v1.h>
 #include <wlr/types/wlr_gamma_control_v1.h>
 #include <wlr/types/wlr_idle_inhibit_v1.h>
@@ -130,6 +131,10 @@ typedef struct {
 	uint32_t tags;
 	int isfloating, isurgent, isfullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
+	struct wlr_foreign_toplevel_handle_v1 *foreign_tlh;
+	struct wl_listener foreign_activate_request;
+	// TODO: add fullscreen, close?
+	struct wl_listener foreign_destroy;
 } Client;
 
 typedef struct {
@@ -366,6 +371,8 @@ static struct wlr_scene_rect *locked_bg;
 static struct wlr_session_lock_v1 *cur_lock;
 static struct wl_listener lock_listener = {.notify = locksession};
 
+static struct wlr_foreign_toplevel_manager_v1 *foreign_tlm;
+
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
 static unsigned int cursor_mode;
@@ -414,6 +421,24 @@ applybounds(Client *c, struct wlr_box *bbox)
 		c->geom.y = bbox->y;
 }
 
+static void
+handle_foreign_activate_request(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_activate_request);
+	struct wlr_foreign_toplevel_handle_v1_activated_event *event = data;
+	// TODO: change tags of client if it is not visible?
+	focusclient(c, 1);
+}
+
+static void
+handle_foreign_destroy(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_destroy);
+
+	wl_list_remove(&c->foreign_activate_request.link);
+	wl_list_remove(&c->foreign_destroy.link);
+}
+
 void
 applyrules(Client *c)
 {
@@ -428,6 +453,19 @@ applyrules(Client *c)
 		appid = broken;
 	if (!(title = client_get_title(c)))
 		title = broken;
+
+	wlr_foreign_toplevel_handle_v1_set_app_id(c->foreign_tlh, appid);
+	wlr_foreign_toplevel_handle_v1_set_title(c->foreign_tlh, title);
+	c->foreign_activate_request.notify = handle_foreign_activate_request;
+	wl_signal_add(&c->foreign_tlh->events.request_activate, 
+		&c->foreign_activate_request);
+	c->foreign_destroy.notify = handle_foreign_destroy;
+	wl_signal_add(&c->foreign_tlh->events.destroy,
+		&c->foreign_destroy);
+
+	// TODO: move to another place?
+	// https://wayland.app/protocols/wlr-foreign-toplevel-management-unstable-v1#zwlr_foreign_toplevel_handle_v1:event:output_enter
+	wlr_foreign_toplevel_handle_v1_output_enter(c->foreign_tlh, mon->wlr_output);
 
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
@@ -1519,6 +1557,10 @@ mapnotify(struct wl_listener *listener, void *data)
 		goto unset_fullscreen;
 	}
 
+	c->foreign_tlh = wlr_foreign_toplevel_handle_v1_create(foreign_tlm);
+	// TODO: add listeners
+	// LISTEN_STATIC(&power_mgr->events.set_mode, powermgrsetmodenotify);
+
 	for (i = 0; i < 4; i++) {
 		c->border[i] = wlr_scene_rect_create(c->scene, 0, 0, bordercolor);
 		c->border[i]->node.data = c;
@@ -2230,6 +2272,8 @@ setup(void)
 	gamma_control_mgr = wlr_gamma_control_manager_v1_create(dpy);
 	LISTEN_STATIC(&gamma_control_mgr->events.set_gamma, setgamma);
 
+	foreign_tlm = wlr_foreign_toplevel_manager_v1_create(dpy);
+
 	/* Creates an output layout, which a wlroots utility for working with an
 	 * arrangement of screens in a physical layout. */
 	output_layout = wlr_output_layout_create();
@@ -2519,6 +2563,11 @@ unmapnotify(struct wl_listener *listener, void *data)
 	wlr_scene_node_destroy(&c->scene->node);
 	printstatus();
 	motionnotify(0);
+
+	if (c->foreign_tlh) {
+		wlr_foreign_toplevel_handle_v1_destroy(c->foreign_tlh);
+		c->foreign_tlh = NULL;
+	}
 }
 
 void
@@ -2622,6 +2671,11 @@ void
 updatetitle(struct wl_listener *listener, void *data)
 {
 	Client *c = wl_container_of(listener, c, set_title);
+	const char *title;
+	if (!(title = client_get_title(c)))
+		title = broken;
+	if (c->foreign_tlh)
+		wlr_foreign_toplevel_handle_v1_set_title(c->foreign_tlh, title);
 	if (c == focustop(c->mon))
 		printstatus();
 }
