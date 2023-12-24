@@ -24,7 +24,6 @@ static const unsigned int cursorsize       = 24;
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
 static const int center_relative_to_monitor = 0;  /* 0 means center floating relative to the window area  */
 static const unsigned int swipe_min_threshold = 0;
-static const int swipe_fingers_count       = 3;
 
 /* Autostart */
 static const char *const autostart[] = {
@@ -277,8 +276,8 @@ static const Button buttons[] = {
 };
 
 static const Gesture gestures[] = {
-	// { MODKEY, SWIPE_LEFT, shiftview, { .i = 1 } },
-	// { MODKEY, SWIPE_RIGHT, shiftview, { .i = -1 } },
-	{ MODKEY, SWIPE_UP, focusstack, {.i = 1} },
-	{ MODKEY, SWIPE_DOWN, focusstack, {.i = -1} },
+	// { MODKEY, SWIPE_LEFT, 4, shiftview, { .i = 1 } },
+	// { MODKEY, SWIPE_RIGHT, 4, shiftview, { .i = -1 } },
+	{ MODKEY, SWIPE_UP, 3, focusstack, {.i = 1} },
+	{ MODKEY, SWIPE_DOWN, 3, focusstack, {.i = -1} },
 };
