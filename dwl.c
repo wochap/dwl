@@ -3326,13 +3326,11 @@ focusortogglescratch(const Arg *arg)
 			} else {
 				// focus
 				focusclient(c, 1);
-				wlr_scene_node_reparent(&c->scene->node, layers[LyrFS]);
 			}
 		} else {
 			// show
 			c->tags = selmon->tagset[selmon->seltags];
 			focusclient(c, 1);
-			wlr_scene_node_reparent(&c->scene->node, layers[LyrFS]);
 		}
 		arrange(selmon);
 	} else{
