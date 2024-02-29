@@ -562,7 +562,7 @@ applyminimalborders(Client *c, Monitor *m)
 	geom.y -= borderpx;
 	geom.height += borderpx;
 
-	if (geom.x < 0) {
+	if (geom.x < m->w.x) {
 		geom.x += borderpx;
 		geom.width -= borderpx;
 	}
@@ -570,7 +570,7 @@ applyminimalborders(Client *c, Monitor *m)
 		geom.width -= borderpx;
 	}
 
-	if (geom.y < 0) {
+	if (geom.y < m->w.y) {
 		geom.y += borderpx;
 		geom.height -= borderpx;
 	}
