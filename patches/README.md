@@ -88,6 +88,9 @@ Order (smallest to largest):
 Workflow
 
 ```
+# generate compile_commands.json for LSP
+$ make clean; bear -- make
+
 # generate a patch
 $ git format-patch --no-signature --stdout <main_branch>..<patch_branch> > <patch_name>.patch
 # or use github url: https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
