@@ -14,6 +14,7 @@ static const float urgentcolor[]           = COLOR(0xff0000ff);
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
 static const char cursortheme[]            = NULL; /* theme from /usr/share/cursors/xorg-x11 */
 static const unsigned int cursorsize       = 24;
+static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
 
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
