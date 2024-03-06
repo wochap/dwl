@@ -35,6 +35,7 @@
 #include <wlr/types/wlr_output.h>
 #include <wlr/types/wlr_output_layout.h>
 #include <wlr/types/wlr_output_management_v1.h>
+#include <wlr/types/wlr_output_power_management_v1.h>
 #include <wlr/types/wlr_pointer.h>
 #include <wlr/types/wlr_pointer_gestures_v1.h>
 #include <wlr/types/wlr_presentation_time.h>
@@ -342,6 +343,7 @@ static void outputmgrtest(struct wl_listener *listener, void *data);
 static void pointerfocus(Client *c, struct wlr_surface *surface,
 		double sx, double sy, uint32_t time);
 static void printstatus(void);
+static void powermgrsetmodenotify(struct wl_listener *listener, void *data);
 static void quit(const Arg *arg);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requeststartdrag(struct wl_listener *listener, void *data);
@@ -433,6 +435,8 @@ static struct wlr_session_lock_manager_v1 *session_lock_mgr;
 static struct wlr_scene_rect *locked_bg;
 static struct wlr_session_lock_v1 *cur_lock;
 static struct wl_listener lock_listener = {.notify = locksession};
+
+static struct wlr_output_power_manager_v1 *power_mgr;
 
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
@@ -2577,6 +2581,14 @@ printstatus(void)
 }
 
 void
+powermgrsetmodenotify(struct wl_listener *listener, void *data)
+{
+	struct wlr_output_power_v1_set_mode_event *event = data;
+	wlr_output_enable(event->output, event->mode);
+	wlr_output_commit(event->output);
+}
+
+void
 quit(const Arg *arg)
 {
 	wl_display_terminate(dpy);
@@ -3008,6 +3020,9 @@ setup(void)
 
 	gamma_control_mgr = wlr_gamma_control_manager_v1_create(dpy);
 	LISTEN_STATIC(&gamma_control_mgr->events.set_gamma, setgamma);
+
+	power_mgr = wlr_output_power_manager_v1_create(dpy);
+	LISTEN_STATIC(&power_mgr->events.set_mode, powermgrsetmodenotify);
 
 	/* Creates an output layout, which a wlroots utility for working with an
 	 * arrangement of screens in a physical layout. */
