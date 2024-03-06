@@ -1,0 +1,61 @@
+diff --git a/config.def.h b/config.def.h
+index db0babc..05de8ee 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -12,6 +12,7 @@ static const float focuscolor[]            = COLOR(0x005577ff);
+ static const float urgentcolor[]           = COLOR(0xff0000ff);
+ /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
+ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
++static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
+ 
+ /* tagging - TAGCOUNT must be no greater than 31 */
+ #define TAGCOUNT (9)
+@@ -20,11 +21,11 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can al
+ static int log_level = WLR_ERROR;
+ 
+ static const Rule rules[] = {
+-	/* app_id     title       tags mask     isfloating   monitor */
++	/* app_id     title       tags mask     isfloating   monitor x   y  width height */
+ 	/* examples:
+-	{ "Gimp",     NULL,       0,            1,           -1 },
++	{ "Gimp",     NULL,       0,            1,           -1,     0,  0, 1000, 0.75 },
+ 	*/
+-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
++	{ "firefox",  NULL,       1 << 8,       0,           -1,     0,  0, 0,    0 },
+ };
+ 
+ /* layout(s) */
+diff --git a/dwl.c b/dwl.c
+index ef27a1d..bbb3740 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -215,6 +215,10 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating;
+ 	int monitor;
++	int x;
++	int y;
++	float w;
++	float h;
+ } Rule;
+ 
+ typedef struct {
+@@ -438,6 +442,18 @@ applyrules(Client *c)
+ 			wl_list_for_each(m, &mons, link)
+ 				if (r->monitor == i++)
+ 					mon = m;
++			if (c->isfloating) {
++				struct wlr_box b = center_relative_to_monitor ? mon->m : mon->w;
++				float newwidth = r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width;
++				float newheight = r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height;
++
++				resize(c, (struct wlr_box){
++					.x = r->x ? r->x + b.x : (b.width - newwidth) / 2 + b.x,
++					.y = r->y ? r->y + b.y : (b.height - newheight) / 2 + b.y,
++					.width = newwidth,
++					.height = newheight,
++				}, 1);
++			}
+ 		}
+ 	}
+ 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);

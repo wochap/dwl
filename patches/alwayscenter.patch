@@ -1,0 +1,37 @@
+diff --git a/config.def.h b/config.def.h
+index db0babc..249ce2e 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -12,6 +12,7 @@ static const float focuscolor[]            = COLOR(0x005577ff);
+ static const float urgentcolor[]           = COLOR(0xff0000ff);
+ /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
+ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
++static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
+ 
+ /* tagging - TAGCOUNT must be no greater than 31 */
+ #define TAGCOUNT (9)
+diff --git a/dwl.c b/dwl.c
+index ef27a1d..61936f7 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1507,8 +1507,9 @@ mapnotify(struct wl_listener *listener, void *data)
+ {
+ 	/* Called when the surface is mapped, or ready to display on-screen. */
+ 	Client *p, *w, *c = wl_container_of(listener, c, map);
+-	Monitor *m;
++	Monitor *m = selmon;
+ 	int i;
++	struct wlr_box b = center_relative_to_monitor ? m->m : m->w; 
+ 
+ 	/* Create scene tree for this client and its border */
+ 	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
+@@ -1547,6 +1548,9 @@ mapnotify(struct wl_listener *listener, void *data)
+ 	wl_list_insert(&clients, &c->link);
+ 	wl_list_insert(&fstack, &c->flink);
+ 
++	c->geom.x = (b.width - c->geom.width) / 2 + b.x;
++	c->geom.y = (b.height - c->geom.height) / 2 + b.y;
++
+ 	/* Set initial monitor, tags, floating status, and focus:
+ 	 * we always consider floating, clients that have parent and thus
+ 	 * we set the same tags and monitor than its parent, if not
