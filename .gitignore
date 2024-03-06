@@ -4,3 +4,5 @@ dwl
 *-protocol.h
 .ccls-cache
 config.h
+compile_commands.json
+.cache
