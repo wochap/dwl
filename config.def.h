@@ -23,12 +23,12 @@ static const int center_relative_to_monitor = 0; /* 0 means center floating rela
 static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   monitor */
+	/* app_id     title       tags mask     isfloating   monitor x   y  width height */
 	/* examples:
-	{ "Gimp",     NULL,       0,            1,           -1 },
+	{ "Gimp",     NULL,       0,            1,           -1,     0,  0, 1000, 0.75 },
 	*/
-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
-	{ "^kitty$",  NULL,       0,            0,           -1 },
+	{ "firefox",  NULL,       1 << 8,       0,           -1,     0,  0, 0,    0 },
+	{ "^kitty$",  NULL,       0,            0,           -1,     0,  0, 0,    0 },
 };
 
 /* layout(s) */
