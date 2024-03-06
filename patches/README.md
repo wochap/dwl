@@ -102,7 +102,7 @@ $ make clean; bear -- make
 $ git format-patch --no-signature --stdout <main_branch>..<patch_branch> > <patch_name>.patch
 # or use github url: https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
 # or
-# $ git diff --patch <main_branch>..<patch_branch> > <patch_name>.patch
+# $ git diff --patch <main_branch>..<patch_branch> > <patch_name>.patch -- ':!*.patch'
 
 $ git checkout <main_branch>
 $ git checkout -b patches/<patch_name>
