@@ -68,6 +68,7 @@ Order (preferably, from smallest to largest):
 - [ ] customfloat.patch
 - [ ] movecenter.patch
 - [ ] lockedkeys.patch
+- [ ] movestack.patch
 - [ ] moveresizekb.patch
 - [ ] togglekblayout.patch
 - [ ] shiftview.patch
