@@ -16,6 +16,13 @@ static const char cursortheme[]            = "capitaine-cursors"; /* theme from 
 static const unsigned int cursorsize       = 24;
 static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
 
+enum {
+    VIEW_L = -1,
+    VIEW_R = 1,
+    SHIFT_L = -2,
+    SHIFT_R = 2,
+} RotateTags;
+
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
 
@@ -134,7 +141,11 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_i,          incnmaster,     {.i = -1} },
+	{ MODKEY,                    XKB_KEY_a,          rotatetags,     {.i = VIEW_L} },
+	{ MODKEY,                    XKB_KEY_d,          rotatetags,     {.i = VIEW_R} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_a,          rotatetags,     {.i = SHIFT_L} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_d,          rotatetags,     {.i = SHIFT_R} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
