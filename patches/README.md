@@ -33,7 +33,7 @@
 # Input
 
 - [keycodes](https://github.com/wochap/dwl/blob/v0.5/keycodes/keycodes.patch)
-- [naturalscrolltrackpad](https://codeberg.org/dwl/dwl-patches/src/branch/main/naturalscrolltrackpad/naturalscrolltrackpad.patch)
+- [naturalscrolltrackpad](https://github.com/wochap/dwl/blob/v0.5/naturalscrolltrackpad/naturalscrolltrackpad.patch)
 - [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1.patch)
 - [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes.patch)
 - [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes.patch)

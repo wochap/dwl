@@ -26,7 +26,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/namedscratchpads/namedscr
 
 # Input
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/keycodes/keycodes.patch
-wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/naturalscrolltrackpad/naturalscrolltrackpad.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.5/naturalscrolltrackpad/naturalscrolltrackpad.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes/modes.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes-keycodes/modes-keycodes.patch
