@@ -2943,81 +2943,107 @@ usage:
 }
 
 static void
-bstack(Monitor *m) 
+bstack(Monitor *m)
 {
-	int w, h, mh, mx, tx, ty, tw;
-	unsigned int i, n = 0;
+	unsigned int i, n, w, mh, mx, tx;
+	float mfacts = 0, sfacts = 0;
 	Client *c;
+	Client *firstc;
 
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n++;
+	n = 0;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+			continue;
+		if (n == 0)
+			firstc = c;
+		if (n < m->nmaster)
+			mfacts += c->cweight;
+		else
+			sfacts += c->cweight;
+		n++;
+	}
 	if (n == 0)
 		return;
-
-	if (n > m->nmaster) {
-		mh = m->nmaster ? m->mfact * m->w.height : 0;
-		tw = m->w.width / (n - m->nmaster);
-		ty = m->w.y + mh;
-	} else {
-		mh = m->w.height;
-		tw = m->w.width;
-		ty = m->w.y;
+	if (n == 1) {
+		resize(firstc, (struct wlr_box) { .x = m->w.x, .y = m->w.y,
+			.width = m->w.width, .height = m->w.height }, 0);
+		return;
 	}
 
-	i = mx = 0;
-	tx = m-> w.x;
+	if (n > m->nmaster)
+		mh = m->nmaster ? m->w.height * m->mfact : 0;
+	else
+		mh = m->w.height;
+	i = mx = tx = 0;
 	wl_list_for_each(c, &clients, link) {
-		if (!VISIBLEON(c, m) || c->isfloating)
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
 		if (i < m->nmaster) {
-			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+			w = (m->w.width - mx) * (c->cweight / mfacts);
 			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
-			mx += c->geom.width;
-		} else {
-			h = m->w.height - mh;
-			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = tw, .height = h }, 0);
-			if (tw != m->w.width)
+			if (mx + c->geom.width < m->m.width)
+				mx += c->geom.width;
+			mfacts -= c->cweight;
+	  } else {
+			w = (m->w.width - tx) * (c->cweight / sfacts);
+			resize(c, (struct wlr_box) { .x = m->w.x + tx, .y = m->w.y + mh, .width = w, .height = m->w.height - mh }, 0);
+			if (tx + c->geom.width < m->m.width)
 				tx += c->geom.width;
+			sfacts -= c->cweight;
 		}
 		i++;
 	}
 }
 
 static void
-bstackhoriz(Monitor *m) {
-	int w, mh, mx, tx, ty, th;
-	unsigned int i, n = 0;
+bstackhoriz(Monitor *m)
+{
+	unsigned int i, n, h, mw, mh, my, ty;
+	float mfacts = 0, sfacts = 0;
 	Client *c;
+	Client *firstc;
 
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n ++;
+	n = 0;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+			continue;
+		if (n == 0)
+			firstc = c;
+		if (n < m->nmaster)
+			mfacts += c->cweight;
+		else
+			sfacts += c->cweight;
+		n++;
+	}
 	if (n == 0)
 		return;
-
-	if (n > m->nmaster) {
-		mh = m->nmaster ? m->mfact * m->w.height : 0;
-		th = (m->w.height - mh) / (n - m->nmaster);
-		ty = m->w.y + mh;
-	} else {
-		th = mh = m->w.height;
-		ty = m->w.y;
+	if (n == 1) {
+		resize(firstc, (struct wlr_box) { .x = m->w.x, .y = m->w.y,
+			.width = m->w.width, .height = m->w.height }, 0);
+		return;
 	}
 
-	i = mx = 0;
-	tx = m-> w.x;
+	if (n > m->nmaster)
+		mh = m->nmaster ? m->w.height * m->mfact : 0;
+	else
+		mh = m->w.height;
+	mw = m->w.width;
+	i = ty = my = 0;
 	wl_list_for_each(c, &clients, link) {
-		if (!VISIBLEON(c,m) || c->isfloating)
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
 		if (i < m->nmaster) {
-			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
-			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
-			mx += c->geom.width;
+			h = (mh - my) * (c->cweight / mfacts);
+			resize(c, (struct wlr_box) { .x = m->w.x, .y = m->w.y + my, .width = mw, .height = h }, 0);
+			if (my + c->geom.height < m->m.height)
+				my += c->geom.height;
+			mfacts -= c->cweight;
 		} else {
-			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = m->w.width, .height = th }, 0);
-			if (th != m->w.height)
+			h = (m->w.height - mh - ty) * (c->cweight / sfacts);
+			resize(c, (struct wlr_box) { .x = m->w.x, .y = m->w.y + mh + ty, .width = mw, .height = h }, 0);
+			if (ty + c->geom.height < m->m.height)
 				ty += c->geom.height;
+			sfacts -= c->cweight;
 		}
 		i++;
 	}
