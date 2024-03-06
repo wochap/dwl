@@ -318,6 +318,7 @@ static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void focusortogglescratch(const Arg *arg);
+static void focusortogglematchingscratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
@@ -2524,6 +2525,48 @@ focusortogglescratch(const Arg *arg)
 		}
 		arrange(selmon);
 	} else{
+		spawnscratch(arg);
+	}
+}
+
+void
+focusortogglematchingscratch(const Arg *arg)
+{
+	Client *c;
+	unsigned int found = 0;
+
+	wl_list_for_each(c, &clients, link) {
+		if (c->scratchkey == 0) {
+			continue;
+		}
+		if (c->scratchkey == ((char**)arg->v)[0][0]) {
+			found = 1;
+			if (VISIBLEON(c, selmon)) {
+				if (focustop(selmon) == c) {
+					// hide
+					c->tags = 0;
+					focusclient(focustop(selmon), 1);
+				} else {
+					// focus
+					focusclient(c, 1);
+				}
+			} else {
+				// show
+				c->tags = selmon->tagset[selmon->seltags];
+				// focus
+				focusclient(c, 1);
+			}
+			continue;
+		}
+		if (VISIBLEON(c, selmon)) {
+			// hide
+			c->tags = 0;
+		}
+	}
+
+	if (found) {
+		arrange(selmon);
+	} else {
 		spawnscratch(arg);
 	}
 }
