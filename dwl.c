@@ -2016,13 +2016,17 @@ run(char *startup_cmd)
 void
 setcfact(const Arg *arg)
 {
-	Client *sel = focustop(selmon);
+	float f;
+	Client *c = focustop(selmon);
 
-	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
+	if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
 		return;
-	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
-	if (sel->cweight < 0)
-		sel->cweight = 0;
+	f = arg->f + c->cweight;
+	if (arg->f == 0)
+		f = 1.0;
+	else if (f < 0.25 || f > 4.0)
+		return;
+	c->cweight = f;
 	arrange(selmon);
 }
 
@@ -2423,7 +2427,7 @@ tagmon(const Arg *arg)
 void
 tile(Monitor *m)
 {
-	unsigned int i, n = 0, mw, my, ty;
+	unsigned int i, n = 0, mw, my, ty, h;
 	float mweight = 0, tweight = 0;
 	Client *c;
 
@@ -2452,13 +2456,17 @@ tile(Monitor *m)
 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
 		if (i < m->nmaster) {
-			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
-				.height = ((c->cweight / mweight) * m->w.height)}, 0);
+			h = (m->w.height - my) * (c->cweight / mweight);
+			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my,
+				.width = mw, .height = h}, 0);
 			my += c->geom.height;
+			mweight -= c->cweight;
 		} else {
+			h = (m->w.height - ty) * (c->cweight / tweight);
 			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
-				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
+				.width = m->w.width - mw, .height = h}, 0);
 			ty += c->geom.height;
+			tweight -= c->cweight;
 		}
 		i++;
 	}
