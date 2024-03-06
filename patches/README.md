@@ -60,38 +60,37 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (preferably, from smallest to largest):
 
-- [ ] naturalscrolltrackpad.patch
-- [ ] cursortheme.patch
-- [ ] zoomswap.patch
-- [ ] alwayscenter.patch
-- [ ] regexrules.patch
-- [ ] customfloat.patch
-- [ ] movecenter.patch
-- [ ] lockedkeys.patch
-- [ ] movestack.patch
-- [ ] moveresizekb.patch
-- [ ] togglekblayout.patch
-- [ ] shiftview.patch
-- [ ] rotatetags.patch
-- [ ] centeredmaster.patch
-- [ ] relative-mouse-resize.patch.1
-- [ ] relative-mouse-resize.patch
-- [ ] bottomstack.patch
-- [ ] autostart.patch
-- [ ] cfact.patch
-- [ ] cfact-bottomstack.patch
-- [ ] minimalborders.patch
-- [ ] pointer-gestures-unstable-v1.patch
-- [ ] modes.patch
-- [ ] gestures.patch
-- [ ] namedscratchpads.patch
-- [ ] pertag.patch
-- [ ] swapandfocusdir.patch
-- [ ] borders.patch
-- [ ] output-power-management.patch
-- [ ] keycodes.patch
-- [ ] modes-keycodes.patch
-- [ ] lockedkeys-keycodes.patch
+- [x] naturalscrolltrackpad.patch
+- [x] cursortheme.patch
+- [x] zoomswap.patch
+- [x] alwayscenter.patch
+- [x] regexrules.patch
+- [x] customfloat.patch
+- [x] movecenter.patch
+- [x] lockedkeys.patch
+- [x] movestack.patch
+- [x] moveresizekb.patch
+- [x] togglekblayout.patch
+- [x] shiftview.patch
+- [x] rotatetags.patch
+- [x] centeredmaster.patch
+- [x] relative-mouse-resize.patch
+- [x] bottomstack.patch
+- [x] autostart.patch
+- [x] cfact.patch
+- [x] cfact-bottomstack.patch
+- [x] minimalborders.patch
+- [x] pointer-gestures-unstable-v1.patch
+- [x] modes.patch
+- [x] gestures.patch
+- [x] namedscratchpads.patch
+- [x] pertag.patch
+- [x] swapandfocusdir.patch
+- [x] borders.patch
+- [x] output-power-management.patch
+- [x] keycodes.patch
+- [x] modes-keycodes.patch
+- [x] lockedkeys-keycodes.patch
 
 Workflow
 
