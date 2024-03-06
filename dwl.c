@@ -2534,18 +2534,26 @@ focusortogglematchingscratch(const Arg *arg)
 {
 	Client *c;
 	unsigned int found = 0;
+	unsigned int hide = 0;
 
 	wl_list_for_each(c, &clients, link) {
 		if (c->scratchkey == 0) {
 			continue;
 		}
 		if (c->scratchkey == ((char**)arg->v)[0][0]) {
-			found = 1;
 			if (VISIBLEON(c, selmon)) {
+				if (found == 1) {
+					if (hide == 1) {
+						c->tags = 0;
+						focusclient(focustop(selmon), 1);
+					}
+					continue;
+				}
 				if (focustop(selmon) == c) {
 					// hide
 					c->tags = 0;
 					focusclient(focustop(selmon), 1);
+					hide = 1;
 				} else {
 					// focus
 					focusclient(c, 1);
@@ -2556,6 +2564,7 @@ focusortogglematchingscratch(const Arg *arg)
 				// focus
 				focusclient(c, 1);
 			}
+			found = 1;
 			continue;
 		}
 		if (VISIBLEON(c, selmon)) {
