@@ -1,17 +1,3 @@
-From c02452204c40663f9a7094e59efa12131555fbc6 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 00:02:35 -0500
-Subject: [PATCH] apply Stivvo customfloat patch
-
-source: https://github.com/djpohly/dwl/wiki/customfloat
-rewrite so it works with latest dwl
-if width or height is less than or equal to 1, then the value will be taken as a percentage value, e.g. 0.5 is 50%, 0.25 is 25%, 1 is 100%
-**NOTE**, some clients such as Thunar, have a minimal width/height
----
- config.def.h |  7 ++++---
- dwl.c        | 16 ++++++++++++++++
- 2 files changed, 20 insertions(+), 3 deletions(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..05de8ee 100644
 --- a/config.def.h
@@ -73,6 +59,3 @@ index ef27a1d..bbb3740 100644
  		}
  	}
  	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
--- 
-2.42.0
-
