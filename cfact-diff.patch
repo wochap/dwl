@@ -1,13 +1,3 @@
-From 8b1b9bd4db22dea4b63f7dad1b0e3fdc851b9064 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 21:46:51 -0500
-Subject: [PATCH 1/2] apply palanix cfact patch
-
----
- config.def.h |  3 +++
- dwl.c        | 32 ++++++++++++++++++++++++++++++--
- 2 files changed, 33 insertions(+), 2 deletions(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..a9b6021 100644
 --- a/config.def.h
@@ -23,7 +13,7 @@ index db0babc..a9b6021 100644
  	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..9567f40 100644
+index ef27a1d..4d45fa5 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -130,6 +130,7 @@ typedef struct {
@@ -50,35 +40,41 @@ index ef27a1d..9567f40 100644
  
  	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
  			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
-@@ -2010,6 +2013,19 @@ run(char *startup_cmd)
+@@ -2010,6 +2013,23 @@ run(char *startup_cmd)
  	wl_display_run(dpy);
  }
  
 +void
 +setcfact(const Arg *arg)
 +{
-+	Client *sel = focustop(selmon);
++	float f;
++	Client *c = focustop(selmon);
 +
-+	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
++	if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
 +		return;
-+	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
-+	if (sel->cweight < 0)
-+		sel->cweight = 0;
++	f = arg->f + c->cweight;
++	if (arg->f == 0)
++		f = 1.0;
++	else if (f < 0.25 || f > 4.0)
++		return;
++	c->cweight = f;
 +	arrange(selmon);
 +}
 +
  void
  setcursor(struct wl_listener *listener, void *data)
  {
-@@ -2408,6 +2424,7 @@ void
+@@ -2407,7 +2427,8 @@ tagmon(const Arg *arg)
+ void
  tile(Monitor *m)
  {
- 	unsigned int i, n = 0, mw, my, ty;
+-	unsigned int i, n = 0, mw, my, ty;
++	unsigned int i, n = 0, mw, my, ty, h;
 +	float mweight = 0, tweight = 0;
  	Client *c;
  
  	wl_list_for_each(c, &clients, link)
-@@ -2420,17 +2437,27 @@ tile(Monitor *m)
+@@ -2420,18 +2441,32 @@ tile(Monitor *m)
  		mw = m->nmaster ? m->w.width * m->mfact : 0;
  	else
  		mw = m->w.width;
@@ -97,82 +93,8 @@ index ef27a1d..9567f40 100644
  		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
  			continue;
  		if (i < m->nmaster) {
- 			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
--				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
-+				.height = ((c->cweight / mweight) * m->w.height)}, 0);
- 			my += c->geom.height;
- 		} else {
- 			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
--				.width = m->w.width - mw, .height = (m->w.height - ty) / (n - i)}, 0);
-+				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
- 			ty += c->geom.height;
- 		}
- 		i++;
-@@ -2791,6 +2818,7 @@ createnotifyx11(struct wl_listener *listener, void *data)
- 	c->surface.xwayland = xsurface;
- 	c->type = xsurface->override_redirect ? X11Unmanaged : X11Managed;
- 	c->bw = borderpx;
-+	c->cweight = 1.0;
- 
- 	/* Listen to the various events it can emit */
- 	LISTEN(&xsurface->events.associate, &c->associate, associatex11);
--- 
-2.42.0
-
-
-From bdd7701563be5a9f33fa0a0010b7441b4d01ec93 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 21:48:08 -0500
-Subject: [PATCH 2/2] remove empty spaces at the end of the y axis
-
-palanix patch is leaving empty spaces at the end of the y axis in v0.5
-inspiration: https://dwm.suckless.org/patches/cfacts/dwm-cfacts-6.1.diff
----
- dwl.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/dwl.c b/dwl.c
-index 9567f40..4d45fa5 100644
---- a/dwl.c
-+++ b/dwl.c
-@@ -2016,13 +2016,17 @@ run(char *startup_cmd)
- void
- setcfact(const Arg *arg)
- {
--	Client *sel = focustop(selmon);
-+	float f;
-+	Client *c = focustop(selmon);
- 
--	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
-+	if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
-+		return;
-+	f = arg->f + c->cweight;
-+	if (arg->f == 0)
-+		f = 1.0;
-+	else if (f < 0.25 || f > 4.0)
- 		return;
--	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
--	if (sel->cweight < 0)
--		sel->cweight = 0;
-+	c->cweight = f;
- 	arrange(selmon);
- }
- 
-@@ -2423,7 +2427,7 @@ tagmon(const Arg *arg)
- void
- tile(Monitor *m)
- {
--	unsigned int i, n = 0, mw, my, ty;
-+	unsigned int i, n = 0, mw, my, ty, h;
- 	float mweight = 0, tweight = 0;
- 	Client *c;
- 
-@@ -2452,13 +2456,17 @@ tile(Monitor *m)
- 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
- 			continue;
- 		if (i < m->nmaster) {
 -			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
--				.height = ((c->cweight / mweight) * m->w.height)}, 0);
+-				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
 +			h = (m->w.height - my) * (c->cweight / mweight);
 +			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my,
 +				.width = mw, .height = h}, 0);
@@ -181,13 +103,18 @@ index 9567f40..4d45fa5 100644
  		} else {
 +			h = (m->w.height - ty) * (c->cweight / tweight);
  			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
--				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
+-				.width = m->w.width - mw, .height = (m->w.height - ty) / (n - i)}, 0);
 +				.width = m->w.width - mw, .height = h}, 0);
  			ty += c->geom.height;
 +			tweight -= c->cweight;
  		}
  		i++;
  	}
--- 
-2.42.0
-
+@@ -2791,6 +2826,7 @@ createnotifyx11(struct wl_listener *listener, void *data)
+ 	c->surface.xwayland = xsurface;
+ 	c->type = xsurface->override_redirect ? X11Unmanaged : X11Managed;
+ 	c->bw = borderpx;
++	c->cweight = 1.0;
+ 
+ 	/* Listen to the various events it can emit */
+ 	LISTEN(&xsurface->events.associate, &c->associate, associatex11);
