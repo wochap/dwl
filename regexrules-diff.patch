@@ -1,14 +1,3 @@
-From 3ae5cd4ff7b2cc73bd2c0ebb25d6afcde64e8e6d Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 23:56:23 -0500
-Subject: [PATCH] implement regex support in rules for app_id and title
-
-Enables the use of regular expressions for window rules "app_id" and "title"
----
- config.def.h |  1 +
- dwl.c        | 19 +++++++++++++++++--
- 2 files changed, 18 insertions(+), 2 deletions(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..ff23b6f 100644
 --- a/config.def.h
@@ -72,6 +61,3 @@ index ef27a1d..df29577 100644
  #ifdef XWAYLAND
  void
  activatex11(struct wl_listener *listener, void *data)
--- 
-2.42.0
-
