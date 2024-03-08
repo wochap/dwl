@@ -1,14 +1,3 @@
-From 18abc170273690fd3fbbdcbe88b348a0b802ba91 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 11:45:30 -0500
-Subject: [PATCH] add 2 more borders for each side
-
----
- client.h     | 16 +++++++++++++---
- config.def.h |  7 +++++++
- dwl.c        | 41 +++++++++++++++++++++++++++++++++++++----
- 3 files changed, 57 insertions(+), 7 deletions(-)
-
 diff --git a/client.h b/client.h
 index 71c7d76..c65f3ec 100644
 --- a/client.h
@@ -179,6 +168,3 @@ index ef27a1d..e11b185 100644
  
  	printstatus();
  }
--- 
-2.42.0
-
