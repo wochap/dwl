@@ -1,16 +1,3 @@
-From aa3ed026fad872d7d8fe80afd31426057a8c68bc Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 10:17:07 -0500
-Subject: [PATCH] implement the output power management protocol
-
-inspiration: https://github.com/djpohly/dwl/wiki/outputPowerManagement
----
- Makefile                                      |   5 +-
- dwl.c                                         |  15 ++
- ...lr-output-power-management-unstable-v1.xml | 128 ++++++++++++++++++
- 3 files changed, 147 insertions(+), 1 deletion(-)
- create mode 100644 protocols/wlr-output-power-management-unstable-v1.xml
-
 diff --git a/Makefile b/Makefile
 index 6cde460..96639d5 100644
 --- a/Makefile
@@ -222,6 +209,3 @@ index 0000000..a977839
 +    </request>
 +  </interface>
 +</protocol>
--- 
-2.42.0
-
