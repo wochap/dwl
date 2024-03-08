@@ -1,13 +1,3 @@
-From 12e9008e1f9ab82cc5342ab7579859912ed7d1a3 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 07:21:15 -0500
-Subject: [PATCH] Implement pointer-gestures-unstable-v1
-
-Forward the following events to client: swipe_begin, swipe_update, swipe_end, pinch_begin, pinch_update and pinch_end
----
- dwl.c | 103 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
-
 diff --git a/dwl.c b/dwl.c
 index ef27a1d..2aeaca1 100644
 --- a/dwl.c
@@ -157,6 +147,3 @@ index ef27a1d..2aeaca1 100644
  	seat = wlr_seat_create(dpy, "seat0");
  	LISTEN_STATIC(&seat->events.request_set_cursor, setcursor);
  	LISTEN_STATIC(&seat->events.request_set_selection, setsel);
--- 
-2.42.0
-
