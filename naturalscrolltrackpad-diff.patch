@@ -1,13 +1,3 @@
-From d204ec2a59570dae2006e781d120aca736937fb8 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 15:40:50 -0500
-Subject: [PATCH] set natural scrolling only for trackpads
-
-source: https://github.com/djpohly/dwl/wiki/naturalscrolltrackpad
----
- dwl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
 diff --git a/dwl.c b/dwl.c
 index ef27a1d..f7c3aed 100644
 --- a/dwl.c
@@ -26,6 +16,3 @@ index ef27a1d..f7c3aed 100644
  
  		if (libinput_device_config_dwt_is_available(libinput_device))
  			libinput_device_config_dwt_set_enabled(libinput_device, disable_while_typing);
--- 
-2.42.0
-
