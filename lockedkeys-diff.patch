@@ -1,13 +1,3 @@
-From d3aca31e6fd1838bf95483d362db233ef8eebdb2 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 07:46:41 -0500
-Subject: [PATCH] allow to add keybindings in locked mode
-
----
- config.def.h | 11 +++++++++++
- dwl.c        | 20 ++++++++++++++++++++
- 2 files changed, 31 insertions(+)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..50c446d 100644
 --- a/config.def.h
@@ -75,6 +65,3 @@ index ef27a1d..ff17d07 100644
  	if (handled && kb->wlr_keyboard->repeat_info.delay > 0) {
  		kb->mods = mods;
  		kb->keysyms = syms;
--- 
-2.42.0
-
