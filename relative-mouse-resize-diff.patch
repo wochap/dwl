@@ -1,14 +1,3 @@
-From cd7dec8ff61fef268a5c5053d33eb202b09ea3f6 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 09:51:29 -0500
-Subject: [PATCH] implement relative mouse resize
-
-the mouse willresize the window in the quadrant that the resize starts at
-inspiration: https://github.com/djpohly/dwl/wiki/relativemouseresize
----
- dwl.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 59 insertions(+), 7 deletions(-)
-
 diff --git a/dwl.c b/dwl.c
 index ef27a1d..deb8c76 100644
 --- a/dwl.c
@@ -100,6 +89,3 @@ index ef27a1d..deb8c76 100644
  		break;
  	}
  }
--- 
-2.42.0
-
