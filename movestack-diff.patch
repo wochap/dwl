@@ -1,14 +1,3 @@
-From b051f50233033b399db324b29ab24227257ac141 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 23:31:51 -0500
-Subject: [PATCH] apply NikitaIvanovV movestack patch
-
-source: https://github.com/djpohly/dwl/wiki/movestack
----
- config.def.h |  2 ++
- dwl.c        | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..778a0dc 100644
 --- a/config.def.h
@@ -75,6 +64,3 @@ index ef27a1d..69b9756 100644
  void
  motionabsolute(struct wl_listener *listener, void *data)
  {
--- 
-2.42.0
-
