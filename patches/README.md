@@ -99,7 +99,7 @@ Workflow
 $ make clean; bear -- make
 
 # generate a patch
-$ git format-patch --no-signature --stdout <main_branch>..<patch_branch> > <patch_name>.patch
+$ git format-patch --no-signature --stdout <main_branch>..<patch_branch> > <patch_name>.patch -- ':!*.patch'
 # or use github url: https://github.com/wochap/dwl/compare/main-codeberg...wochap:shiftview.patch
 # or
 # $ git diff --patch <main_branch>..<patch_branch> > <patch_name>.patch -- ':!*.patch'
