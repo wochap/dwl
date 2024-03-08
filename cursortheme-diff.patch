@@ -1,14 +1,3 @@
-From 05a532202ec5aa989f790939d6006af79f80e938 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 07:52:05 -0500
-Subject: [PATCH] apply Zakharchenko cursortheme patch, sync with v0.5
-
-source: https://github.com/djpohly/dwl/wiki/cursortheme
----
- config.def.h | 2 ++
- dwl.c        | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..aeb5174 100644
 --- a/config.def.h
@@ -35,6 +24,3 @@ index ef27a1d..bd53fc0 100644
  	setenv("XCURSOR_SIZE", "24", 1);
  
  	/*
--- 
-2.42.0
-
