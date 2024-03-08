@@ -1,14 +1,3 @@
-From a32b85018ff2cea0fc9f9137789860a4aadc3b3a Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 07:31:17 -0500
-Subject: [PATCH] implement modes
-
-like sway/river modes
----
- config.def.h | 20 ++++++++++++++++++++
- dwl.c        | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..1616136 100644
 --- a/config.def.h
@@ -160,6 +149,3 @@ index ef27a1d..1ada006 100644
  #ifdef XWAYLAND
  void
  activatex11(struct wl_listener *listener, void *data)
--- 
-2.42.0
-
