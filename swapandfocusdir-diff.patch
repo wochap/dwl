@@ -1,18 +1,3 @@
-From d224594e8f077ac49a1369670f6ff6a5d27ec75a Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 23:50:01 -0500
-Subject: [PATCH] implement swap and focus direction functions
-
-you should expect the same behavior as in river wm,
-
-swap only works on tiling windows
-focus works on tiling and floating windows
----
- Makefile     |   2 +-
- config.def.h |   8 +++
- dwl.c        | 163 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+), 1 deletion(-)
-
 diff --git a/Makefile b/Makefile
 index 6cde460..22f4372 100644
 --- a/Makefile
@@ -240,6 +225,3 @@ index ef27a1d..8d3540e 100644
  /* We probably should change the name of this, it sounds like
   * will focus the topmost client of this mon, when actually will
   * only return that client */
--- 
-2.42.0
-
