@@ -1,14 +1,3 @@
-From d2b8292c3416770462784fd9f05d2759e3747ce2 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 10:45:39 -0500
-Subject: [PATCH] apply minimal borders
-
-dynamically adjusts the borders between adjacent clients to make them visually merge
----
- config.def.h |  1 +
- dwl.c        | 77 ++++++++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 72 insertions(+), 6 deletions(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..8677c12 100644
 --- a/config.def.h
@@ -158,6 +147,3 @@ index ef27a1d..a35cec5 100644
  void
  run(char *startup_cmd)
  {
--- 
-2.42.0
-
