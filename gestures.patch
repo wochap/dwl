@@ -1,3 +1,178 @@
+From 34d441ef4c3e7e7c9bc21f2f8d581bb0296e3d98 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 6 Mar 2024 10:24:42 -0500
+Subject: [PATCH 1/2] apply pointer-gestures-unstable-v1.patch
+
+---
+ dwl.c | 103 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/dwl.c b/dwl.c
+index ef27a1d..2aeaca1 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -34,6 +34,7 @@
+ #include <wlr/types/wlr_output_layout.h>
+ #include <wlr/types/wlr_output_management_v1.h>
+ #include <wlr/types/wlr_pointer.h>
++#include <wlr/types/wlr_pointer_gestures_v1.h>
+ #include <wlr/types/wlr_presentation_time.h>
+ #include <wlr/types/wlr_primary_selection.h>
+ #include <wlr/types/wlr_primary_selection_v1.h>
+@@ -235,6 +236,12 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
+ static void arrangelayers(Monitor *m);
+ static void axisnotify(struct wl_listener *listener, void *data);
+ static void buttonpress(struct wl_listener *listener, void *data);
++static void swipe_begin(struct wl_listener *listener, void *data);
++static void swipe_update(struct wl_listener *listener, void *data);
++static void swipe_end(struct wl_listener *listener, void *data);
++static void pinch_begin(struct wl_listener *listener, void *data);
++static void pinch_update(struct wl_listener *listener, void *data);
++static void pinch_end(struct wl_listener *listener, void *data);
+ static void chvt(const Arg *arg);
+ static void checkidleinhibitor(struct wlr_surface *exclude);
+ static void cleanup(void);
+@@ -357,6 +364,7 @@ static struct wlr_output_manager_v1 *output_mgr;
+ static struct wlr_gamma_control_manager_v1 *gamma_control_mgr;
+ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
+ static struct wlr_cursor_shape_manager_v1 *cursor_shape_mgr;
++static struct wlr_pointer_gestures_v1 *pointer_gestures;
+ 
+ static struct wlr_cursor *cursor;
+ static struct wlr_xcursor_manager *cursor_mgr;
+@@ -597,6 +605,94 @@ buttonpress(struct wl_listener *listener, void *data)
+ 			event->time_msec, event->button, event->state);
+ }
+ 
++void
++swipe_begin(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_swipe_begin_event *event = data;
++
++	// Forward swipe begin event to client
++	wlr_pointer_gestures_v1_send_swipe_begin(
++		pointer_gestures, 
++		seat,
++		event->time_msec,
++		event->fingers
++	);
++}
++
++void
++swipe_update(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_swipe_update_event *event = data;
++
++	// Forward swipe update event to client
++	wlr_pointer_gestures_v1_send_swipe_update(
++		pointer_gestures, 
++		seat,
++		event->time_msec,
++		event->dx,
++		event->dy
++	);
++}
++
++void
++swipe_end(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_swipe_end_event *event = data;
++
++	// Forward swipe end event to client
++	wlr_pointer_gestures_v1_send_swipe_end(
++		pointer_gestures, 
++		seat,
++		event->time_msec,
++		event->cancelled
++	);
++}
++
++void
++pinch_begin(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_pinch_begin_event *event = data;
++
++	// Forward pinch begin event to client
++	wlr_pointer_gestures_v1_send_pinch_begin(
++		pointer_gestures, 
++		seat,
++		event->time_msec,
++		event->fingers
++	);
++}
++
++void
++pinch_update(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_pinch_update_event *event = data;
++
++	// Forward pinch update event to client
++	wlr_pointer_gestures_v1_send_pinch_update(
++		pointer_gestures,
++		seat,
++		event->time_msec,
++		event->dx,
++		event->dy,
++		event->scale,
++		event->rotation
++	);
++}
++
++void
++pinch_end(struct wl_listener *listener, void *data)
++{
++	struct wlr_pointer_pinch_end_event *event = data;
++
++	// Forward pinch end event to client
++	wlr_pointer_gestures_v1_send_pinch_end(
++		pointer_gestures,
++		seat,
++		event->time_msec,
++		event->cancelled
++	);
++}
++
+ void
+ chvt(const Arg *arg)
+ {
+@@ -2315,6 +2411,12 @@ setup(void)
+ 	LISTEN_STATIC(&cursor->events.motion, motionrelative);
+ 	LISTEN_STATIC(&cursor->events.motion_absolute, motionabsolute);
+ 	LISTEN_STATIC(&cursor->events.button, buttonpress);
++	LISTEN_STATIC(&cursor->events.swipe_begin, swipe_begin);
++	LISTEN_STATIC(&cursor->events.swipe_update, swipe_update);
++	LISTEN_STATIC(&cursor->events.swipe_end, swipe_end);
++	LISTEN_STATIC(&cursor->events.pinch_begin, pinch_begin);
++	LISTEN_STATIC(&cursor->events.pinch_update, pinch_update);
++	LISTEN_STATIC(&cursor->events.pinch_end, pinch_end);
+ 	LISTEN_STATIC(&cursor->events.axis, axisnotify);
+ 	LISTEN_STATIC(&cursor->events.frame, cursorframe);
+ 
+@@ -2331,6 +2433,7 @@ setup(void)
+ 	LISTEN_STATIC(&backend->events.new_input, inputdevice);
+ 	virtual_keyboard_mgr = wlr_virtual_keyboard_manager_v1_create(dpy);
+ 	LISTEN_STATIC(&virtual_keyboard_mgr->events.new_virtual_keyboard, virtualkeyboard);
++	pointer_gestures = wlr_pointer_gestures_v1_create(dpy);
+ 	seat = wlr_seat_create(dpy, "seat0");
+ 	LISTEN_STATIC(&seat->events.request_set_cursor, setcursor);
+ 	LISTEN_STATIC(&seat->events.request_set_selection, setsel);
+-- 
+2.42.0
+
+
+From a68af2e251dcc0cccef32a3cbbbe44481ed32576 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 6 Mar 2024 10:35:18 -0500
+Subject: [PATCH 2/2] add swipe gestures to trigger functions
+
+like libinput-gestures, it supports the following gestures: SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT and SWIPE_RIGHT
+support multiple fingers count in gestures[]
+support mods in gestures[]
+---
+ config.def.h |  9 +++++++
+ dwl.c        | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+
 diff --git a/config.def.h b/config.def.h
 index db0babc..e2ec245 100644
 --- a/config.def.h
@@ -155,3 +330,6 @@ index 2aeaca1..fd7ab00 100644
  	// Forward swipe end event to client
  	wlr_pointer_gestures_v1_send_swipe_end(
  		pointer_gestures, 
+-- 
+2.42.0
+
