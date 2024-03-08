@@ -1,14 +1,3 @@
-From 09765d456b55cf36cb65c1a95829a86a13857bc3 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 23:00:23 -0500
-Subject: [PATCH] same as alwayscenter patch
-
-but allows the user to center floating relative to monitor or window area
----
- config.def.h | 1 +
- dwl.c        | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..249ce2e 100644
 --- a/config.def.h
@@ -46,6 +35,3 @@ index ef27a1d..61936f7 100644
  	/* Set initial monitor, tags, floating status, and focus:
  	 * we always consider floating, clients that have parent and thus
  	 * we set the same tags and monitor than its parent, if not
--- 
-2.42.0
-
