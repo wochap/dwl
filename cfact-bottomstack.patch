@@ -1,3 +1,348 @@
+From 8b1b9bd4db22dea4b63f7dad1b0e3fdc851b9064 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 5 Mar 2024 21:46:51 -0500
+Subject: [PATCH 1/4] apply palanix cfact patch
+
+---
+ config.def.h |  3 +++
+ dwl.c        | 32 ++++++++++++++++++++++++++++++--
+ 2 files changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index db0babc..a9b6021 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -126,6 +126,9 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_H,          setcfact,       {.f = +0.25} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_L,          setcfact,       {.f = -0.25} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          setcfact,       {.f = 0} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+ 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
+diff --git a/dwl.c b/dwl.c
+index ef27a1d..9567f40 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -130,6 +130,7 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating, isurgent, isfullscreen;
+ 	uint32_t resize; /* configure serial of a pending resize */
++	float cweight;
+ } Client;
+ 
+ typedef struct {
+@@ -295,6 +296,7 @@ static void requeststartdrag(struct wl_listener *listener, void *data);
+ static void requestmonstate(struct wl_listener *listener, void *data);
+ static void resize(Client *c, struct wlr_box geo, int interact);
+ static void run(char *startup_cmd);
++static void setcfact(const Arg *arg);
+ static void setcursor(struct wl_listener *listener, void *data);
+ static void setcursorshape(struct wl_listener *listener, void *data);
+ static void setfloating(Client *c, int floating);
+@@ -971,6 +973,7 @@ createnotify(struct wl_listener *listener, void *data)
+ 	c = xdg_surface->data = ecalloc(1, sizeof(*c));
+ 	c->surface.xdg = xdg_surface;
+ 	c->bw = borderpx;
++	c->cweight = 1.0;
+ 
+ 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
+ 			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
+@@ -2010,6 +2013,19 @@ run(char *startup_cmd)
+ 	wl_display_run(dpy);
+ }
+ 
++void
++setcfact(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++
++	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
++		return;
++	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
++	if (sel->cweight < 0)
++		sel->cweight = 0;
++	arrange(selmon);
++}
++
+ void
+ setcursor(struct wl_listener *listener, void *data)
+ {
+@@ -2408,6 +2424,7 @@ void
+ tile(Monitor *m)
+ {
+ 	unsigned int i, n = 0, mw, my, ty;
++	float mweight = 0, tweight = 0;
+ 	Client *c;
+ 
+ 	wl_list_for_each(c, &clients, link)
+@@ -2420,17 +2437,27 @@ tile(Monitor *m)
+ 		mw = m->nmaster ? m->w.width * m->mfact : 0;
+ 	else
+ 		mw = m->w.width;
++	i = 0;
++	wl_list_for_each(c, &clients, link){
++		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
++			continue;
++		if (i < m->nmaster)
++			mweight += c->cweight;
++		else
++			tweight += c->cweight;
++		i++;
++	}
+ 	i = my = ty = 0;
+ 	wl_list_for_each(c, &clients, link) {
+ 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+ 			continue;
+ 		if (i < m->nmaster) {
+ 			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
+-				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
++				.height = ((c->cweight / mweight) * m->w.height)}, 0);
+ 			my += c->geom.height;
+ 		} else {
+ 			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
+-				.width = m->w.width - mw, .height = (m->w.height - ty) / (n - i)}, 0);
++				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
+ 			ty += c->geom.height;
+ 		}
+ 		i++;
+@@ -2791,6 +2818,7 @@ createnotifyx11(struct wl_listener *listener, void *data)
+ 	c->surface.xwayland = xsurface;
+ 	c->type = xsurface->override_redirect ? X11Unmanaged : X11Managed;
+ 	c->bw = borderpx;
++	c->cweight = 1.0;
+ 
+ 	/* Listen to the various events it can emit */
+ 	LISTEN(&xsurface->events.associate, &c->associate, associatex11);
+-- 
+2.42.0
+
+
+From bdd7701563be5a9f33fa0a0010b7441b4d01ec93 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 5 Mar 2024 21:48:08 -0500
+Subject: [PATCH 2/4] remove empty spaces at the end of the y axis
+
+palanix patch is leaving empty spaces at the end of the y axis in v0.5
+inspiration: https://dwm.suckless.org/patches/cfacts/dwm-cfacts-6.1.diff
+---
+ dwl.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 9567f40..4d45fa5 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -2016,13 +2016,17 @@ run(char *startup_cmd)
+ void
+ setcfact(const Arg *arg)
+ {
+-	Client *sel = focustop(selmon);
++	float f;
++	Client *c = focustop(selmon);
+ 
+-	if(!arg || !sel || !selmon->lt[selmon->sellt]->arrange)
++	if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
++		return;
++	f = arg->f + c->cweight;
++	if (arg->f == 0)
++		f = 1.0;
++	else if (f < 0.25 || f > 4.0)
+ 		return;
+-	sel->cweight = arg->f ? sel->cweight + arg->f : 1.0;
+-	if (sel->cweight < 0)
+-		sel->cweight = 0;
++	c->cweight = f;
+ 	arrange(selmon);
+ }
+ 
+@@ -2423,7 +2427,7 @@ tagmon(const Arg *arg)
+ void
+ tile(Monitor *m)
+ {
+-	unsigned int i, n = 0, mw, my, ty;
++	unsigned int i, n = 0, mw, my, ty, h;
+ 	float mweight = 0, tweight = 0;
+ 	Client *c;
+ 
+@@ -2452,13 +2456,17 @@ tile(Monitor *m)
+ 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+ 			continue;
+ 		if (i < m->nmaster) {
+-			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
+-				.height = ((c->cweight / mweight) * m->w.height)}, 0);
++			h = (m->w.height - my) * (c->cweight / mweight);
++			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my,
++				.width = mw, .height = h}, 0);
+ 			my += c->geom.height;
++			mweight -= c->cweight;
+ 		} else {
++			h = (m->w.height - ty) * (c->cweight / tweight);
+ 			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
+-				.width = m->w.width - mw, .height = ((c->cweight / tweight) * m->w.height) }, 0);
++				.width = m->w.width - mw, .height = h}, 0);
+ 			ty += c->geom.height;
++			tweight -= c->cweight;
+ 		}
+ 		i++;
+ 	}
+-- 
+2.42.0
+
+
+From 055f0561b4f39549757308586718f2099a12fc58 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 5 Mar 2024 23:05:44 -0500
+Subject: [PATCH 3/4] apply bottomstack patch
+
+---
+ config.def.h |  4 +++
+ dwl.c        | 84 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index a9b6021..378c79e 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -33,6 +33,8 @@ static const Layout layouts[] = {
+ 	{ "[]=",      tile },
+ 	{ "><>",      NULL },    /* no layout function means floating behavior */
+ 	{ "[M]",      monocle },
++	{ "TTT",      bstack },
++	{ "===",      bstackhoriz },
+ };
+ 
+ /* monitors */
+@@ -135,6 +137,8 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
++	{ MODKEY,                    XKB_KEY_u,          setlayout,      {.v = &layouts[3]} },
++	{ MODKEY,                    XKB_KEY_o,          setlayout,      {.v = &layouts[4]} },
+ 	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
+ 	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
+diff --git a/dwl.c b/dwl.c
+index 4d45fa5..247d171 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -51,6 +51,7 @@
+ #include <wlr/types/wlr_xdg_decoration_v1.h>
+ #include <wlr/types/wlr_xdg_output_v1.h>
+ #include <wlr/types/wlr_xdg_shell.h>
++#include <wlr/util/box.h>
+ #include <wlr/util/log.h>
+ #include <xkbcommon/xkbcommon.h>
+ #ifdef XWAYLAND
+@@ -329,6 +330,8 @@ static Monitor *xytomon(double x, double y);
+ static void xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+ static void zoom(const Arg *arg);
++static void bstack(Monitor *m);
++static void bstackhoriz(Monitor *m);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2938,3 +2941,84 @@ main(int argc, char *argv[])
+ usage:
+ 	die("Usage: %s [-v] [-d] [-s startup command]", argv[0]);
+ }
++
++static void
++bstack(Monitor *m) 
++{
++	int w, h, mh, mx, tx, ty, tw;
++	unsigned int i, n = 0;
++	Client *c;
++
++	wl_list_for_each(c, &clients, link)
++		if (VISIBLEON(c, m) && !c->isfloating)
++			n++;
++	if (n == 0)
++		return;
++
++	if (n > m->nmaster) {
++		mh = m->nmaster ? m->mfact * m->w.height : 0;
++		tw = m->w.width / (n - m->nmaster);
++		ty = m->w.y + mh;
++	} else {
++		mh = m->w.height;
++		tw = m->w.width;
++		ty = m->w.y;
++	}
++
++	i = mx = 0;
++	tx = m-> w.x;
++	wl_list_for_each(c, &clients, link) {
++		if (!VISIBLEON(c, m) || c->isfloating)
++			continue;
++		if (i < m->nmaster) {
++			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
++			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
++			mx += c->geom.width;
++		} else {
++			h = m->w.height - mh;
++			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = tw, .height = h }, 0);
++			if (tw != m->w.width)
++				tx += c->geom.width;
++		}
++		i++;
++	}
++}
++
++static void
++bstackhoriz(Monitor *m) {
++	int w, mh, mx, tx, ty, th;
++	unsigned int i, n = 0;
++	Client *c;
++
++	wl_list_for_each(c, &clients, link)
++		if (VISIBLEON(c, m) && !c->isfloating)
++			n ++;
++	if (n == 0)
++		return;
++
++	if (n > m->nmaster) {
++		mh = m->nmaster ? m->mfact * m->w.height : 0;
++		th = (m->w.height - mh) / (n - m->nmaster);
++		ty = m->w.y + mh;
++	} else {
++		th = mh = m->w.height;
++		ty = m->w.y;
++	}
++
++	i = mx = 0;
++	tx = m-> w.x;
++	wl_list_for_each(c, &clients, link) {
++		if (!VISIBLEON(c,m) || c->isfloating)
++			continue;
++		if (i < m->nmaster) {
++			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
++			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
++			mx += c->geom.width;
++		} else {
++			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = m->w.width, .height = th }, 0);
++			if (th != m->w.height)
++				ty += c->geom.height;
++		}
++		i++;
++	}
++}
+-- 
+2.42.0
+
+
+From 01f227c25b2d48062585121b8bfadc53b69db003 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 5 Mar 2024 23:11:51 -0500
+Subject: [PATCH 4/4] implement cfact for bottomstack layout
+
+---
+ dwl.c | 118 +++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 72 insertions(+), 46 deletions(-)
+
 diff --git a/dwl.c b/dwl.c
 index 247d171..a29849c 100644
 --- a/dwl.c
@@ -156,3 +501,6 @@ index 247d171..a29849c 100644
  		}
  		i++;
  	}
+-- 
+2.42.0
+
