@@ -1,18 +1,3 @@
-From cde81c0a62c1fccaa12f80f30b1ab4e76506b5c4 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 6 Mar 2024 12:03:34 -0500
-Subject: [PATCH] apply sevz keycodes patch to v0.5
-
-fix all conflicts
----
- config.def.h    |  85 ++++++++---------
- dwl.c           |  32 +++----
- generate-keys.c |  82 ++++++++++++++++
- keys.h          | 242 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 378 insertions(+), 63 deletions(-)
- create mode 100644 generate-keys.c
- create mode 100644 keys.h
-
 diff --git a/config.def.h b/config.def.h
 index db0babc..9723325 100644
 --- a/config.def.h
@@ -569,6 +554,3 @@ index 0000000..e732f80
 +#define Key_XF86MonBrightnessCycle   251
 +#define Key_XF86WWAN                 254
 +#define Key_XF86RFKill               255
--- 
-2.42.0
-
