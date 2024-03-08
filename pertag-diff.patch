@@ -1,13 +1,3 @@
-From 6f1d1d667ab417026f4c91993154628ccca03e41 Mon Sep 17 00:00:00 2001
-From: wochap <gean.marroquin@gmail.com>
-Date: Tue, 5 Mar 2024 23:35:55 -0500
-Subject: [PATCH] apply mortezadadgar pertag patch
-
-source: https://github.com/djpohly/dwl/wiki/pertag
----
- dwl.c | 75 +++++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 70 insertions(+), 5 deletions(-)
-
 diff --git a/dwl.c b/dwl.c
 index ef27a1d..1b84350 100644
 --- a/dwl.c
@@ -166,6 +156,3 @@ index ef27a1d..1b84350 100644
  	focusclient(focustop(selmon), 1);
  	arrange(selmon);
  	printstatus();
--- 
-2.42.0
-
