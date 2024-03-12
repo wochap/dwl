@@ -54,6 +54,7 @@
 - [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders.patch)
 - [borders](https://github.com/wochap/dwl/blob/v0.5/borders/borders.patch)
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
+- [reporting-namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-namedscratchpads/reporting-namedscratchpads-diff.patch)
 
 ### How to apply them
 
@@ -92,7 +93,8 @@ Order (preferably, from smallest to largest):
 - [x] keycodes.patch
 - [x] modes-keycodes.patch
 - [x] lockedkeys-keycodes.patch
-- [x] reporting
+- [x] reporting.patch
+- [x] reporting-namedscratchpads.patch
 
 Workflow
 

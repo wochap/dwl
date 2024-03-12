@@ -2536,10 +2536,15 @@ printstatus(void)
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
 	char *visible_appids = NULL;
+	int namedscratchpads_count;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
+		namedscratchpads_count = 0;
 		wl_list_for_each(c, &clients, link) {
+			if (c->scratchkey != 0) {
+				namedscratchpads_count++;
+			}
 			if (c->mon != m)
 				continue;
 			if (VISIBLEON(c, m)) {
@@ -2570,6 +2575,7 @@ printstatus(void)
 				sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
 		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");
+		printf("%s namedscratchpads_count %d\n", m->wlr_output->name, namedscratchpads_count);
 
 		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
 		free(visible_appids);
