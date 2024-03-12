@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 /*
  * See LICENSE file for copyright and license details.
  */
@@ -1829,10 +1830,15 @@ printstatus(void)
 	Client *c;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
+	int namedscratchpads_count;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
+		namedscratchpads_count = 0;
 		wl_list_for_each(c, &clients, link) {
+			if (c->scratchkey != 0) {
+				namedscratchpads_count++;
+			}
 			if (c->mon != m)
 				continue;
 			occ |= c->tags;
@@ -1859,6 +1865,7 @@ printstatus(void)
 		printf("%s tags %u %u %u %u\n", m->wlr_output->name, occ, m->tagset[m->seltags],
 				sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
+		printf("%s namedscratchpads_count %d\n", m->wlr_output->name, namedscratchpads_count);
 	}
 	fflush(stdout);
 }
