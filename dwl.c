@@ -2533,6 +2533,7 @@ printstatus(void)
 {
 	Monitor *m = NULL;
 	Client *c;
+	Client *csel;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
 	char *visible_appids = NULL;
@@ -2540,6 +2541,7 @@ printstatus(void)
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
+	  csel = focustop(m);
 		namedscratchpads_count = 0;
 		wl_list_for_each(c, &clients, link) {
 			if (c->scratchkey != 0) {
@@ -2548,7 +2550,7 @@ printstatus(void)
 			if (c->mon != m)
 				continue;
 			if (VISIBLEON(c, m)) {
-				asprintf(&visible_appids, "%s%s ", visible_appids ? visible_appids : "", client_get_appid(c));
+				asprintf(&visible_appids, "%s%s %s ", visible_appids ? visible_appids : "", client_get_appid(c), c == csel ? "true" : "false");
 			}
 			occ |= c->tags;
 			if (c->isurgent)
