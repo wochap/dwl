@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 /*
  * See LICENSE file for copyright and license details.
  */
@@ -2534,12 +2535,16 @@ printstatus(void)
 	Client *c;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
+	char *visible_appids = NULL;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
 		wl_list_for_each(c, &clients, link) {
 			if (c->mon != m)
 				continue;
+			if (VISIBLEON(c, m)) {
+				asprintf(&visible_appids, "%s%s ", visible_appids ? visible_appids : "", client_get_appid(c));
+			}
 			occ |= c->tags;
 			if (c->isurgent)
 				urg |= c->tags;
@@ -2565,6 +2570,9 @@ printstatus(void)
 				sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
 		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");
+
+		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
+		free(visible_appids);
 	}
 	fflush(stdout);
 }
