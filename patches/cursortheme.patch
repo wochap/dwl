@@ -12,15 +12,27 @@ index db0babc..aeb5174 100644
  /* tagging - TAGCOUNT must be no greater than 31 */
  #define TAGCOUNT (9)
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..bd53fc0 100644
+index ef27a1d..c1121a8 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -2299,7 +2299,7 @@ setup(void)
+@@ -2167,7 +2167,9 @@ setup(void)
+ {
+ 	int i, sig[] = {SIGCHLD, SIGINT, SIGTERM, SIGPIPE};
+ 	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = handlesig};
++	char cursorsize_str[3];
+ 	sigemptyset(&sa.sa_mask);
++	sprintf(cursorsize_str, "%d", cursorsize);
+ 
+ 	for (i = 0; i < LENGTH(sig); i++)
+ 		sigaction(sig[i], &sa, NULL);
+@@ -2299,8 +2301,8 @@ setup(void)
  	 * Xcursor themes to source cursor images from and makes sure that cursor
  	 * images are available at all scale factors on the screen (necessary for
  	 * HiDPI support). Scaled cursors will be loaded with each output. */
 -	cursor_mgr = wlr_xcursor_manager_create(NULL, 24);
+-	setenv("XCURSOR_SIZE", "24", 1);
 +	cursor_mgr = wlr_xcursor_manager_create(cursortheme, cursorsize);
- 	setenv("XCURSOR_SIZE", "24", 1);
++	setenv("XCURSOR_SIZE", cursorsize_str, 1);
  
  	/*
+ 	 * wlr_cursor *only* displays an image on screen. It does not move around
