@@ -55,6 +55,7 @@
 - [borders](https://github.com/wochap/dwl/blob/v0.5/borders/borders.patch)
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
 - [reporting-namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-namedscratchpads/reporting-namedscratchpads-diff.patch)
+- [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx.patch)
 
 ### How to apply them
 
@@ -95,6 +96,7 @@ Order (preferably, from smallest to largest):
 - [x] lockedkeys-keycodes.patch
 - [x] reporting.patch
 - [x] reporting-namedscratchpads.patch
+- [x] scenefx
 
 Workflow
 
