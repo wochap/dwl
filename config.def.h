@@ -23,6 +23,10 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can al
 static const char cursortheme[]            = "capitaine-cursors"; /* theme from /usr/share/cursors/xorg-x11 */
 static const unsigned int cursorsize       = 24;
 static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
+static const int shadow = 1;
+static const int shadow_only_floating = 0;
+static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
+static const int shadow_blur_sigma = 20;
 
 enum {
     VIEW_L = -1,
