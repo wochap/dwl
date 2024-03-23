@@ -12,22 +12,24 @@ index 6cde460..f235edf 100644
  LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
  
 diff --git a/config.def.h b/config.def.h
-index db0babc..db2532d 100644
+index db0babc..a0440b1 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -12,6 +12,10 @@ static const float focuscolor[]            = COLOR(0x005577ff);
+@@ -12,6 +12,12 @@ static const float focuscolor[]            = COLOR(0x005577ff);
  static const float urgentcolor[]           = COLOR(0xff0000ff);
  /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
  static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
 +static const int shadow = 1;
 +static const int shadow_only_floating = 0;
 +static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
++static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
 +static const int shadow_blur_sigma = 20;
++static const int shadow_blur_sigma_focus = 40;
  
  /* tagging - TAGCOUNT must be no greater than 31 */
  #define TAGCOUNT (9)
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..c9fc22a 100644
+index ef27a1d..8d7d576 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -9,6 +9,9 @@
@@ -83,7 +85,29 @@ index ef27a1d..c9fc22a 100644
  	LISTEN(&xdg_surface->surface->events.commit, &c->commit, commitnotify);
  	LISTEN(&xdg_surface->surface->events.map, &c->map, mapnotify);
  	LISTEN(&xdg_surface->surface->events.unmap, &c->unmap, unmapnotify);
-@@ -1554,6 +1570,9 @@ mapnotify(struct wl_listener *listener, void *data)
+@@ -1204,8 +1220,11 @@ focusclient(Client *c, int lift)
+ 
+ 		/* Don't change border color if there is an exclusive focus or we are
+ 		 * handling a drag operation */
+-		if (!exclusive_focus && !seat->drag)
++		if (!exclusive_focus && !seat->drag) {
+ 			client_set_border_color(c, focuscolor);
++			c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
++			c->shadow_data.color = shadow_color_focus;
++		}
+ 	}
+ 
+ 	/* Deactivate old client if focus is changing */
+@@ -1223,6 +1242,8 @@ focusclient(Client *c, int lift)
+ 		 * and probably other clients */
+ 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
+ 			client_set_border_color(old_c, bordercolor);
++			old_c->shadow_data.blur_sigma = shadow_blur_sigma;
++			old_c->shadow_data.color = shadow_color;
+ 
+ 			client_activate_surface(old, 0);
+ 		}
+@@ -1554,6 +1575,9 @@ mapnotify(struct wl_listener *listener, void *data)
  	 /* TODO: https://github.com/djpohly/dwl/pull/334#issuecomment-1330166324 */
  	if (c->type == XDGShell && (p = client_get_parent(c))) {
  		c->isfloating = 1;
@@ -93,7 +117,7 @@ index ef27a1d..c9fc22a 100644
  		wlr_scene_node_reparent(&c->scene->node, layers[LyrFloat]);
  		setmon(c, p->mon, p->tags);
  	} else {
-@@ -1861,6 +1880,53 @@ quit(const Arg *arg)
+@@ -1861,6 +1885,53 @@ quit(const Arg *arg)
  	wl_display_terminate(dpy);
  }
  
@@ -147,7 +171,7 @@ index ef27a1d..c9fc22a 100644
  void
  rendermon(struct wl_listener *listener, void *data)
  {
-@@ -1878,6 +1944,10 @@ rendermon(struct wl_listener *listener, void *data)
+@@ -1878,6 +1949,10 @@ rendermon(struct wl_listener *listener, void *data)
  		if (c->resize && !c->isfloating && client_is_rendered_on_mon(c, m) && !client_is_stopped(c))
  			goto skip;
  
@@ -158,7 +182,7 @@ index ef27a1d..c9fc22a 100644
  	/*
  	 * HACK: The "correct" way to set the gamma is to commit it together with
  	 * the rest of the state in one go, but to do that we would need to rewrite
-@@ -2048,6 +2118,9 @@ void
+@@ -2048,6 +2123,9 @@ void
  setfloating(Client *c, int floating)
  {
  	c->isfloating = floating;
@@ -168,7 +192,7 @@ index ef27a1d..c9fc22a 100644
  	if (!c->mon)
  		return;
  	wlr_scene_node_reparent(&c->scene->node, layers[c->isfullscreen
-@@ -2196,7 +2269,7 @@ setup(void)
+@@ -2196,7 +2274,7 @@ setup(void)
  	 * can also specify a renderer using the WLR_RENDERER env var.
  	 * The renderer is responsible for defining the various pixel formats it
  	 * supports for shared memory, this configures that for clients. */
@@ -177,3 +201,16 @@ index ef27a1d..c9fc22a 100644
  		die("couldn't create renderer");
  
  	/* Create shm, drm and linux_dmabuf interfaces by ourselves.
+@@ -2650,8 +2728,11 @@ urgent(struct wl_listener *listener, void *data)
+ 	if (!c || c == focustop(selmon))
+ 		return;
+ 
+-	if (client_surface(c)->mapped)
++	if (client_surface(c)->mapped) {
+ 		client_set_border_color(c, urgentcolor);
++		c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
++		c->shadow_data.color = shadow_color_focus;
++	}
+ 	c->isurgent = 1;
+ 	printstatus();
+ }
