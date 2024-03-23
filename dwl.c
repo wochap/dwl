@@ -1629,8 +1629,11 @@ focusclient(Client *c, int lift)
 
 		/* Don't change border color if there is an exclusive focus or we are
 		 * handling a drag operation */
-		if (!exclusive_focus && !seat->drag)
+		if (!exclusive_focus && !seat->drag) {
 			client_set_border_color(c, focuscolor, focuscolor, focuscolor);
+			c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
+			c->shadow_data.color = shadow_color_focus;
+		}
 	}
 
 	/* Deactivate old client if focus is changing */
@@ -1648,6 +1651,8 @@ focusclient(Client *c, int lift)
 		 * and probably other clients */
 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
 			client_set_border_color(old_c, bordercolor, borderscolor, borderecolor);
+			old_c->shadow_data.blur_sigma = shadow_blur_sigma;
+			old_c->shadow_data.color = shadow_color;
 
 			client_activate_surface(old, 0);
 		}
@@ -3729,8 +3734,11 @@ urgent(struct wl_listener *listener, void *data)
 	if (!c || c == focustop(selmon))
 		return;
 
-	if (client_surface(c)->mapped)
+	if (client_surface(c)->mapped) {
 		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
+		c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
+		c->shadow_data.color = shadow_color_focus;
+	}
 	c->isurgent = 1;
 	printstatus();
 }
