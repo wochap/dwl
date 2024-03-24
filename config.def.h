@@ -29,6 +29,7 @@ static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
 static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
 static const int shadow_blur_sigma = 20;
 static const int shadow_blur_sigma_focus = 40;
+static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk", "cpupower-gui", NULL }; /* list of app-id to ignore */
 
 enum {
     VIEW_L = -1,
