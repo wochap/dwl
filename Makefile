@@ -9,7 +9,7 @@ DWLDEVCFLAGS = -pedantic -Wall -Wextra -Wdeclaration-after-statement -Wno-unused
 	-Werror=strict-prototypes -Werror=implicit -Werror=return-type -Werror=incompatible-pointer-types
 
 # CFLAGS / LDFLAGS
-PKGS      = wlroots wayland-server xkbcommon libinput $(XLIBS)
+PKGS      = scenefx wlroots wayland-server xkbcommon libinput $(XLIBS)
 DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
 LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
 
