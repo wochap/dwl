@@ -155,8 +155,8 @@ client_get_clip(Client *c, struct wlr_box *clip)
 #endif
 
 	*clip = (struct wlr_box){
-		.x = c->surface.xdg->pending.geometry.x,
-		.y = c->surface.xdg->pending.geometry.y,
+		.x = 0,
+		.y = 0,
 		.width = c->geom.width - c->bw,
 		.height = c->geom.height - c->bw};
 

@@ -6,12 +6,19 @@
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int borderpx         = 10;  /* border pixel of windows */
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
+static const int shadow = 1;
+static const int shadow_only_floating = 0;
+static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
+static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
+static const int shadow_blur_sigma = 20;
+static const int shadow_blur_sigma_focus = 40;
+static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk",  NULL }; /* list of app-id to ignore */
 
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
