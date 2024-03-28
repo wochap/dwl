@@ -2712,6 +2712,7 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 {
 	struct wlr_box *bbox = interact ? &sgeom : &c->mon->w;
 	struct wlr_box clip;
+	int should_clip;
 	client_set_bounds(c, geo.width, geo.height);
 	c->geom = geo;
 	applybounds(c, bbox);
@@ -2749,7 +2750,12 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	c->resize = client_set_size(c, c->geom.width - 2 * c->bw,
 			c->geom.height - 2 * c->bw);
 	client_get_clip(c, &clip);
-	wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, &clip);
+	should_clip = client_get_clip(c, &clip);
+	if (should_clip) {
+		wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, &clip);
+	} else {
+		wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, NULL);
+	}
 }
 
 void
