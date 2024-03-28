@@ -151,8 +151,8 @@ client_get_clip(Client *c, struct wlr_box *clip)
 	clip->x = xdg_geom.x;
 	clip->y = xdg_geom.y;
 
-	if (!(xdg_geom.width > c->geom.width - c->bw 
-			|| xdg_geom.height > c->geom.height - c->bw)) {
+	if (xdg_geom.width <= c->geom.width - c->bw 
+			&& xdg_geom.height <= c->geom.height - c->bw) {
 		return 0;
 	}
 

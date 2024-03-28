@@ -12,7 +12,7 @@ index 6cde460..f235edf 100644
  LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
  
 diff --git a/client.h b/client.h
-index 71c7d76..b641ced 100644
+index 71c7d76..6532e05 100644
 --- a/client.h
 +++ b/client.h
 @@ -131,7 +131,7 @@ client_get_appid(Client *c)
@@ -36,8 +36,8 @@ index 71c7d76..b641ced 100644
  	clip->x = xdg_geom.x;
  	clip->y = xdg_geom.y;
 +
-+	if (!(xdg_geom.width > c->geom.width - c->bw 
-+			|| xdg_geom.height > c->geom.height - c->bw)) {
++	if (xdg_geom.width <= c->geom.width - c->bw 
++			&& xdg_geom.height <= c->geom.height - c->bw) {
 +		return 0;
 +	}
 +
