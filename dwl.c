@@ -153,7 +153,7 @@ typedef struct {
 	unsigned int bws;
 	unsigned int bwe;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen;
+	int isfloating, isurgent, isfullscreen, isfakefullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
 	float cweight;
 	char scratchkey;
@@ -362,6 +362,7 @@ static void setcursor(struct wl_listener *listener, void *data);
 static void setcursorshape(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
+static void setfakefullscreen(Client *c, int fullscreen);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -378,6 +379,7 @@ static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglekblayout(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void togglefakefullscreen(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void focusortogglescratch(const Arg *arg);
 static void focusortogglematchingscratch(const Arg *arg);
@@ -2914,6 +2916,17 @@ setfullscreen(Client *c, int fullscreen)
 }
 
 void
+setfakefullscreen(Client *c, int fullscreen)
+{
+	c->isfakefullscreen = fullscreen;
+	if (!c->mon)
+		return;
+	if (c->isfullscreen)
+		setfullscreen(c, 0);
+	client_set_fullscreen(c, fullscreen);
+}
+
+void
 setgamma(struct wl_listener *listener, void *data)
 {
 	struct wlr_gamma_control_manager_v1_set_gamma_event *event = data;
@@ -3489,6 +3502,14 @@ focusortogglematchingscratch(const Arg *arg)
 	} else {
 		spawnscratch(arg);
 	}
+}
+
+void
+togglefakefullscreen(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		setfakefullscreen(sel, !sel->isfakefullscreen);
 }
 
 void

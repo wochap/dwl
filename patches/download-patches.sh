@@ -45,4 +45,5 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/gestures/gestures.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/minimalborders/minimalborders.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/borders/borders.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/scenefx/scenefx.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/fakefullscreenclient.patch
 
