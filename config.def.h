@@ -19,6 +19,11 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can al
 /* logging */
 static int log_level = WLR_ERROR;
 
+static const Env envs[] = {
+    /* variable            value */
+    { "XDG_CURRENT_DESKTOP",    "wlroots" },
+};
+
 static const Rule rules[] = {
 	/* app_id     title       tags mask     isfloating   monitor */
 	/* examples:
