@@ -53,12 +53,16 @@ static const unsigned int swipe_min_threshold = 0;
 /* logging */
 static int log_level = WLR_ERROR;
 
+static const Env envs[] = {
+    /* variable            value */
+    { "XDG_CURRENT_DESKTOP",    "wlroots" },
+};
+
 /* Autostart */
 static const char *const autostart[] = {
         "wbg", "/path/to/your/image", NULL,
         NULL /* terminate */
 };
-
 
 static const Rule rules[] = {
 	/* app_id     title       tags mask     isfloating   monitor x   y  width height scratchkey */
