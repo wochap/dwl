@@ -157,6 +157,7 @@ typedef struct {
 	uint32_t resize; /* configure serial of a pending resize */
 	float cweight;
 	char scratchkey;
+	int inscratchpad;
 	float opacity;
 	int corner_radius;
 	struct shadow_data shadow_data;
@@ -392,6 +393,8 @@ static void moveresizekb(const Arg *arg);
 static void movecenter(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglescratchpad(const Arg *arg);
+static void toggleinscratchpad(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
 static void unmaplayersurfacenotify(struct wl_listener *listener, void *data);
 static void unmapnotify(struct wl_listener *listener, void *data);
@@ -536,6 +539,7 @@ applyrules(Client *c)
 
 	c->isfloating = client_is_float_type(c);
 	c->scratchkey = 0;
+	c->inscratchpad = 0;
 	if (!(appid = client_get_appid(c)))
 		appid = broken;
 	if (!(title = client_get_title(c)))
@@ -3568,6 +3572,49 @@ toggleview(const Arg *arg)
 	focusclient(focustop(selmon), 1);
 	arrange(selmon);
 	printstatus();
+}
+
+void
+togglescratchpad(const Arg *arg)
+{
+	Client *c;
+	int iscratchpadvisible = 1;
+	int found = 0;
+
+	wl_list_for_each(c, &clients, link) {
+		if (c->inscratchpad) {
+			found = 1;
+			if (!VISIBLEON(c, selmon)) {
+				iscratchpadvisible = 0;
+			}
+		}
+	}
+	if (!found)
+		return;
+	wl_list_for_each(c, &clients, link) {
+		if (c->inscratchpad) {
+			c->tags = iscratchpadvisible ? 0 : selmon->tagset[selmon->seltags];
+			focusclient(c, 1);
+		}
+	}
+	arrange(selmon);
+}
+
+void
+toggleinscratchpad(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (!sel)
+		return;
+	if (!sel->mon)
+		return;
+	sel->inscratchpad = !sel->inscratchpad;
+	if (sel->inscratchpad) {
+		sel->tags = 0;
+	} else {
+		sel->tags = selmon->tagset[selmon->seltags];
+	}
+	arrange(selmon);
 }
 
 void

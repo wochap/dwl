@@ -221,6 +221,8 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
 	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_e,       togglefakefullscreen, {0} },
+	{ MODKEY,                    Key_d,          togglescratchpad, {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_d,          toggleinscratchpad, {0} },
 	{ MODKEY,                    Key_Down,       moveresizekb,   {.v = (int []){ 0, 40, 0, 0 }}},
 	{ MODKEY,                    Key_Up,         moveresizekb,   {.v = (int []){ 0, -40, 0, 0 }}},
 	{ MODKEY,                    Key_Right,      moveresizekb,   {.v = (int []){ 40, 0, 0, 0 }}},
