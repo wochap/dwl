@@ -59,6 +59,7 @@
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
 - [scratchpads](https://github.com/wochap/dwl/blob/v0.5/scratchpads/scratchpads-diff.patch)
+- [reporting-scratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-scratchpads/reporting-scratchpads-diff.patch)
 
 ### How to apply them
 
@@ -103,6 +104,7 @@ Order (preferably, from smallest to largest):
 - [x] fakefullscreenclient.patch
 - [x] env.patch
 - [x] scratchpads.patch
+- [x] reporting-scratchpads.patch
 
 Workflow
 
