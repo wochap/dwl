@@ -2583,14 +2583,19 @@ printstatus(void)
 	const char *appid, *title;
 	char *visible_appids = NULL;
 	int namedscratchpads_count;
+	int scratchpads_count;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
 	  csel = focustop(m);
 		namedscratchpads_count = 0;
+		scratchpads_count = 0;
 		wl_list_for_each(c, &clients, link) {
 			if (c->scratchkey != 0) {
 				namedscratchpads_count++;
+			}
+			if (c->inscratchpad != 0) {
+				scratchpads_count++;
 			}
 			if (c->mon != m)
 				continue;
@@ -2623,6 +2628,7 @@ printstatus(void)
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
 		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");
 		printf("%s namedscratchpads_count %d\n", m->wlr_output->name, namedscratchpads_count);
+		printf("%s scratchpads_count %d\n", m->wlr_output->name, scratchpads_count);
 
 		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
 		free(visible_appids);
@@ -3615,6 +3621,7 @@ toggleinscratchpad(const Arg *arg)
 		sel->tags = selmon->tagset[selmon->seltags];
 	}
 	arrange(selmon);
+	printstatus();
 }
 
 void
