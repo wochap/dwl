@@ -9,7 +9,7 @@
 
 # Clients placement
 
-- [alwayscenter](https://github.com/wochap/dwl/blob/v0.5/alwayscenter/alwayscenter.patch) (keybinding to center floating windows)
+- [alwayscenter](https://github.com/wochap/dwl/blob/v0.5/alwayscenter/alwayscenter.patch)
 - [cfact](https://github.com/wochap/dwl/blob/v0.5/cfact/cfact.patch)
 - [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack.patch)
 
@@ -52,7 +52,7 @@
 - [autostart](https://codeberg.org/dwl/dwl-patches/src/branch/main/autostart/autostart.patch)
 - [gestures](https://github.com/wochap/dwl/blob/v0.5/gestures/gestures.patch)
 - [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders.patch)
-- [borders](https://github.com/wochap/dwl/blob/v0.5/borders/borders.patch)
+- ~~[borders](https://github.com/wochap/dwl/blob/v0.5/borders/borders.patch)~~
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
 - [reporting-namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-namedscratchpads/reporting-namedscratchpads-diff.patch)
 - [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx.patch)
@@ -93,7 +93,7 @@ Order (preferably, from smallest to largest):
 - [x] namedscratchpads.patch
 - [x] pertag.patch
 - [x] swapandfocusdir.patch
-- [x] borders.patch
+- [x] ~~borders.patch~~
 - [x] output-power-management.patch
 - [x] keycodes.patch
 - [x] modes-keycodes.patch
