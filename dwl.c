@@ -2493,19 +2493,44 @@ void
 togglescratchpad(const Arg *arg)
 {
 	Client *c;
-	int iscratchpadvisible = 1;
+	Client *sel = focustop(selmon);
+	int iscratchpadvisible;
 	int found = 0;
+	int visible = 0;
+	int focus = 0;
+	int hidden_count = 0;
 
 	wl_list_for_each(c, &clients, link) {
 		if (c->inscratchpad) {
 			found = 1;
+			if (sel == c) {
+				focus = 1;
+			}
+			if (VISIBLEON(c, selmon)) {
+				visible = 1;
+			}
 			if (!VISIBLEON(c, selmon)) {
-				iscratchpadvisible = 0;
+				hidden_count++;
 			}
 		}
 	}
-	if (!found)
+
+	if (!found) {
 		return;
+	}
+
+	if (hidden_count > 0) {
+		iscratchpadvisible = 0;
+	} else if (visible) {
+		if (focus) {
+			iscratchpadvisible = 1;
+		} else {
+			iscratchpadvisible = 0;
+		}
+	} else {
+		iscratchpadvisible = 0;
+	}
+
 	wl_list_for_each(c, &clients, link) {
 		if (c->inscratchpad) {
 			c->tags = iscratchpadvisible ? 0 : selmon->tagset[selmon->seltags];
