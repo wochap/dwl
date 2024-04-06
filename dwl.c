@@ -2465,6 +2465,10 @@ movecenter(const Arg *arg)
 		return;
 	}
 
+	if (!c->isfloating) {
+		return;
+	}
+
 	if (c) {
 		// const int center_relative_to_monitor = arg->i;
 		struct wlr_box b = center_relative_to_monitor ? m->m : m->w; 
