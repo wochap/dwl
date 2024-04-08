@@ -1823,11 +1823,12 @@ printstatus(void)
 	Client *csel;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
-	char *visible_appids = NULL;
+	char *visible_appids;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
 	  csel = focustop(m);
+		visible_appids = NULL;
 		wl_list_for_each(c, &clients, link) {
 			if (c->mon != m)
 				continue;
