@@ -32,6 +32,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes/modes.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes-keycodes/modes-keycodes.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys/lockedkeys.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys-keycodes/lockedkeys-keycodes.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.5/xkb-rules-switcher/xkb-rules-switcher.patch
 
 # Cursor
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/cursortheme/cursortheme.patch

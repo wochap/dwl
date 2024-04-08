@@ -96,12 +96,16 @@ static const MonitorRule monrules[] = {
 };
 
 /* keyboard */
-static const struct xkb_rule_names xkb_rules = {
-	/* can specify fields: rules, model, layout, variant, options */
-	/* example:
-	.options = "ctrl:nocaps",
-	*/
-	.options = NULL,
+static const struct xkb_rule_names xkb_rules[] = {
+	{
+		/* can specify fields: rules, model, layout, variant, options */
+		.layout = "us",
+		.options = NULL,
+	},
+	{
+		.layout = "us",
+		.options = "compose:ralt",
+	},
 };
 
 static const int repeat_rate = 25;
@@ -233,6 +237,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_period,  focusmon,       {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY,                    Key_w,          switchxkbrule,  {0} },
 	TAGKEYS(                     Key_1,                       0),
 	TAGKEYS(                     Key_2,                       1),
 	TAGKEYS(                     Key_3,                       2),

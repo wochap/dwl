@@ -39,6 +39,7 @@
 - [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes.patch)
 - [lockedkeys](https://github.com/wochap/dwl/blob/v0.5/lockedkeys/lockedkeys.patch)
 - [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes.patch)
+- [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.5/xkb-rules-switcher/xkb-rules-switcher.patch)
 
 # Cursor
 
@@ -103,6 +104,7 @@ Order (preferably, from smallest to largest):
 - [x] env.patch
 - [x] scratchpads.patch
 - [x] reporting-scratchpads.patch
+- [x] xkb-rules-switcher.patch
 
 Workflow
 
