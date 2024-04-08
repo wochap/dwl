@@ -39,6 +39,9 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/virtual-pointer/virtual-p
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/cursortheme/cursortheme.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/relative-mouse-resize/relative-mouse-resize.patch
 
+# Monitor
+wget https://raw.githubusercontent.com/wochap/dwl/v0.5/focus-mon-pointer/focus-mon-pointer-diff.patch
+
 # Other
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/output-power-management/output-power-management.patch
 wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/autostart/autostart.patch

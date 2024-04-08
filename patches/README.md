@@ -47,6 +47,10 @@
 - [cursortheme](https://github.com/wochap/dwl/blob/v0.5/cursortheme/cursortheme.patch)
 - [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.5/relative-mouse-resize/relative-mouse-resize.patch)
 
+# Monitor
+
+- [focus-mon-pointer](https://github.com/wochap/dwl/blob/v0.5/focus-mon-pointer/focus-mon-pointer-diff.patch)
+
 # Other
 
 - [output-power-management](https://github.com/wochap/dwl/blob/v0.5/output-power-management/output-power-management.patch)
@@ -109,6 +113,7 @@ Order (preferably, from smallest to largest):
 - [x] xkb-rules-switcher.patch
 - [x] virtual-pointer.patch
 - [x] headless.patch
+- [x] focus-mon-pointer.patch
 
 Workflow
 
