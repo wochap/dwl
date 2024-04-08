@@ -308,6 +308,7 @@ static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
 static void spawn(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
+static void switchxkbrule(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
@@ -369,6 +370,7 @@ static struct wl_listener lock_listener = {.notify = locksession};
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
 static unsigned int cursor_mode;
+static unsigned int xkb_rule_index = 0;
 static Client *grabc;
 static int grabcx, grabcy; /* client-relative */
 
@@ -773,7 +775,7 @@ createkeyboard(struct wlr_keyboard *keyboard)
 
 	/* Prepare an XKB keymap and assign it to the keyboard. */
 	context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-	keymap = xkb_keymap_new_from_names(context, &xkb_rules,
+	keymap = xkb_keymap_new_from_names(context, &xkb_rules[xkb_rule_index],
 		XKB_KEYMAP_COMPILE_NO_FLAGS);
 	if (!keymap)
 		die("createkeyboard: failed to compile keymap");
@@ -2381,6 +2383,25 @@ startdrag(struct wl_listener *listener, void *data)
 
 	drag->icon->data = &wlr_scene_drag_icon_create(drag_icon, drag->icon)->node;
 	LISTEN_STATIC(&drag->icon->events.destroy, destroydragicon);
+}
+
+void
+switchxkbrule(const Arg *arg)
+{
+	Keyboard *kb;
+	struct xkb_rule_names newrule;
+
+	xkb_rule_index = (xkb_rule_index + 1) % LENGTH(xkb_rules);
+	newrule = xkb_rules[xkb_rule_index];
+
+	wl_list_for_each(kb, &keyboards, link) {
+		struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+		struct xkb_keymap *keymap = xkb_map_new_from_names(context, &newrule,
+				XKB_KEYMAP_COMPILE_NO_FLAGS);
+		wlr_keyboard_set_keymap(kb->wlr_keyboard, keymap);
+		xkb_keymap_unref(keymap);
+		xkb_context_unref(context);
+	}
 }
 
 void
