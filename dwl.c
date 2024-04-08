@@ -2520,7 +2520,11 @@ focusortogglescratch(const Arg *arg)
 			}
 		} else {
 			// show
-			c->tags = selmon->tagset[selmon->seltags];
+			if (c->mon == selmon) {
+				c->tags = selmon->tagset[selmon->seltags];
+			} else {
+				setmon(c, selmon, 0);
+			}
 			focusclient(c, 1);
 		}
 		arrange(selmon);
@@ -2560,7 +2564,11 @@ focusortogglematchingscratch(const Arg *arg)
 				}
 			} else {
 				// show
-				c->tags = selmon->tagset[selmon->seltags];
+				if (c->mon == selmon) {
+					c->tags = selmon->tagset[selmon->seltags];
+				} else {
+					setmon(c, selmon, 0);
+				}
 				// focus
 				focusclient(c, 1);
 			}
