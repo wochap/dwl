@@ -30,7 +30,6 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/naturalscrolltrackpad/nat
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes/modes.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes-keycodes/modes-keycodes.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/togglekblayout/togglekblayout.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys/lockedkeys.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys-keycodes/lockedkeys-keycodes.patch
 

@@ -37,7 +37,6 @@
 - [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1.patch)
 - [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes.patch)
 - [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes.patch)
-- [togglekblayout](https://github.com/wochap/dwl/blob/v0.5/togglekblayout/togglekblayout.patch)
 - [lockedkeys](https://github.com/wochap/dwl/blob/v0.5/lockedkeys/lockedkeys.patch)
 - [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes.patch)
 
@@ -77,7 +76,6 @@ Order (preferably, from smallest to largest):
 - [x] lockedkeys.patch
 - [x] movestack.patch
 - [x] moveresizekb.patch
-- [x] togglekblayout.patch
 - [x] shiftview.patch
 - [x] rotatetags.patch
 - [x] centeredmaster.patch
