@@ -50,4 +50,5 @@ wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/f
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/env/env-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/scratchpads/scratchpads-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/reporting-scratchpads/reporting-scratchpads-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.5/headless/headless-diff.patch
 

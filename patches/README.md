@@ -61,6 +61,7 @@
 - [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
 - [scratchpads](https://github.com/wochap/dwl/blob/v0.5/scratchpads/scratchpads-diff.patch)
 - [reporting-scratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-scratchpads/reporting-scratchpads-diff.patch)
+- [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
 
 ### How to apply them
 
@@ -107,6 +108,7 @@ Order (preferably, from smallest to largest):
 - [x] reporting-scratchpads.patch
 - [x] xkb-rules-switcher.patch
 - [x] virtual-pointer.patch
+- [x] headless.patch
 
 Workflow
 
