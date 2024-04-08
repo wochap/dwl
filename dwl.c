@@ -12,7 +12,10 @@
 #include <unistd.h>
 #include <wayland-server-core.h>
 #include <wlr/backend.h>
+#include <wlr/backend/headless.h>
 #include <wlr/backend/libinput.h>
+#include <wlr/backend/multi.h>
+#include <wlr/backend/wayland.h>
 #include <wlr/render/allocator.h>
 #include <wlr/render/wlr_renderer.h>
 #include <wlr/types/wlr_compositor.h>
@@ -57,6 +60,9 @@
 #include <wlr/xwayland.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_icccm.h>
+#endif
+#if WLR_HAS_X11_BACKEND
+#include <wlr/backend/x11.h>
 #endif
 
 #include "util.h"
@@ -327,6 +333,8 @@ static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
 static void zoom(const Arg *arg);
+static void _create_output(struct wlr_backend *backend, void *data);
+static void create_output(const Arg *arg);
 
 /* variables */
 static const char broken[] = "broken";
@@ -335,6 +343,7 @@ static int locked;
 static void *exclusive_focus;
 static struct wl_display *dpy;
 static struct wlr_backend *backend;
+static struct wlr_backend *headless_backend;
 static struct wlr_scene *scene;
 static struct wlr_scene_tree *layers[NUM_LAYERS];
 static struct wlr_scene_tree *drag_icon;
@@ -2321,6 +2330,16 @@ setup(void)
 	cursor_shape_mgr = wlr_cursor_shape_manager_v1_create(dpy, 1);
 	LISTEN_STATIC(&cursor_shape_mgr->events.request_set_shape, setcursorshape);
 
+	/**
+	 * Initialize headless backend
+	 */ 
+	headless_backend = wlr_headless_backend_create(dpy);
+	if (!headless_backend) {
+		die("Failed to create secondary headless backend");
+	} else {
+		wlr_multi_backend_add(backend, headless_backend);
+	}
+
 	/*
 	 * Configures a seat, which is a single "seat" at which a user sits and
 	 * operates the computer. This conceptually includes up to one keyboard,
@@ -2744,6 +2763,45 @@ zoom(const Arg *arg)
 
 	focusclient(sel, 1);
 	arrange(selmon);
+}
+
+void 
+_create_output(struct wlr_backend *_backend, void *data) 
+{
+	bool *done = data;
+	if (*done) {
+		return;
+	}
+
+	if (wlr_backend_is_wl(_backend)) {
+		wlr_wl_output_create(_backend);
+		*done = true;
+	} else if (wlr_backend_is_headless(_backend)) {
+		wlr_headless_add_output(_backend, 1920, 1080);
+		*done = true;
+	}
+#if WLR_HAS_X11_BACKEND
+	else if (wlr_backend_is_x11(backend)) {
+		wlr_x11_output_create(backend);
+		*done = true;
+	}
+#endif
+}
+
+void
+create_output(const Arg *arg)
+{
+	bool done = false;
+
+	if (!wlr_backend_is_multi(backend)) {
+		die("Expected a multi backend");
+	}
+
+	wlr_multi_for_each_backend(backend, _create_output, &done);
+
+	if (!done) {
+		die("Can only create outputs for Wayland, X11 or headless backends");
+	}
 }
 
 #ifdef XWAYLAND
