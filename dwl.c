@@ -3009,6 +3009,9 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
+		if (c->isfloating) {
+			_movecenter(c, 0);
+		}
 	}
 	focusclient(focustop(selmon), 1);
 }
