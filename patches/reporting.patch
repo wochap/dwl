@@ -1,5 +1,5 @@
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..f41b49b 100644
+index ef27a1d..67e5e9b 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -1,3 +1,4 @@
@@ -7,18 +7,19 @@ index ef27a1d..f41b49b 100644
  /*
   * See LICENSE file for copyright and license details.
   */
-@@ -1819,14 +1820,20 @@ printstatus(void)
+@@ -1819,14 +1820,21 @@ printstatus(void)
  {
  	Monitor *m = NULL;
  	Client *c;
 +	Client *csel;
  	uint32_t occ, urg, sel;
  	const char *appid, *title;
-+	char *visible_appids = NULL;
++	char *visible_appids;
  
  	wl_list_for_each(m, &mons, link) {
  		occ = urg = 0;
 +	  csel = focustop(m);
++		visible_appids = NULL;
  		wl_list_for_each(c, &clients, link) {
  			if (c->mon != m)
  				continue;
@@ -28,7 +29,7 @@ index ef27a1d..f41b49b 100644
  			occ |= c->tags;
  			if (c->isurgent)
  				urg |= c->tags;
-@@ -1851,6 +1858,9 @@ printstatus(void)
+@@ -1851,6 +1859,9 @@ printstatus(void)
  		printf("%s tags %u %u %u %u\n", m->wlr_output->name, occ, m->tagset[m->seltags],
  				sel, urg);
  		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);

@@ -2586,7 +2586,7 @@ printstatus(void)
 	Client *csel;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
-	char *visible_appids = NULL;
+	char *visible_appids;
 	int namedscratchpads_count;
 	int scratchpads_count;
 
@@ -2595,6 +2595,7 @@ printstatus(void)
 	  csel = focustop(m);
 		namedscratchpads_count = 0;
 		scratchpads_count = 0;
+		visible_appids = NULL;
 		wl_list_for_each(c, &clients, link) {
 			if (c->scratchkey != 0) {
 				namedscratchpads_count++;
