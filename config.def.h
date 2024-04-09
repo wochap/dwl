@@ -30,6 +30,15 @@ static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
 static const int shadow_blur_sigma = 20;
 static const int shadow_blur_sigma_focus = 40;
 static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk", "cpupower-gui", NULL }; /* list of app-id to ignore */
+static const int optimized_blur = 0;
+static const struct blur_data blur_data = {
+	.radius = 5, /* 0 disables blur */
+	.num_passes = 3,
+	.noise = 0.02,
+	.brightness = 0.9,
+	.contrast = 0.9,
+	.saturation = 1.1,
+};
 
 enum {
     VIEW_L = -1,

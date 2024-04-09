@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <scenefx/fx_renderer/fx_renderer.h>
+#include <scenefx/types/fx/blur_data.h>
 #include <scenefx/types/fx/shadow_data.h>
 #include <scenefx/types/wlr_scene.h>
 #include <unistd.h>
@@ -421,6 +422,7 @@ static void bstackhoriz(Monitor *m);
 static void entermode(const Arg *arg);
 static int in_shadow_ignore_list(const char *str);
 static void output_configure_scene(struct wlr_scene_node *node, Client *c);
+static void iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
 static void _create_output(struct wlr_backend *backend, void *data);
 static void create_output(const Arg *arg);
 
@@ -2179,6 +2181,8 @@ mapnotify(struct wl_listener *listener, void *data)
 			: wlr_scene_subsurface_tree_create(c->scene, client_surface(c));
 	c->scene->node.data = c->scene_surface->node.data = c;
 
+	wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers, c);
+
 	/* Handle unmanaged clients first so we can return prior create borders */
 	if (client_is_unmanaged(c)) {
 		client_get_geometry(c, &c->geom);
@@ -3069,6 +3073,8 @@ setup(void)
 		layers[i] = wlr_scene_tree_create(&scene->tree);
 	drag_icon = wlr_scene_tree_create(&scene->tree);
 	wlr_scene_node_place_below(&drag_icon->node, &layers[LyrBlock]->node);
+
+	wlr_scene_set_blur_data(scene, blur_data);
 
 	/* Autocreates a renderer, either Pixman, GLES2 or Vulkan for us. The user
 	 * can also specify a renderer using the WLR_RENDERER env var.
@@ -4102,12 +4108,7 @@ output_configure_scene(struct wlr_scene_node *node, Client *c)
 		if (c &&
 				xdg_surface &&
 				xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
-			// TODO: Be able to set whole decoration_data instead of calling
-			// each individually?
-			wlr_scene_buffer_set_opacity(buffer, c->opacity);
-
 			if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
-				wlr_scene_buffer_set_corner_radius(buffer, c->corner_radius);
 				wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
 			}
 		}
@@ -4156,6 +4157,37 @@ create_output(const Arg *arg)
 
 	if (!done) {
 		die("Can only create outputs for Wayland, X11 or headless backends");
+	}
+}
+
+void 
+iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data) 
+{
+	Client *c = user_data;
+	struct wlr_scene_surface * scene_surface = wlr_scene_surface_try_from_buffer(buffer);
+	struct wlr_xdg_surface *xdg_surface;
+
+	if (!scene_surface) {
+		return;
+	}
+
+	xdg_surface = wlr_xdg_surface_try_from_wlr_surface(scene_surface->surface);
+
+	if (c &&
+			xdg_surface &&
+			xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
+		// TODO: Be able to set whole decoration_data instead of calling
+		// each individually?
+		wlr_scene_buffer_set_opacity(buffer, c->opacity);
+
+		if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
+			wlr_scene_buffer_set_corner_radius(buffer, c->corner_radius);
+			// wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
+
+			wlr_scene_buffer_set_backdrop_blur(buffer, !optimized_blur);
+			wlr_scene_buffer_set_backdrop_blur_optimized(buffer, optimized_blur);
+			wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, true);
+		}
 	}
 }
 
