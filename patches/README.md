@@ -1,5 +1,10 @@
 ## Patches
 
+### Changes that aren't in patches
+
+- 3a997d0336f122898ac8c28b60433c7cbbe14d02
+  Center floating windows that were recently moved to another monitor.
+
 ### Patches list
 
 # Layouts
@@ -27,7 +32,7 @@
 # Rules
 
 - [regexrules](https://github.com/wochap/dwl/blob/v0.5/regexrules/regexrules.patch)
-- [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat.patch) 
+- [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat.patch)
 - [namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/namedscratchpads/namedscratchpads.patch) (keybinding for run or raise)
 
 # Input
