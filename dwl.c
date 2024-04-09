@@ -313,6 +313,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void _movecenter(Client *c, int interact);
 static void movecenter(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -2456,9 +2457,8 @@ togglefullscreen(const Arg *arg)
 }
 
 void
-movecenter(const Arg *arg)
+_movecenter(Client *c, int interact)
 {
-	Client *c = focustop(selmon);
 	Monitor *m = selmon;
 
 	if (!m) {
@@ -2477,8 +2477,15 @@ movecenter(const Arg *arg)
 			.y = (b.height - c->geom.height) / 2 + b.y,
 			.width = c->geom.width,
 			.height = c->geom.height,
-		}, 1);
+		}, interact);
 	}
+}
+
+void
+movecenter(const Arg *arg)
+{
+	Client *c = focustop(selmon);
+	_movecenter(c, 1);
 }
 
 void
