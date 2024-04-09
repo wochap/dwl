@@ -2534,6 +2534,9 @@ togglescratchpad(const Arg *arg)
 	wl_list_for_each(c, &clients, link) {
 		if (c->inscratchpad) {
 			c->tags = iscratchpadvisible ? 0 : selmon->tagset[selmon->seltags];
+			if (c->tags != 0 && c->mon != selmon) {
+				setmon(c, selmon, 0);
+			}
 			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
 		}
 	}
