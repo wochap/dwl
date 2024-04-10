@@ -421,8 +421,8 @@ static void bstack(Monitor *m);
 static void bstackhoriz(Monitor *m);
 static void entermode(const Arg *arg);
 static int in_shadow_ignore_list(const char *str);
-static void output_configure_scene(struct wlr_scene_node *node, Client *c);
 static void iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
+static void iter_xdg_scene_buffers_shadow(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
 static void _create_output(struct wlr_backend *backend, void *data);
 static void create_output(const Arg *arg);
 
@@ -585,12 +585,13 @@ applyrules(Client *c)
 			}
 		}
 	}
-	if (shadow_only_floating) {
+	if (shadow && shadow_only_floating) {
 		if (c->isfloating && !in_shadow_ignore_list(appid)) {
 			c->shadow_data.enabled = 1;
 		} else {
 			c->shadow_data.enabled = 0;
 		}
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
 	}
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
 	setmon(c, mon, newtags);
@@ -1426,7 +1427,7 @@ createnotify(struct wl_listener *listener, void *data)
 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
 			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
 
-	c->opacity = 1;
+	c->opacity = opacity;
 	c->corner_radius = 0;
 	c->shadow_data = shadow_data_get_default();
 	c->shadow_data.enabled = shadow_only_floating != 1 && !in_shadow_ignore_list(client_get_appid(c));
@@ -1664,8 +1665,18 @@ focusclient(Client *c, int lift)
 		 * handling a drag operation */
 		if (!exclusive_focus && !seat->drag) {
 			client_set_border_color(c, focuscolor, focuscolor, focuscolor);
-			c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
-			c->shadow_data.color = shadow_color_focus;
+			if (shadow) {
+				c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
+				c->shadow_data.color = shadow_color_focus;
+			}
+			if (opacity) {
+				c->opacity = opacity_active;
+			}
+			if (opacity) {
+				wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers, c);
+			} else if (shadow) {
+				wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
+			}
 		}
 	}
 
@@ -1684,8 +1695,18 @@ focusclient(Client *c, int lift)
 		 * and probably other clients */
 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
 			client_set_border_color(old_c, bordercolor, borderscolor, borderecolor);
-			old_c->shadow_data.blur_sigma = shadow_blur_sigma;
-			old_c->shadow_data.color = shadow_color;
+			if (shadow) {
+				old_c->shadow_data.blur_sigma = shadow_blur_sigma;
+				old_c->shadow_data.color = shadow_color;
+			}
+			if (opacity) {
+				old_c->opacity = opacity_inactive;
+			}
+			if (opacity) {
+				wlr_scene_node_for_each_buffer(&old_c->scene_surface->node, iter_xdg_scene_buffers, old_c);
+			} else if (shadow) {
+				wlr_scene_node_for_each_buffer(&old_c->scene_surface->node, iter_xdg_scene_buffers_shadow, old_c);
+			}
 
 			client_activate_surface(old, 0);
 		}
@@ -2228,12 +2249,13 @@ mapnotify(struct wl_listener *listener, void *data)
 	 /* TODO: https://github.com/djpohly/dwl/pull/334#issuecomment-1330166324 */
 	if (c->type == XDGShell && (p = client_get_parent(c))) {
 		c->isfloating = 1;
-		if (shadow_only_floating) {
+		if (shadow && shadow_only_floating) {
 			if (!in_shadow_ignore_list(client_get_appid(c))) {
 				c->shadow_data.enabled = 1;
 			} else {
 				c->shadow_data.enabled = 0;
 			}
+			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
 		}
 		wlr_scene_node_reparent(&c->scene->node, layers[LyrFloat]);
 		setmon(c, p->mon, p->tags);
@@ -2680,10 +2702,6 @@ rendermon(struct wl_listener *listener, void *data)
 		if (c->resize && !c->isfloating && client_is_rendered_on_mon(c, m) && !client_is_stopped(c))
 			goto skip;
 
-	if (shadow) {
-		output_configure_scene(&m->scene_output->scene->tree.node, NULL);
-	}
-
 	/*
 	 * HACK: The "correct" way to set the gamma is to commit it together with
 	 * the rest of the state in one go, but to do that we would need to rewrite
@@ -2905,12 +2923,13 @@ void
 setfloating(Client *c, int floating)
 {
 	c->isfloating = floating;
-	if (shadow_only_floating) {
+	if (shadow && shadow_only_floating) {
 		if (c->isfloating && !in_shadow_ignore_list(client_get_appid(c))) {
 			c->shadow_data.enabled = 1;
 		} else {
 			c->shadow_data.enabled = 0;
 		}
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
 	}
 	if (!c->mon)
 		return;
@@ -3074,7 +3093,9 @@ setup(void)
 	drag_icon = wlr_scene_tree_create(&scene->tree);
 	wlr_scene_node_place_below(&drag_icon->node, &layers[LyrBlock]->node);
 
-	wlr_scene_set_blur_data(scene, blur_data);
+	if (blur) {
+		wlr_scene_set_blur_data(scene, blur_data);
+	}
 
 	/* Autocreates a renderer, either Pixman, GLES2 or Vulkan for us. The user
 	 * can also specify a renderer using the WLR_RENDERER env var.
@@ -3883,8 +3904,11 @@ urgent(struct wl_listener *listener, void *data)
 
 	if (client_surface(c)->mapped) {
 		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
-		c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
-		c->shadow_data.color = shadow_color_focus;
+		if (shadow) {
+			c->shadow_data.blur_sigma = shadow_blur_sigma_focus;
+			c->shadow_data.color = shadow_color_focus;
+			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
+		}
 	}
 	c->isurgent = 1;
 	printstatus();
@@ -4069,58 +4093,6 @@ entermode(const Arg *arg)
 	printstatus();
 }
 
-int
-in_shadow_ignore_list(const char *str) {
-	for (int i = 0; shadow_ignore_list[i] != NULL; i++) {
-		if (strcmp(shadow_ignore_list[i], str) == 0) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
-void 
-output_configure_scene(struct wlr_scene_node *node, Client *c)
-{
-	Client *_c;
-
-	if (!node->enabled) {
-		return;
-	}
-
-	_c = node->data;
-	if (_c) {
-		c = _c;
-	}
-
-	if (node->type == WLR_SCENE_NODE_BUFFER) {
-		struct wlr_xdg_surface *xdg_surface;
-		struct wlr_scene_buffer *buffer = wlr_scene_buffer_from_node(node);
-
-		struct wlr_scene_surface * scene_surface =
-			wlr_scene_surface_try_from_buffer(buffer);
-		if (!scene_surface) {
-			return;
-		}
-
-		xdg_surface = wlr_xdg_surface_try_from_wlr_surface(scene_surface->surface);
-
-		if (c &&
-				xdg_surface &&
-				xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
-			if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
-				wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
-			}
-		}
-	} else if (node->type == WLR_SCENE_NODE_TREE) {
-		struct wlr_scene_tree *tree = wl_container_of(node, tree, node);
-		struct wlr_scene_node *_node;
-		wl_list_for_each(_node, &tree->children, link) {
-			output_configure_scene(_node, c);
-		}
-	}
-}
-
 void 
 _create_output(struct wlr_backend *_backend, void *data) 
 {
@@ -4160,6 +4132,16 @@ create_output(const Arg *arg)
 	}
 }
 
+int
+in_shadow_ignore_list(const char *str) {
+	for (int i = 0; shadow_ignore_list[i] != NULL; i++) {
+		if (strcmp(shadow_ignore_list[i], str) == 0) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void 
 iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data) 
 {
@@ -4178,15 +4160,46 @@ iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *us
 			xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
 		// TODO: Be able to set whole decoration_data instead of calling
 		// each individually?
-		wlr_scene_buffer_set_opacity(buffer, c->opacity);
+		if (opacity) {
+			wlr_scene_buffer_set_opacity(buffer, c->opacity);
+		}
 
 		if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
-			wlr_scene_buffer_set_corner_radius(buffer, c->corner_radius);
-			// wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
+			if (corner_radius > 0) {
+				wlr_scene_buffer_set_corner_radius(buffer, c->corner_radius);
+			}
 
-			wlr_scene_buffer_set_backdrop_blur(buffer, !optimized_blur);
-			wlr_scene_buffer_set_backdrop_blur_optimized(buffer, optimized_blur);
-			wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, true);
+			if (shadow) {
+				wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
+			}
+
+			if (blur) {
+				wlr_scene_buffer_set_backdrop_blur(buffer, 1);
+				wlr_scene_buffer_set_backdrop_blur_optimized(buffer, blur_optimized);
+				wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, blur_ignore_transparent);
+			}
+		}
+	}
+}
+
+void 
+iter_xdg_scene_buffers_shadow(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data) 
+{
+	Client *c = user_data;
+	struct wlr_scene_surface * scene_surface = wlr_scene_surface_try_from_buffer(buffer);
+	struct wlr_xdg_surface *xdg_surface;
+
+	if (!scene_surface) {
+		return;
+	}
+
+	xdg_surface = wlr_xdg_surface_try_from_wlr_surface(scene_surface->surface);
+
+	if (c &&
+			xdg_surface &&
+			xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
+		if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
+			wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
 		}
 	}
 }

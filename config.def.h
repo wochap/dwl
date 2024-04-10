@@ -19,20 +19,30 @@ static const int border_color_type         = BrdOriginal; /* borders to be color
 static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can also use glsl colors */
+static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 0.0}; /* You can also use glsl colors */
 static const char cursortheme[]            = "capitaine-cursors"; /* theme from /usr/share/cursors/xorg-x11 */
 static const unsigned int cursorsize       = 24;
 static const int center_relative_to_monitor = 0; /* 0 means center floating relative to the window area */
-static const int shadow = 1;
+
+static const int opacity = 0; /* flag to enable opacity */
+static const float opacity_inactive = 0.5;
+static const float opacity_active = 1.0;
+
+static const int shadow = 1; /* flag to enable shadow */
 static const int shadow_only_floating = 0;
 static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
 static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
 static const int shadow_blur_sigma = 20;
 static const int shadow_blur_sigma_focus = 40;
-static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk", "cpupower-gui", NULL }; /* list of app-id to ignore */
-static const int optimized_blur = 0;
+static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk", NULL }; /* list of app-id to ignore */
+
+static const int corner_radius = 0; /* 0 disables corner_radius */
+
+static const int blur = 0; /* flag to enable blur */
+static const int blur_optimized = 1;
+static const int blur_ignore_transparent = 1;
 static const struct blur_data blur_data = {
-	.radius = 5, /* 0 disables blur */
+	.radius = 5,
 	.num_passes = 3,
 	.noise = 0.02,
 	.brightness = 0.9,
