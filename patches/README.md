@@ -21,7 +21,7 @@
 # Clients placement
 
 - [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center-diff.patch)
-- [cfact](https://github.com/wochap/dwl/blob/v0.5/cfact/cfact-diff.patch)
+- [cfact](https://github.com/wochap/dwl/blob/v0.6-a/cfact/cfact-diff.patch)
 - [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack-diff.patch)
 
 # Clients & tags manipulation
@@ -37,37 +37,37 @@
 
 # Rules
 
-- [regexrules](https://github.com/wochap/dwl/blob/v0.5/regexrules/regexrules-diff.patch)
-- [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat-diff.patch)
+- [regexrules](https://github.com/wochap/dwl/blob/v0.6-a/regexrules/regexrules-diff.patch)
+- [customfloat](https://github.com/wochap/dwl/blob/v0.6-a/customfloat/customfloat-diff.patch)
 
 # Input
 
 - [keycodes](https://github.com/wochap/dwl/blob/v0.5/keycodes/keycodes-diff.patch)
 - [naturalscrolltrackpad](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/naturalscrolltrackpad/naturalscrolltrackpad.patch)
-- [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1-diff.patch)
+- [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.6-a/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1-diff.patch)
 - [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes-diff.patch)
 - [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes-diff.patch)
-- [lockedkeys](https://github.com/wochap/dwl/blob/v0.5/lockedkeys/lockedkeys-diff.patch)
+- [lockedkeys](https://github.com/wochap/dwl/blob/v0.6-a/lockedkeys/lockedkeys-diff.patch)
 - [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes-diff.patch)
-- [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.5/xkb-rules-switcher/xkb-rules-switcher-diff.patch)
+- [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.6-a/xkb-rules-switcher/xkb-rules-switcher-diff.patch)
 
 # Cursor
 
-- [cursortheme](https://github.com/wochap/dwl/blob/v0.5/cursortheme/cursortheme-diff.patch)
+- [cursortheme](https://github.com/wochap/dwl/blob/v0.6-a/cursortheme/cursortheme-diff.patch)
 - [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.5/relative-mouse-resize/relative-mouse-resize-diff.patch)
 
 # Monitor
 
-- [focus-mon-pointer](https://github.com/wochap/dwl/blob/v0.5/focus-mon-pointer/focus-mon-pointer-diff.patch)
+- [focus-mon-pointer](https://github.com/wochap/dwl/blob/v0.6-a/focus-mon-pointer/focus-mon-pointer-diff.patch)
 
 # Other
 
-- [output-power-management](https://github.com/wochap/dwl/blob/v0.5/output-power-management/output-power-management-diff.patch)
+- [output-power-management](https://github.com/wochap/dwl/blob/v0.6-a/output-power-management/output-power-management-diff.patch)
 - [autostart](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/autostart/autostart.patch)
-- [gestures](https://github.com/wochap/dwl/blob/v0.5/gestures/gestures-diff.patch)
-- [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders-diff.patch)
+- [gestures](https://github.com/wochap/dwl/blob/v0.6-a/gestures/gestures-diff.patch)
+- [minimalborders](https://github.com/wochap/dwl/blob/v0.6-a/minimalborders/minimalborders-diff.patch)
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
-- [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx-diff.patch)
+- [scenefx](https://github.com/wochap/dwl/blob/v0.6-a/scenefx/scenefx-diff.patch)
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
 - [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
@@ -78,39 +78,39 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (preferably, from smallest to largest):
 
-- [ ] focus-mon-pointer-diff.patch (UPDATE)
+- [ ] focus-mon-pointer-diff.patch
 - [ ] naturalscrolltrackpad-diff.patch
 - [ ] env-diff.patch
 - [ ] reporting-diff.patch
 - [ ] zoomswap.patch
-- [ ] cursortheme-diff.patch (UPDATE)
-- [ ] regexrules-diff.patch (UPDATE)
-- [ ] customfloat-diff.patch (UPDATE)
-- [ ] lockedkeys-diff.patch (UPDATE)
+- [ ] cursortheme-diff.patch 
+- [ ] regexrules-diff.patch 
+- [ ] customfloat-diff.patch 
+- [ ] lockedkeys-diff.patch
 - [ ] movestack-diff.patch
 - [ ] moveresizekb-diff.patch
 - [ ] shiftview.patch
 - [ ] fakefullscreenclient.patch
 - [ ] rotatetags.patch
-- [ ] xkb-rules-switcher-diff.patch (UPDATE)
+- [ ] xkb-rules-switcher-diff.patch
 - [ ] centeredmaster-diff.patch
-- [ ] relative-mouse-resize-diff.patch (UPDATE)
+- [ ] relative-mouse-resize-diff.patch
 - [ ] headless-diff.patch
 - [ ] center-diff.patch
 - [ ] bottomstack-diff.patch
 - [ ] autostart.patch
-- [ ] cfact-diff.patch (UPDATE)
+- [ ] cfact-diff.patch
 - [ ] cfact-bottomstack-diff.patch
-- [ ] minimalborders-diff.patch (UPDATE)
-- [ ] pointer-gestures-unstable-v1-diff.patch (UPDATE)
+- [ ] minimalborders-diff.patch
+- [ ] pointer-gestures-unstable-v1-diff.patch
 - [ ] modes-diff.patch
-- [ ] gestures-diff.patch (UPDATE)
-- [ ] pertag-diff.patch (UPDATE)
+- [ ] gestures-diff.patch
+- [ ] pertag-diff.patch
 - [ ] swapandfocusdir-diff.patch
 - [ ] scratchpads-diff.patch
-- [ ] output-power-management-diff.patch (UPDATE)
-- [ ] scenefx-diff.patch (UPDATE)
-- [ ] keycodes-diff.patch (UPDATE)
+- [ ] output-power-management-diff.patch
+- [ ] scenefx-diff.patch
+- [ ] keycodes-diff.patch
 - [ ] modes-keycodes-diff.patch
 - [ ] lockedkeys-keycodes-diff.patch
 
