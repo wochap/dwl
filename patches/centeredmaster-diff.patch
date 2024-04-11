@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index db0babc..95611ef 100644
+index 8847e58..cfc6e62 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -33,6 +33,7 @@ static const Layout layouts[] = {
@@ -10,7 +10,7 @@ index db0babc..95611ef 100644
  };
  
  /* monitors */
-@@ -132,6 +133,7 @@ static const Key keys[] = {
+@@ -134,6 +135,7 @@ static const Key keys[] = {
  	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
  	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
@@ -19,10 +19,10 @@ index db0babc..95611ef 100644
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
  	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..0ab3789 100644
+index bf763df..0e84ccf 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -235,6 +235,7 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
+@@ -248,6 +248,7 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
  static void arrangelayers(Monitor *m);
  static void axisnotify(struct wl_listener *listener, void *data);
  static void buttonpress(struct wl_listener *listener, void *data);
@@ -30,14 +30,15 @@ index ef27a1d..0ab3789 100644
  static void chvt(const Arg *arg);
  static void checkidleinhibitor(struct wlr_surface *exclude);
  static void cleanup(void);
-@@ -597,6 +598,68 @@ buttonpress(struct wl_listener *listener, void *data)
+@@ -628,6 +629,69 @@ buttonpress(struct wl_listener *listener, void *data)
  			event->time_msec, event->button, event->state);
  }
  
 +void
 +centeredmaster(Monitor *m)
 +{
-+	unsigned int i, n, h, mw, mx, my, oty, ety, tw;
++	unsigned int h, mw, mx, my, oty, ety, tw;
++	int i, n;
 +	Client *c;
 +
 +	n = 0;
@@ -55,7 +56,7 @@ index ef27a1d..0ab3789 100644
 +
 +	if (n > m->nmaster) {
 +		/* go mfact box in the center if more than nmaster clients */
-+		mw = m->nmaster ? m->w.width * m->mfact : 0;
++		mw = ROUND(m->nmaster ? m->w.width * m->mfact : 0);
 +		tw = m->w.width - mw;
 +
 +		if (n - m->nmaster > 1) {

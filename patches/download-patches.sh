@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Layouts
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/centeredmaster/centeredmaster-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/centeredmaster/centeredmaster-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/bottomstack/bottomstack-diff.patch
 
 # Clients placement

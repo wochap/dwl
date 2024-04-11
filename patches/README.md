@@ -15,7 +15,7 @@
 
 # Layouts
 
-- [centeredmaster](https://github.com/wochap/dwl/blob/v0.5/centeredmaster/centeredmaster-diff.patch)
+- [centeredmaster](https://github.com/wochap/dwl/blob/v0.6-a/centeredmaster/centeredmaster-diff.patch)
 - [bottomstack](https://github.com/wochap/dwl/blob/v0.5/bottomstack/bottomstack-diff.patch)
 
 # Clients placement
@@ -78,21 +78,21 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (preferably, from smallest to largest):
 
-- [ ] focus-mon-pointer-diff.patch
-- [ ] naturalscrolltrackpad-diff.patch
-- [ ] env-diff.patch
-- [ ] reporting-diff.patch
-- [ ] zoomswap.patch
-- [ ] cursortheme-diff.patch 
-- [ ] regexrules-diff.patch 
-- [ ] customfloat-diff.patch 
-- [ ] lockedkeys-diff.patch
-- [ ] movestack-diff.patch
-- [ ] moveresizekb-diff.patch
-- [ ] shiftview.patch
-- [ ] fakefullscreenclient.patch
-- [ ] rotatetags.patch
-- [ ] xkb-rules-switcher-diff.patch
+- [x] focus-mon-pointer-diff.patch
+- [x] naturalscrolltrackpad.patch
+- [x] env-diff.patch
+- [x] reporting-diff.patch
+- [x] zoomswap.patch
+- [x] cursortheme-diff.patch 
+- [x] regexrules-diff.patch 
+- [x] customfloat-diff.patch 
+- [x] lockedkeys-diff.patch
+- [x] movestack-diff.patch
+- [x] moveresizekb-diff.patch
+- [x] shiftview.patch
+- [x] fakefullscreenclient.patch
+- [x] rotatetags.patch
+- [x] xkb-rules-switcher-diff.patch
 - [ ] centeredmaster-diff.patch
 - [ ] relative-mouse-resize-diff.patch
 - [ ] headless-diff.patch
