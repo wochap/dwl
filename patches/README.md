@@ -22,7 +22,7 @@
 
 - [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center-diff.patch)
 - [cfact](https://github.com/wochap/dwl/blob/v0.6-a/cfact/cfact-diff.patch)
-- [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack-diff.patch)
+- [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.6-a/cfact-bottomstack/cfact-bottomstack-diff.patch)
 
 # Clients & tags manipulation
 
@@ -97,9 +97,9 @@ Order (preferably, from smallest to largest):
 - [x] relative-mouse-resize-diff.patch
 - [x] headless-diff.patch
 - [x] center-diff.patch
-- [ ] bottomstack-diff.patch
-- [ ] autostart.patch
-- [ ] cfact-diff.patch
+- [x] bottomstack-diff.patch
+- [x] autostart.patch
+- [x] cfact-diff.patch
 - [ ] cfact-bottomstack-diff.patch
 - [ ] minimalborders-diff.patch
 - [ ] pointer-gestures-unstable-v1-diff.patch

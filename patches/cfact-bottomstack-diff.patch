@@ -1,8 +1,8 @@
 diff --git a/dwl.c b/dwl.c
-index 247d171..a29849c 100644
+index c4586ea..5422514 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -2943,81 +2943,107 @@ usage:
+@@ -3130,81 +3130,107 @@ usage:
  }
  
  static void
@@ -10,8 +10,8 @@ index 247d171..a29849c 100644
 +bstack(Monitor *m)
  {
 -	int w, h, mh, mx, tx, ty, tw;
--	unsigned int i, n = 0;
-+	unsigned int i, n, w, mh, mx, tx;
+-	int i, n = 0;
++	int i, n, w, mh, mx, tx;
 +	float mfacts = 0, sfacts = 0;
  	Client *c;
 +	Client *firstc;
@@ -35,7 +35,7 @@ index 247d171..a29849c 100644
  		return;
 -
 -	if (n > m->nmaster) {
--		mh = m->nmaster ? m->mfact * m->w.height : 0;
+-		mh = ROUND(m->nmaster ? m->mfact * m->w.height : 0);
 -		tw = m->w.width / (n - m->nmaster);
 -		ty = m->w.y + mh;
 -	} else {
@@ -51,7 +51,7 @@ index 247d171..a29849c 100644
 -	i = mx = 0;
 -	tx = m-> w.x;
 +	if (n > m->nmaster)
-+		mh = m->nmaster ? m->w.height * m->mfact : 0;
++		mh = ROUND(m->nmaster ? m->w.height * m->mfact : 0);
 +	else
 +		mh = m->w.height;
 +	i = mx = tx = 0;
@@ -61,7 +61,7 @@ index 247d171..a29849c 100644
  			continue;
  		if (i < m->nmaster) {
 -			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
-+			w = (m->w.width - mx) * (c->cweight / mfacts);
++			w = ROUND((m->w.width - mx) * (c->cweight / mfacts));
  			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
 -			mx += c->geom.width;
 -		} else {
@@ -72,7 +72,7 @@ index 247d171..a29849c 100644
 +				mx += c->geom.width;
 +			mfacts -= c->cweight;
 +	  } else {
-+			w = (m->w.width - tx) * (c->cweight / sfacts);
++			w = ROUND((m->w.width - tx) * (c->cweight / sfacts));
 +			resize(c, (struct wlr_box) { .x = m->w.x + tx, .y = m->w.y + mh, .width = w, .height = m->w.height - mh }, 0);
 +			if (tx + c->geom.width < m->m.width)
  				tx += c->geom.width;
@@ -85,10 +85,10 @@ index 247d171..a29849c 100644
  static void
 -bstackhoriz(Monitor *m) {
 -	int w, mh, mx, tx, ty, th;
--	unsigned int i, n = 0;
+-	int i, n = 0;
 +bstackhoriz(Monitor *m)
 +{
-+	unsigned int i, n, h, mw, mh, my, ty;
++	int i, n, h, mw, mh, my, ty;
 +	float mfacts = 0, sfacts = 0;
  	Client *c;
 +	Client *firstc;
@@ -112,7 +112,7 @@ index 247d171..a29849c 100644
  		return;
 -
 -	if (n > m->nmaster) {
--		mh = m->nmaster ? m->mfact * m->w.height : 0;
+-		mh = ROUND(m->nmaster ? m->mfact * m->w.height : 0);
 -		th = (m->w.height - mh) / (n - m->nmaster);
 -		ty = m->w.y + mh;
 -	} else {
@@ -127,7 +127,7 @@ index 247d171..a29849c 100644
 -	i = mx = 0;
 -	tx = m-> w.x;
 +	if (n > m->nmaster)
-+		mh = m->nmaster ? m->w.height * m->mfact : 0;
++		mh = ROUND(m->nmaster ? m->w.height * m->mfact : 0);
 +	else
 +		mh = m->w.height;
 +	mw = m->w.width;
@@ -140,7 +140,7 @@ index 247d171..a29849c 100644
 -			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
 -			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
 -			mx += c->geom.width;
-+			h = (mh - my) * (c->cweight / mfacts);
++			h = ROUND((mh - my) * (c->cweight / mfacts));
 +			resize(c, (struct wlr_box) { .x = m->w.x, .y = m->w.y + my, .width = mw, .height = h }, 0);
 +			if (my + c->geom.height < m->m.height)
 +				my += c->geom.height;
@@ -148,7 +148,7 @@ index 247d171..a29849c 100644
  		} else {
 -			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = m->w.width, .height = th }, 0);
 -			if (th != m->w.height)
-+			h = (m->w.height - mh - ty) * (c->cweight / sfacts);
++			h = ROUND((m->w.height - mh - ty) * (c->cweight / sfacts));
 +			resize(c, (struct wlr_box) { .x = m->w.x, .y = m->w.y + mh + ty, .width = mw, .height = h }, 0);
 +			if (ty + c->geom.height < m->m.height)
  				ty += c->geom.height;

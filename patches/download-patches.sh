@@ -7,7 +7,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/bottomstack/bottomstack
 # Clients placement
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/center/center-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/cfact/cfact-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/cfact-bottomstack/cfact-bottomstack-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/cfact-bottomstack/cfact-bottomstack-diff.patch
 
 # Clients & tags manipulation
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/movestack/movestack-diff.patch
