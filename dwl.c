@@ -355,6 +355,8 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void _movecenter(Client *c, int interact);
+static void movecenter(const Arg *arg);
 static void togglefakefullscreen(const Arg *arg);
 static void moveresizekb(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -1695,8 +1697,9 @@ mapnotify(struct wl_listener *listener, void *data)
 	/* Called when the surface is mapped, or ready to display on-screen. */
 	Client *p = NULL;
 	Client *w, *c = wl_container_of(listener, c, map);
-	Monitor *m;
+	Monitor *m = selmon;
 	int i;
+	struct wlr_box b = floating_relative_to_monitor ? m->m : m->w; 
 
 	/* Create scene tree for this client and its border */
 	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
@@ -1735,6 +1738,9 @@ mapnotify(struct wl_listener *listener, void *data)
 	/* Insert this client into client lists. */
 	wl_list_insert(&clients, &c->link);
 	wl_list_insert(&fstack, &c->flink);
+
+	c->geom.x = (b.width - c->geom.width) / 2 + b.x;
+	c->geom.y = (b.height - c->geom.height) / 2 + b.y;
 
 	/* Set initial monitor, tags, floating status, and focus:
 	 * we always consider floating, clients that have parent and thus
@@ -2476,6 +2482,9 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
+		if (c->isfloating) {
+			_movecenter(c, 0);
+		}
 	}
 	focusclient(focustop(selmon), 1);
 }
@@ -2910,6 +2919,37 @@ togglefakefullscreen(const Arg *arg)
 	Client *sel = focustop(selmon);
 	if (sel)
 		setfakefullscreen(sel, !sel->isfakefullscreen);
+}
+
+void
+_movecenter(Client *c, int interact)
+{
+	Monitor *m = selmon;
+
+	if (!m) {
+		return;
+	}
+
+	if (!c->isfloating) {
+		return;
+	}
+
+	if (c) {
+		struct wlr_box b = floating_relative_to_monitor ? m->m : m->w; 
+		resize(c, (struct wlr_box){
+			.x = (b.width - c->geom.width) / 2 + b.x,
+			.y = (b.height - c->geom.height) / 2 + b.y,
+			.width = c->geom.width,
+			.height = c->geom.height,
+		}, interact);
+	}
+}
+
+void
+movecenter(const Arg *arg)
+{
+	Client *c = focustop(selmon);
+	_movecenter(c, 1);
 }
 
 void
