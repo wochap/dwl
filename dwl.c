@@ -175,7 +175,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t mod;
-	xkb_keysym_t keysym;
+	xkb_keycode_t keycode;
 	void (*func)(const Arg *);
 	const Arg arg;
 } Key;
@@ -189,9 +189,8 @@ typedef struct {
 	struct wl_list link;
 	struct wlr_keyboard_group *wlr_group;
 
-	int nsyms;
-	const xkb_keysym_t *keysyms; /* invalid if nsyms == 0 */
-	uint32_t mods; /* invalid if nsyms == 0 */
+	xkb_keycode_t keycode;
+	uint32_t mods; /* invalid if keycode == 0 */
 	struct wl_event_source *key_repeat_source;
 
 	struct wl_listener modifiers;
@@ -351,7 +350,7 @@ static void fullscreennotify(struct wl_listener *listener, void *data);
 static void handlesig(int signo);
 static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
-static int keybinding(uint32_t mods, xkb_keysym_t sym);
+static int keybinding(uint32_t mods, xkb_keycode_t keycode);
 static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
 static int lockedkeybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
@@ -2069,7 +2068,7 @@ inputdevice(struct wl_listener *listener, void *data)
 }
 
 int
-keybinding(uint32_t mods, xkb_keysym_t sym)
+keybinding(uint32_t mods, xkb_keycode_t keycode)
 {
 	/*
 	 * Here we handle compositor keybindings. This is when the compositor is
@@ -2084,7 +2083,7 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 
 	for (k = keys; k < END(keys); k++) {
 		if (CLEANMASK(mods) == CLEANMASK(k->mod)
-				&& sym == k->keysym && k->func) {
+				&& keycode == k->keycode && k->func) {
 			k->func(&k->arg);
 			return 1;
 		}
@@ -2133,17 +2132,12 @@ modekeybinding(uint32_t mods, xkb_keysym_t sym)
 void
 keypress(struct wl_listener *listener, void *data)
 {
-	int i;
 	/* This event is raised when a key is pressed or released. */
 	KeyboardGroup *group = wl_container_of(listener, group, key);
 	struct wlr_keyboard_key_event *event = data;
 
 	/* Translate libinput keycode -> xkbcommon */
 	uint32_t keycode = event->keycode + 8;
-	/* Get a list of keysyms based on the keymap for this keyboard */
-	const xkb_keysym_t *syms;
-	int nsyms = xkb_state_key_get_syms(
-			group->wlr_group->keyboard.xkb_state, keycode, &syms);
 
 	int handled = 0;
 	uint32_t mods = wlr_keyboard_get_modifiers(&group->wlr_group->keyboard);
@@ -2153,8 +2147,7 @@ keypress(struct wl_listener *listener, void *data)
 	/* On _press_ if there is no active screen locker,
 	 * attempt to process a compositor keybinding. */
 	if (!locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED) {
-		for (i = 0; i < nsyms; i++)
-			handled = keybinding(mods, syms[i]) || handled;
+		handled = keybinding(mods, keycode);
 	}
 
 	if (locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED)
@@ -2163,12 +2156,11 @@ keypress(struct wl_listener *listener, void *data)
 
 	if (handled && group->wlr_group->keyboard.repeat_info.delay > 0) {
 		group->mods = mods;
-		group->keysyms = syms;
-		group->nsyms = nsyms;
+		group->keycode = keycode;
 		wl_event_source_timer_update(group->key_repeat_source,
 				group->wlr_group->keyboard.repeat_info.delay);
 	} else {
-		group->nsyms = 0;
+		group->keycode = 0;
 		wl_event_source_timer_update(group->key_repeat_source, 0);
 	}
 
@@ -2198,15 +2190,13 @@ int
 keyrepeat(void *data)
 {
 	KeyboardGroup *group = data;
-	int i;
-	if (!group->nsyms || group->wlr_group->keyboard.repeat_info.rate <= 0)
+	if (!group->keycode || group->wlr_group->keyboard.repeat_info.rate <= 0)
 		return 0;
 
 	wl_event_source_timer_update(group->key_repeat_source,
 			1000 / group->wlr_group->keyboard.repeat_info.rate);
 
-	for (i = 0; i < group->nsyms; i++)
-		keybinding(group->mods, group->keysyms[i]);
+	keybinding(group->mods, group->keycode);
 
 	return 0;
 }
