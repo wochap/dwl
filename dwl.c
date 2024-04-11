@@ -2295,7 +2295,7 @@ run(char *startup_cmd)
 	if (!socket)
 		die("startup: display_add_socket_auto");
 	setenv("WAYLAND_DISPLAY", socket, 1);
-	for (int i = 0; i < LENGTH(envs); i++)
+	for (int i = 0; i < (int)LENGTH(envs); i++)
 			setenv(envs[i].variable, envs[i].value, 1);
 
 	/* Start the backend. This will enumerate outputs and inputs, become the DRM

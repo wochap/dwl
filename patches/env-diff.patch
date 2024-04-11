@@ -1,8 +1,8 @@
 diff --git a/config.def.h b/config.def.h
-index db0babc..8514d7e 100644
+index 8847e58..11e5241 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -19,6 +19,11 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0}; /* You can al
+@@ -20,6 +20,11 @@ static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You ca
  /* logging */
  static int log_level = WLR_ERROR;
  
@@ -12,13 +12,13 @@ index db0babc..8514d7e 100644
 +};
 +
  static const Rule rules[] = {
- 	/* app_id     title       tags mask     isfloating   monitor */
- 	/* examples:
+ 	/* app_id             title       tags mask     isfloating   monitor */
+ 	/* examples: */
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..de64d00 100644
+index bf763df..a81a9cb 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -217,6 +217,11 @@ typedef struct {
+@@ -230,6 +230,11 @@ typedef struct {
  	int monitor;
  } Rule;
  
@@ -30,11 +30,11 @@ index ef27a1d..de64d00 100644
  typedef struct {
  	struct wlr_scene_tree *scene;
  
-@@ -1966,6 +1971,8 @@ run(char *startup_cmd)
+@@ -2066,6 +2071,8 @@ run(char *startup_cmd)
  	if (!socket)
  		die("startup: display_add_socket_auto");
  	setenv("WAYLAND_DISPLAY", socket, 1);
-+	for (int i = 0; i < LENGTH(envs); i++)
++	for (int i = 0; i < (int)LENGTH(envs); i++)
 +			setenv(envs[i].variable, envs[i].value, 1);
  
  	/* Start the backend. This will enumerate outputs and inputs, become the DRM
