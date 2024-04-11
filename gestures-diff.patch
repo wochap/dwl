@@ -23,18 +23,10 @@ index 8847e58..53a8437 100644
 +	{ MODKEY, SWIPE_DOWN, 3, focusstack, {.i = -1} },
 +};
 diff --git a/dwl.c b/dwl.c
-index bf763df..7e8a684 100644
+index e96ea09..7e8a684 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -36,6 +36,7 @@
- #include <wlr/types/wlr_output_management_v1.h>
- #include <wlr/types/wlr_pointer.h>
- #include <wlr/types/wlr_pointer_constraints_v1.h>
-+#include <wlr/types/wlr_pointer_gestures_v1.h>
- #include <wlr/types/wlr_presentation_time.h>
- #include <wlr/types/wlr_primary_selection.h>
- #include <wlr/types/wlr_primary_selection_v1.h>
-@@ -86,6 +87,7 @@ enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock,
+@@ -87,6 +87,7 @@ enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock,
  enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
  	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
  #endif
@@ -42,7 +34,7 @@ index bf763df..7e8a684 100644
  
  typedef union {
  	int i;
-@@ -101,6 +103,14 @@ typedef struct {
+@@ -102,6 +103,14 @@ typedef struct {
  	const Arg arg;
  } Button;
  
@@ -57,29 +49,15 @@ index bf763df..7e8a684 100644
  typedef struct Monitor Monitor;
  typedef struct {
  	/* Must keep these three elements in this order */
-@@ -248,6 +258,13 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
+@@ -249,6 +258,7 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
  static void arrangelayers(Monitor *m);
  static void axisnotify(struct wl_listener *listener, void *data);
  static void buttonpress(struct wl_listener *listener, void *data);
 +static int ongesture(struct wlr_pointer_swipe_end_event *event);
-+static void swipe_begin(struct wl_listener *listener, void *data);
-+static void swipe_update(struct wl_listener *listener, void *data);
-+static void swipe_end(struct wl_listener *listener, void *data);
-+static void pinch_begin(struct wl_listener *listener, void *data);
-+static void pinch_update(struct wl_listener *listener, void *data);
-+static void pinch_end(struct wl_listener *listener, void *data);
- static void chvt(const Arg *arg);
- static void checkidleinhibitor(struct wlr_surface *exclude);
- static void cleanup(void);
-@@ -378,6 +395,7 @@ static struct wlr_gamma_control_manager_v1 *gamma_control_mgr;
- static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
- static struct wlr_virtual_pointer_manager_v1 *virtual_pointer_mgr;
- static struct wlr_cursor_shape_manager_v1 *cursor_shape_mgr;
-+static struct wlr_pointer_gestures_v1 *pointer_gestures;
- 
- static struct wlr_pointer_constraints_v1 *pointer_constraints;
- static struct wlr_relative_pointer_manager_v1 *relative_pointer_mgr;
-@@ -405,6 +423,10 @@ static struct wlr_box sgeom;
+ static void swipe_begin(struct wl_listener *listener, void *data);
+ static void swipe_update(struct wl_listener *listener, void *data);
+ static void swipe_end(struct wl_listener *listener, void *data);
+@@ -413,6 +423,10 @@ static struct wlr_box sgeom;
  static struct wl_list mons;
  static Monitor *selmon;
  
@@ -90,7 +68,7 @@ index bf763df..7e8a684 100644
  #ifdef XWAYLAND
  static void activatex11(struct wl_listener *listener, void *data);
  static void associatex11(struct wl_listener *listener, void *data);
-@@ -424,6 +446,8 @@ static xcb_atom_t netatom[NetLast];
+@@ -432,6 +446,8 @@ static xcb_atom_t netatom[NetLast];
  /* attempt to encapsulate suck into one file */
  #include "client.h"
  
@@ -99,49 +77,34 @@ index bf763df..7e8a684 100644
  /* function implementations */
  void
  applybounds(Client *c, struct wlr_box *bbox)
-@@ -628,6 +652,146 @@ buttonpress(struct wl_listener *listener, void *data)
- 			event->time_msec, event->button, event->state);
- }
+@@ -641,6 +657,11 @@ swipe_begin(struct wl_listener *listener, void *data)
+ {
+ 	struct wlr_pointer_swipe_begin_event *event = data;
  
-+void
-+swipe_begin(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_swipe_begin_event *event = data;
-+
 +	swipe_fingers = event->fingers;
 +	// Reset swipe distance at the beginning of a swipe
 +	swipe_dx = 0;
 +	swipe_dy = 0;
 +
-+	// Forward swipe begin event to client
-+	wlr_pointer_gestures_v1_send_swipe_begin(
-+		pointer_gestures, 
-+		seat,
-+		event->time_msec,
-+		event->fingers
-+	);
-+}
-+
-+void
-+swipe_update(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_swipe_update_event *event = data;
-+
+ 	// Forward swipe begin event to client
+ 	wlr_pointer_gestures_v1_send_swipe_begin(
+ 		pointer_gestures, 
+@@ -655,6 +676,11 @@ swipe_update(struct wl_listener *listener, void *data)
+ {
+ 	struct wlr_pointer_swipe_update_event *event = data;
+ 
 +	swipe_fingers = event->fingers;
 +	// Accumulate swipe distance
 +	swipe_dx += event->dx;
 +	swipe_dy += event->dy;
 +
-+	// Forward swipe update event to client
-+	wlr_pointer_gestures_v1_send_swipe_update(
-+		pointer_gestures, 
-+		seat,
-+		event->time_msec,
-+		event->dx,
-+		event->dy
-+	);
-+}
-+
+ 	// Forward swipe update event to client
+ 	wlr_pointer_gestures_v1_send_swipe_update(
+ 		pointer_gestures, 
+@@ -665,11 +691,53 @@ swipe_update(struct wl_listener *listener, void *data)
+ 	);
+ }
+ 
 +int
 +ongesture(struct wlr_pointer_swipe_end_event *event)
 +{
@@ -181,83 +144,14 @@ index bf763df..7e8a684 100644
 +	return handled;
 +}
 +
-+void
-+swipe_end(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_swipe_end_event *event = data;
-+
+ void
+ swipe_end(struct wl_listener *listener, void *data)
+ {
+ 	struct wlr_pointer_swipe_end_event *event = data;
+ 
 +	// TODO: should we stop here if the event has been handled?
 +	ongesture(event);
 +
-+	// Forward swipe end event to client
-+	wlr_pointer_gestures_v1_send_swipe_end(
-+		pointer_gestures, 
-+		seat,
-+		event->time_msec,
-+		event->cancelled
-+	);
-+}
-+
-+void
-+pinch_begin(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_pinch_begin_event *event = data;
-+
-+	// Forward pinch begin event to client
-+	wlr_pointer_gestures_v1_send_pinch_begin(
-+		pointer_gestures, 
-+		seat,
-+		event->time_msec,
-+		event->fingers
-+	);
-+}
-+
-+void
-+pinch_update(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_pinch_update_event *event = data;
-+
-+	// Forward pinch update event to client
-+	wlr_pointer_gestures_v1_send_pinch_update(
-+		pointer_gestures,
-+		seat,
-+		event->time_msec,
-+		event->dx,
-+		event->dy,
-+		event->scale,
-+		event->rotation
-+	);
-+}
-+
-+void
-+pinch_end(struct wl_listener *listener, void *data)
-+{
-+	struct wlr_pointer_pinch_end_event *event = data;
-+
-+	// Forward pinch end event to client
-+	wlr_pointer_gestures_v1_send_pinch_end(
-+		pointer_gestures,
-+		seat,
-+		event->time_msec,
-+		event->cancelled
-+	);
-+}
-+
- void
- chvt(const Arg *arg)
- {
-@@ -2446,6 +2610,14 @@ setup(void)
- 	virtual_pointer_mgr = wlr_virtual_pointer_manager_v1_create(dpy);
- 	LISTEN_STATIC(&virtual_pointer_mgr->events.new_virtual_pointer, virtualpointer);
- 
-+	pointer_gestures = wlr_pointer_gestures_v1_create(dpy);
-+	LISTEN_STATIC(&cursor->events.swipe_begin, swipe_begin);
-+	LISTEN_STATIC(&cursor->events.swipe_update, swipe_update);
-+	LISTEN_STATIC(&cursor->events.swipe_end, swipe_end);
-+	LISTEN_STATIC(&cursor->events.pinch_begin, pinch_begin);
-+	LISTEN_STATIC(&cursor->events.pinch_update, pinch_update);
-+	LISTEN_STATIC(&cursor->events.pinch_end, pinch_end);
-+
- 	seat = wlr_seat_create(dpy, "seat0");
- 	LISTEN_STATIC(&seat->events.request_set_cursor, setcursor);
- 	LISTEN_STATIC(&seat->events.request_set_selection, setsel);
+ 	// Forward swipe end event to client
+ 	wlr_pointer_gestures_v1_send_swipe_end(
+ 		pointer_gestures, 
