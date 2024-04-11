@@ -11,11 +11,11 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/cfact-bottomstack/cfact-b
 
 # Clients & tags manipulation
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/movestack/movestack-diff.patch
-wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/zoomswap/zoomswap.patch
-wget https://codeberg.org/korei999/dwl-patches/raw/branch/main/rotatetags/rotatetags.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/zoomswap/zoomswap.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/rotatetags/rotatetags.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/pertag/pertag-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/moveresizekb/moveresizekb-diff.patch
-wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/shiftview/shiftview.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/shiftview/shiftview.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/swapandfocusdir/swapandfocusdir-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scratchpads/scratchpads-diff.patch
 
@@ -25,14 +25,13 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/customfloat/customfloat-d
 
 # Input
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/keycodes/keycodes-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/naturalscrolltrackpad/naturalscrolltrackpad-diff.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/naturalscrolltrackpad/naturalscrolltrackpad.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes/modes-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes-keycodes/modes-keycodes-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys/lockedkeys-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys-keycodes/lockedkeys-keycodes-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/xkb-rules-switcher/xkb-rules-switcher-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/virtual-pointer/virtual-pointer-diff.patch
 
 # Cursor
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/cursortheme/cursortheme-diff.patch
@@ -43,12 +42,12 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/focus-mon-pointer/focus-m
 
 # Other
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/output-power-management/output-power-management-diff.patch
-wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/autostart/autostart.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/autostart/autostart.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/gestures/gestures-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/minimalborders/minimalborders-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/reporting/reporting-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/scenefx/scenefx-diff.patch
-wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/fakefullscreenclient.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/env/env-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/headless/headless-diff.patch
 
