@@ -79,42 +79,42 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (preferably, from smallest to largest):
 
-- [x] focus-mon-pointer-diff.patch
-- [x] naturalscrolltrackpad-diff.patch
-- [x] env-diff.patch
-- [x] reporting-diff.patch
-- [x] zoomswap.patch
-- [x] cursortheme-diff.patch
-- [x] regexrules-diff.patch
-- [x] customfloat-diff.patch
-- [x] lockedkeys-diff.patch
-- [x] movestack-diff.patch
-- [x] moveresizekb-diff.patch
-- [x] shiftview.patch
-- [x] fakefullscreenclient.patch
-- [x] rotatetags.patch
-- [x] xkb-rules-switcher-diff.patch
-- [x] centeredmaster-diff.patch
-- [x] relative-mouse-resize-diff.patch
-- [x] headless-diff.patch
-- [x] center-diff.patch
-- [x] bottomstack-diff.patch
-- [x] autostart.patch
-- [x] cfact-diff.patch
-- [x] cfact-bottomstack-diff.patch
-- [x] virtual-pointer-diff.patch
-- [x] minimalborders-diff.patch
-- [x] pointer-gestures-unstable-v1-diff.patch
-- [x] modes-diff.patch
-- [x] gestures-diff.patch
-- [x] pertag-diff.patch
-- [x] swapandfocusdir-diff.patch
-- [x] scratchpads-diff.patch
-- [x] output-power-management-diff.patch
-- [x] scenefx-diff.patch
-- [x] keycodes-diff.patch
-- [x] modes-keycodes-diff.patch
-- [x] lockedkeys-keycodes-diff.patch
+- [ ] focus-mon-pointer-diff.patch (UPDATE)
+- [ ] naturalscrolltrackpad-diff.patch (UPDATE)
+- [ ] env-diff.patch
+- [ ] reporting-diff.patch
+- [ ] zoomswap.patch
+- [ ] cursortheme-diff.patch (UPDATE)
+- [ ] regexrules-diff.patch (UPDATE)
+- [ ] customfloat-diff.patch (UPDATE)
+- [ ] lockedkeys-diff.patch (UPDATE)
+- [ ] movestack-diff.patch
+- [ ] moveresizekb-diff.patch
+- [ ] shiftview.patch
+- [ ] fakefullscreenclient.patch
+- [ ] rotatetags.patch
+- [ ] xkb-rules-switcher-diff.patch (UPDATE)
+- [ ] centeredmaster-diff.patch
+- [ ] relative-mouse-resize-diff.patch (UPDATE)
+- [ ] headless-diff.patch
+- [ ] center-diff.patch
+- [ ] bottomstack-diff.patch
+- [ ] autostart.patch
+- [ ] cfact-diff.patch (UPDATE)
+- [ ] cfact-bottomstack-diff.patch
+- [ ] virtual-pointer-diff.patch (UPDATE)
+- [ ] minimalborders-diff.patch (UPDATE)
+- [ ] pointer-gestures-unstable-v1-diff.patch (UPDATE)
+- [ ] modes-diff.patch
+- [ ] gestures-diff.patch (UPDATE)
+- [ ] pertag-diff.patch (UPDATE)
+- [ ] swapandfocusdir-diff.patch
+- [ ] scratchpads-diff.patch
+- [ ] output-power-management-diff.patch (UPDATE)
+- [ ] scenefx-diff.patch (UPDATE)
+- [ ] keycodes-diff.patch (UPDATE)
+- [ ] modes-keycodes-diff.patch
+- [ ] lockedkeys-keycodes-diff.patch
 
 ### Workflow
 
