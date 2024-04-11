@@ -5,6 +5,12 @@
 - 3a997d0336f122898ac8c28b60433c7cbbe14d02
   Center floating windows that were recently moved to another monitor.
 
+- 9d83ddc 
+  put LyrTop behind LyrFloat and LyrFS
+
+- a66bbdd
+  make lyrsfs and lyrfloat the same level
+
 ### Patches list
 
 # Layouts
