@@ -15,47 +15,47 @@
 
 # Layouts
 
-- [centeredmaster](https://github.com/wochap/dwl/blob/v0.5/centeredmaster/centeredmaster.patch)
-- [bottomstack](https://github.com/wochap/dwl/blob/v0.5/bottomstack/bottomstack.patch)
+- [centeredmaster](https://github.com/wochap/dwl/blob/v0.5/centeredmaster/centeredmaster-diff.patch)
+- [bottomstack](https://github.com/wochap/dwl/blob/v0.5/bottomstack/bottomstack-diff.patch)
 
 # Clients placement
 
-- [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center.patch)
-- [cfact](https://github.com/wochap/dwl/blob/v0.5/cfact/cfact.patch)
-- [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack.patch)
+- [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center-diff.patch)
+- [cfact](https://github.com/wochap/dwl/blob/v0.5/cfact/cfact-diff.patch)
+- [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack-diff.patch)
 
 # Clients & tags manipulation
 
-- [movestack](https://github.com/wochap/dwl/blob/v0.5/movestack/movestack.patch)
+- [movestack](https://github.com/wochap/dwl/blob/v0.5/movestack/movestack-diff.patch)
 - [zoomswap](https://codeberg.org/dwl/dwl-patches/src/branch/main/zoomswap/zoomswap.patch)
 - [rotatetags](https://codeberg.org/korei999/dwl-patches/src/branch/main/rotatetags/rotatetags.patch)
-- [pertag](https://github.com/wochap/dwl/blob/v0.5/pertag/pertag.patch)
-- [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb.patch)
+- [pertag](https://github.com/wochap/dwl/blob/v0.5/pertag/pertag-diff.patch)
+- [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb-diff.patch)
 - [shiftview](https://codeberg.org/dwl/dwl-patches/src/branch/main/shiftview/shiftview.patch)
-- [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir.patch)
-- [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads.patch) 
+- [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir-diff.patch)
+- [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads-diff.patch) 
 
 # Rules
 
-- [regexrules](https://github.com/wochap/dwl/blob/v0.5/regexrules/regexrules.patch)
-- [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat.patch)
+- [regexrules](https://github.com/wochap/dwl/blob/v0.5/regexrules/regexrules-diff.patch)
+- [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat-diff.patch)
 
 # Input
 
-- [keycodes](https://github.com/wochap/dwl/blob/v0.5/keycodes/keycodes.patch)
-- [naturalscrolltrackpad](https://github.com/wochap/dwl/blob/v0.5/naturalscrolltrackpad/naturalscrolltrackpad.patch)
-- [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1.patch)
-- [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes.patch)
-- [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes.patch)
-- [lockedkeys](https://github.com/wochap/dwl/blob/v0.5/lockedkeys/lockedkeys.patch)
-- [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes.patch)
-- [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.5/xkb-rules-switcher/xkb-rules-switcher.patch)
-- [virtual-pointer](https://github.com/wochap/dwl/blob/v0.5/virtual-pointer/virtual-pointer.patch)
+- [keycodes](https://github.com/wochap/dwl/blob/v0.5/keycodes/keycodes-diff.patch)
+- [naturalscrolltrackpad](https://github.com/wochap/dwl/blob/v0.5/naturalscrolltrackpad/naturalscrolltrackpad-diff.patch)
+- [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.5/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1-diff.patch)
+- [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes-diff.patch)
+- [modes-keycodes](https://github.com/wochap/dwl/blob/v0.5/modes-keycodes/modes-keycodes-diff.patch)
+- [lockedkeys](https://github.com/wochap/dwl/blob/v0.5/lockedkeys/lockedkeys-diff.patch)
+- [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes-diff.patch)
+- [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.5/xkb-rules-switcher/xkb-rules-switcher-diff.patch)
+- [virtual-pointer](https://github.com/wochap/dwl/blob/v0.5/virtual-pointer/virtual-pointer-diff.patch)
 
 # Cursor
 
-- [cursortheme](https://github.com/wochap/dwl/blob/v0.5/cursortheme/cursortheme.patch)
-- [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.5/relative-mouse-resize/relative-mouse-resize.patch)
+- [cursortheme](https://github.com/wochap/dwl/blob/v0.5/cursortheme/cursortheme-diff.patch)
+- [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.5/relative-mouse-resize/relative-mouse-resize-diff.patch)
 
 # Monitor
 
@@ -63,12 +63,12 @@
 
 # Other
 
-- [output-power-management](https://github.com/wochap/dwl/blob/v0.5/output-power-management/output-power-management.patch)
+- [output-power-management](https://github.com/wochap/dwl/blob/v0.5/output-power-management/output-power-management-diff.patch)
 - [autostart](https://codeberg.org/dwl/dwl-patches/src/branch/main/autostart/autostart.patch)
-- [gestures](https://github.com/wochap/dwl/blob/v0.5/gestures/gestures.patch)
-- [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders.patch)
+- [gestures](https://github.com/wochap/dwl/blob/v0.5/gestures/gestures-diff.patch)
+- [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders-diff.patch)
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
-- [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx.patch)
+- [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx-diff.patch)
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
 - [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
