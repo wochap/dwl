@@ -16,7 +16,7 @@
 # Layouts
 
 - [centeredmaster](https://github.com/wochap/dwl/blob/v0.6-a/centeredmaster/centeredmaster-diff.patch)
-- [bottomstack](https://github.com/wochap/dwl/blob/v0.5/bottomstack/bottomstack-diff.patch)
+- [bottomstack](https://github.com/wochap/dwl/blob/v0.6-a/bottomstack/bottomstack-diff.patch)
 
 # Clients placement
 
@@ -69,7 +69,7 @@
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
 - [scenefx](https://github.com/wochap/dwl/blob/v0.6-a/scenefx/scenefx-diff.patch)
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch)
-- [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
+- [env](https://github.com/wochap/dwl/blob/v0.6-a/env/env-diff.patch)
 - [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
 
 ### How to apply them
@@ -93,10 +93,10 @@ Order (preferably, from smallest to largest):
 - [x] fakefullscreenclient.patch
 - [x] rotatetags.patch
 - [x] xkb-rules-switcher-diff.patch
-- [ ] centeredmaster-diff.patch
-- [ ] relative-mouse-resize-diff.patch
-- [ ] headless-diff.patch
-- [ ] center-diff.patch
+- [x] centeredmaster-diff.patch
+- [x] relative-mouse-resize-diff.patch
+- [x] headless-diff.patch
+- [x] center-diff.patch
 - [ ] bottomstack-diff.patch
 - [ ] autostart.patch
 - [ ] cfact-diff.patch

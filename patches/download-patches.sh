@@ -2,7 +2,7 @@
 
 # Layouts
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/centeredmaster/centeredmaster-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/bottomstack/bottomstack-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/bottomstack/bottomstack-diff.patch
 
 # Clients placement
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/center/center-diff.patch
@@ -48,6 +48,6 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/minimalborders/minimalb
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/reporting/reporting-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scenefx/scenefx-diff.patch
 wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/env/env-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/env/env-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/headless/headless-diff.patch
 
