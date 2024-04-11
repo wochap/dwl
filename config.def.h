@@ -189,6 +189,7 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 /* named scratchpads - First arg only serves to match against key in rules*/
 static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
 
+#include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key                 function        argument */
 	{ MODKEY,                    Key_p,          spawn,          {.v = menucmd} },
@@ -214,9 +215,9 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_d,          rotatetags,     {.i = SHIFT_R} },
 	{ MODKEY,                    Key_h,          setmfact,       {.f = -0.05f} },
 	{ MODKEY,                    Key_l,          setmfact,       {.f = +0.05f} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_H,          setcfact,       {.f = +0.25} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_L,          setcfact,       {.f = -0.25} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_K,          setcfact,       {.f = 0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_h,          setcfact,       {.f = +0.25} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,          setcfact,       {.f = -0.25} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,          setcfact,       {.f = 0} },
 	{ MODKEY,                    Key_Return,     zoom,           {0} },
 	{ MODKEY,                    Key_Tab,        view,           {0} },
 	{ MODKEY,                    Key_a,          shiftview,      { .i = -1 } },
@@ -262,7 +263,7 @@ static const Key keys[] = {
 	TAGKEYS(                     Key_9,                          8),
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,          quit,           {0} },
 
-	{ MODKEY,                    XKB_KEY_b,          entermode,      {.i = BROWSER} },
+	{ MODKEY,                    Key_b,          entermode,      {.i = BROWSER} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
