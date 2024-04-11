@@ -20,7 +20,7 @@
 
 # Clients placement
 
-- [alwayscenter](https://github.com/wochap/dwl/blob/v0.5/alwayscenter/alwayscenter.patch)
+- [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center.patch)
 - [cfact](https://github.com/wochap/dwl/blob/v0.5/cfact/cfact.patch)
 - [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.5/cfact-bottomstack/cfact-bottomstack.patch)
 
@@ -30,16 +30,15 @@
 - [zoomswap](https://codeberg.org/dwl/dwl-patches/src/branch/main/zoomswap/zoomswap.patch)
 - [rotatetags](https://codeberg.org/korei999/dwl-patches/src/branch/main/rotatetags/rotatetags.patch)
 - [pertag](https://github.com/wochap/dwl/blob/v0.5/pertag/pertag.patch)
-- [movecenter](https://github.com/wochap/dwl/blob/v0.5/movecenter/movecenter.patch)
 - [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb.patch)
 - [shiftview](https://codeberg.org/dwl/dwl-patches/src/branch/main/shiftview/shiftview.patch)
 - [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir.patch)
+- [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads.patch) 
 
 # Rules
 
 - [regexrules](https://github.com/wochap/dwl/blob/v0.5/regexrules/regexrules.patch)
 - [customfloat](https://github.com/wochap/dwl/blob/v0.5/customfloat/customfloat.patch)
-- [namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/namedscratchpads/namedscratchpads.patch) (keybinding for run or raise)
 
 # Input
 
@@ -68,14 +67,10 @@
 - [autostart](https://codeberg.org/dwl/dwl-patches/src/branch/main/autostart/autostart.patch)
 - [gestures](https://github.com/wochap/dwl/blob/v0.5/gestures/gestures.patch)
 - [minimalborders](https://github.com/wochap/dwl/blob/v0.5/minimalborders/minimalborders.patch)
-- ~~[borders](https://github.com/wochap/dwl/blob/v0.5/borders/borders.patch)~~
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
-- [reporting-namedscratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-namedscratchpads/reporting-namedscratchpads-diff.patch)
 - [scenefx](https://github.com/wochap/dwl/blob/v0.5/scenefx/scenefx.patch)
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/raw/branch/main/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.5/env/env-diff.patch)
-- [scratchpads](https://github.com/wochap/dwl/blob/v0.5/scratchpads/scratchpads-diff.patch)
-- [reporting-scratchpads](https://github.com/wochap/dwl/blob/v0.5/reporting-scratchpads/reporting-scratchpads-diff.patch)
 - [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
 
 ### How to apply them
@@ -126,7 +121,7 @@ Order (preferably, from smallest to largest):
 - [x] headless.patch
 - [x] focus-mon-pointer.patch
 
-Workflow
+### Workflow
 
 ```
 # generate compile_commands.json for LSP
