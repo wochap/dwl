@@ -100,19 +100,19 @@ Order (preferably, from smallest to largest):
 - [x] bottomstack-diff.patch
 - [x] autostart.patch
 - [x] cfact-diff.patch
-- [ ] cfact-bottomstack-diff.patch
-- [ ] minimalborders-diff.patch
-- [ ] pointer-gestures-unstable-v1-diff.patch
-- [ ] modes-diff.patch
-- [ ] gestures-diff.patch
-- [ ] pertag-diff.patch
-- [ ] swapandfocusdir-diff.patch
-- [ ] scratchpads-diff.patch
-- [ ] output-power-management-diff.patch
-- [ ] scenefx-diff.patch
-- [ ] keycodes-diff.patch
-- [ ] modes-keycodes-diff.patch
-- [ ] lockedkeys-keycodes-diff.patch
+- [x] cfact-bottomstack-diff.patch
+- [x] minimalborders-diff.patch
+- [x] pointer-gestures-unstable-v1-diff.patch
+- [x] modes-diff.patch
+- [x] gestures-diff.patch
+- [x] pertag-diff.patch
+- [x] swapandfocusdir-diff.patch
+- [x] scratchpads-diff.patch
+- [x] output-power-management-diff.patch
+- [x] scenefx-diff.patch
+- [x] keycodes-diff.patch
+- [x] modes-keycodes-diff.patch
+- [x] lockedkeys-keycodes-diff.patch
 
 ### Workflow
 
