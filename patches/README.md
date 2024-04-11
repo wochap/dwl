@@ -2,14 +2,9 @@
 
 ### Changes that aren't in patches
 
-- 3a997d0336f122898ac8c28b60433c7cbbe14d02
-  Center floating windows that were recently moved to another monitor.
-
-- 9d83ddc 
-  put LyrTop behind LyrFloat and LyrFS
-
-- a66bbdd
-  make lyrsfs and lyrfloat the same level
+- f42c23430b2cf4253a2aa964fefa150d8a06cc93
+  - put LyrTop behind LyrFloat
+  - make LyrFS and LyrFloat the same level
 
 ### Patches list
 
@@ -33,7 +28,7 @@
 - [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb-diff.patch)
 - [shiftview](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/shiftview/shiftview.patch)
 - [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir-diff.patch)
-- [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads-diff.patch) 
+- [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads-diff.patch)
 
 # Rules
 
@@ -83,9 +78,9 @@ Order (preferably, from smallest to largest):
 - [x] env-diff.patch
 - [x] reporting-diff.patch
 - [x] zoomswap.patch
-- [x] cursortheme-diff.patch 
-- [x] regexrules-diff.patch 
-- [x] customfloat-diff.patch 
+- [x] cursortheme-diff.patch
+- [x] regexrules-diff.patch
+- [x] customfloat-diff.patch
 - [x] lockedkeys-diff.patch
 - [x] movestack-diff.patch
 - [x] moveresizekb-diff.patch
