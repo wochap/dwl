@@ -35,6 +35,13 @@ static const Env envs[] = {
     { "XDG_CURRENT_DESKTOP",    "wlroots" },
 };
 
+/* Autostart */
+static const char *const autostart[] = {
+        "wbg", "/path/to/your/image", NULL,
+        NULL /* terminate */
+};
+
+
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor   x   y   width   height */
 	/* examples: */
