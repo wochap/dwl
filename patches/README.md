@@ -24,7 +24,7 @@
 - [movestack](https://github.com/wochap/dwl/blob/v0.5/movestack/movestack-diff.patch)
 - [zoomswap](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/zoomswap/zoomswap.patch)
 - [rotatetags](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/rotatetags/rotatetags.patch)
-- [pertag](https://github.com/wochap/dwl/blob/v0.5/pertag/pertag-diff.patch)
+- [pertag](https://github.com/wochap/dwl/blob/v0.6-a/pertag/pertag-diff.patch)
 - [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb-diff.patch)
 - [shiftview](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/shiftview/shiftview.patch)
 - [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir-diff.patch)
@@ -37,7 +37,7 @@
 
 # Input
 
-- [keycodes](https://github.com/wochap/dwl/blob/v0.5/keycodes/keycodes-diff.patch)
+- [keycodes](https://github.com/wochap/dwl/blob/v0.6-a/keycodes/keycodes-diff.patch)
 - [naturalscrolltrackpad](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/naturalscrolltrackpad/naturalscrolltrackpad.patch)
 - [pointer-gestures-unstable-v1](https://github.com/wochap/dwl/blob/v0.6-a/pointer-gestures-unstable-v1/pointer-gestures-unstable-v1-diff.patch)
 - [modes](https://github.com/wochap/dwl/blob/v0.5/modes/modes-diff.patch)
@@ -49,7 +49,8 @@
 # Cursor
 
 - [cursortheme](https://github.com/wochap/dwl/blob/v0.6-a/cursortheme/cursortheme-diff.patch)
-- [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.5/relative-mouse-resize/relative-mouse-resize-diff.patch)
+- [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.6-a/relative-mouse-resize/relative-mouse-resize-diff.patch)
+- [hide-cursor](https://github.com/wochap/dwl/blob/v0.6-a/hide-cursor/hide-cursor-diff.patch)
 
 # Monitor
 
@@ -108,6 +109,7 @@ Order (preferably, from smallest to largest):
 - [x] keycodes-diff.patch
 - [x] modes-keycodes-diff.patch
 - [x] lockedkeys-keycodes-diff.patch
+- [x] hide-cursor-diff.patch
 
 ### Workflow
 

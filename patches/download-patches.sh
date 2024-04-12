@@ -36,6 +36,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/xkb-rules-switcher/xkb-
 # Cursor
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/cursortheme/cursortheme-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/relative-mouse-resize/relative-mouse-resize-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/hide-cursor/hide-cursor-diff.patch
 
 # Monitor
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/focus-mon-pointer/focus-mon-pointer-diff.patch
