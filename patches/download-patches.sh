@@ -51,4 +51,5 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scenefx/scenefx-diff.pa
 wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/env/env-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/headless/headless-diff.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/47258482e2854164b7b1bd01e2a763445b690590/xwayland-handle-minimize/xwayland-handle-minimize.patch
 

@@ -67,6 +67,7 @@
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.6-a/env/env-diff.patch)
 - [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
+- [xwayland-handle-minimize](https://codeberg.org/dwl/dwl-patches/src/commit/47258482e2854164b7b1bd01e2a763445b690590/xwayland-handle-minimize/xwayland-handle-minimize.patch)
 
 ### How to apply them
 
@@ -110,6 +111,7 @@ Order (preferably, from smallest to largest):
 - [x] modes-keycodes-diff.patch
 - [x] lockedkeys-keycodes-diff.patch
 - [x] hide-cursor-diff.patch
+- [x] xwayland-handle-minimize.patch
 
 ### Workflow
 
