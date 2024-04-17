@@ -409,6 +409,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void togglepointerconstraints(const Arg *arg);
 static void raiserunnamedscratchpad(const Arg *arg);
 static void _movecenter(Client *c, int interact);
 static void movecenter(const Arg *arg);
@@ -507,6 +508,8 @@ static unsigned int xkb_rule_index = 0;
 static Client *grabc;
 static Client initial_grabc;
 static int grabcx, grabcy, grabx, graby, grabcenterx, grabcentery; /* client-relative */
+
+static int enable_constraints = 1;
 
 static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
@@ -2470,22 +2473,24 @@ motionnotify(uint32_t time, struct wlr_input_device *device, double dx, double d
 				relative_pointer_mgr, seat, (uint64_t)time * 1000,
 				dx, dy, dx_unaccel, dy_unaccel);
 
-		wl_list_for_each(constraint, &pointer_constraints->constraints, link)
-			cursorconstrain(constraint);
+		if (enable_constraints){
+			wl_list_for_each(constraint, &pointer_constraints->constraints, link)
+				cursorconstrain(constraint);
 
-		if (active_constraint && cursor_mode != CurResize && cursor_mode != CurMove) {
-			toplevel_from_wlr_surface(active_constraint->surface, &c, NULL);
-			if (c && active_constraint->surface == seat->pointer_state.focused_surface) {
-				sx = cursor->x - c->geom.x - c->bw;
-				sy = cursor->y - c->geom.y - c->bw;
-				if (wlr_region_confine(&active_constraint->region, sx, sy,
-						sx + dx, sy + dy, &sx_confined, &sy_confined)) {
-					dx = sx_confined - sx;
-					dy = sy_confined - sy;
+			if (active_constraint && cursor_mode != CurResize && cursor_mode != CurMove) {
+				toplevel_from_wlr_surface(active_constraint->surface, &c, NULL);
+				if (c && active_constraint->surface == seat->pointer_state.focused_surface) {
+					sx = cursor->x - c->geom.x - c->bw;
+					sy = cursor->y - c->geom.y - c->bw;
+					if (wlr_region_confine(&active_constraint->region, sx, sy,
+							sx + dx, sy + dy, &sx_confined, &sy_confined)) {
+						dx = sx_confined - sx;
+						dy = sy_confined - sy;
+					}
+
+					if (active_constraint->type == WLR_POINTER_CONSTRAINT_V1_LOCKED)
+						return;
 				}
-
-				if (active_constraint->type == WLR_POINTER_CONSTRAINT_V1_LOCKED)
-					return;
 			}
 		}
 
@@ -3729,6 +3734,12 @@ raiserunnamedscratchpad(const Arg *arg)
 	} else {
 		spawnnamedscratchpad(arg);
 	}
+}
+
+void
+togglepointerconstraints(const Arg *arg)
+{
+	enable_constraints = !enable_constraints;
 }
 
 void
