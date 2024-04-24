@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <time.h>
-#include <scenefx/fx_renderer/fx_renderer.h>
+#include <scenefx/render/fx_renderer/fx_renderer.h>
 #include <scenefx/types/fx/blur_data.h>
 #include <scenefx/types/fx/shadow_data.h>
 #include <scenefx/types/wlr_scene.h>
@@ -478,14 +478,6 @@ applyrules(Client *c)
 				if (r->monitor == i++)
 					mon = m;
 			}
-		}
-		if (shadow && shadow_only_floating) {
-			if (c->isfloating && !in_shadow_ignore_list(appid)) {
-				c->shadow_data.enabled = 1;
-			} else {
-				c->shadow_data.enabled = 0;
-			}
-			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
 		}
 	}
 	setmon(c, mon, newtags);
@@ -1666,19 +1658,20 @@ mapnotify(struct wl_listener *listener, void *data)
 	 * try to apply rules for them */
 	if ((p = client_get_parent(c))) {
 		c->isfloating = 1;
-		if (shadow && shadow_only_floating) {
-			if (!in_shadow_ignore_list(client_get_appid(c))) {
-				c->shadow_data.enabled = 1;
-			} else {
-				c->shadow_data.enabled = 0;
-			}
-			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
-		}
 		setmon(c, p->mon, p->tags);
 	} else {
 		applyrules(c);
 	}
 	printstatus();
+
+	if (shadow && shadow_only_floating) {
+		if (c->isfloating && !in_shadow_ignore_list(client_get_appid(c))) {
+			c->shadow_data.enabled = 1;
+		} else {
+			c->shadow_data.enabled = 0;
+		}
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
+	}
 
 unset_fullscreen:
 	m = c->mon ? c->mon : xytomon(c->geom.x, c->geom.y);
@@ -2373,9 +2366,9 @@ setup(void)
 	drag_icon = wlr_scene_tree_create(&scene->tree);
 	wlr_scene_node_place_below(&drag_icon->node, &layers[LyrBlock]->node);
 
-	if (blur) {
-		wlr_scene_set_blur_data(scene, blur_data);
-	}
+	// if (blur) {
+	// 	wlr_scene_set_blur_data(scene, blur_data);
+	// }
 
 	/* Autocreates a renderer, either Pixman, GLES2 or Vulkan for us. The user
 	 * can also specify a renderer using the WLR_RENDERER env var.
@@ -3053,11 +3046,11 @@ iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *us
 				wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
 			}
 
-			if (blur) {
-				wlr_scene_buffer_set_backdrop_blur(buffer, 1);
-				wlr_scene_buffer_set_backdrop_blur_optimized(buffer, blur_optimized);
-				wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, blur_ignore_transparent);
-			}
+			// if (blur) {
+			// 	wlr_scene_buffer_set_backdrop_blur(buffer, 1);
+			// 	wlr_scene_buffer_set_backdrop_blur_optimized(buffer, blur_optimized);
+			// 	wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, blur_ignore_transparent);
+			// }
 		}
 	}
 }
