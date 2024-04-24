@@ -621,14 +621,6 @@ applyrules(Client *c)
 				}, 1);
 			}
 		}
-		if (shadow && shadow_only_floating) {
-			if (c->isfloating && !in_shadow_ignore_list(appid)) {
-				c->shadow_data.enabled = 1;
-			} else {
-				c->shadow_data.enabled = 0;
-			}
-			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
-		}
 	}
 	setmon(c, mon, newtags);
 }
@@ -2345,14 +2337,6 @@ mapnotify(struct wl_listener *listener, void *data)
 	 * try to apply rules for them */
 	if ((p = client_get_parent(c))) {
 		c->isfloating = 1;
-		if (shadow && shadow_only_floating) {
-			if (!in_shadow_ignore_list(client_get_appid(c))) {
-				c->shadow_data.enabled = 1;
-			} else {
-				c->shadow_data.enabled = 0;
-			}
-			wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
-		}
 		setmon(c, p->mon, p->tags);
 	} else {
 		applyrules(c);
@@ -2366,6 +2350,15 @@ mapnotify(struct wl_listener *listener, void *data)
 	}
 
 	printstatus();
+
+	if (shadow && shadow_only_floating) {
+		if (c->isfloating && !in_shadow_ignore_list(client_get_appid(c))) {
+			c->shadow_data.enabled = 1;
+		} else {
+			c->shadow_data.enabled = 0;
+		}
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_shadow, c);
+	}
 
 unset_fullscreen:
 	m = c->mon ? c->mon : xytomon(c->geom.x, c->geom.y);
