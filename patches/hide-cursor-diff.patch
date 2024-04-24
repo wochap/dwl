@@ -13,7 +13,7 @@ index 8847e58..1feba6a 100644
  #define MODKEY WLR_MODIFIER_ALT
  
 diff --git a/dwl.c b/dwl.c
-index bf763df..f0b5e39 100644
+index bf763df..96e37f1 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -283,6 +283,8 @@ static void focusmon(const Arg *arg);
@@ -94,7 +94,7 @@ index bf763df..f0b5e39 100644
  	}
  
 +	if (cursor_hide_when_typing)
-+		hidecursor(cursor);
++		wl_event_source_timer_update(hide_source, 0);
 +
  	if (handled)
  		return;
@@ -180,4 +180,3 @@ index bf763df..f0b5e39 100644
  }
  
  Monitor *
-

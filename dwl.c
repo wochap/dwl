@@ -2204,7 +2204,7 @@ keypress(struct wl_listener *listener, void *data)
 	}
 
 	if (cursor_hide_when_typing)
-		hidecursor(cursor);
+		wl_event_source_timer_update(hide_source, 0);
 
 	if (handled)
 		return;
