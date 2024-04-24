@@ -50,7 +50,7 @@
 
 - [cursortheme](https://github.com/wochap/dwl/blob/v0.6-a/cursortheme/cursortheme-diff.patch)
 - [relative-mouse-resize](https://github.com/wochap/dwl/blob/v0.6-a/relative-mouse-resize/relative-mouse-resize-diff.patch)
-- [hide-cursor](https://github.com/wochap/dwl/blob/v0.6-a/hide-cursor/hide-cursor-diff.patch)
+- ~~[hide-cursor](https://github.com/wochap/dwl/blob/v0.6-a/hide-cursor/hide-cursor-diff.patch)~~
 
 # Monitor
 
@@ -111,7 +111,7 @@ Order (preferably, from smallest to largest):
 - [x] keycodes-diff.patch
 - [x] modes-keycodes-diff.patch
 - [x] lockedkeys-keycodes-diff.patch
-- [x] hide-cursor-diff.patch
+- [x] ~~hide-cursor-diff.patch~~
 - [x] xwayland-handle-minimize.patch
 - [x] toggle_constraints.patch
 
