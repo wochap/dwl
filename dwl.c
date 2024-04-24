@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <time.h>
-#include <render/fx_renderer/fx_renderer.h>
+#include <scenefx/render/fx_renderer/fx_renderer.h>
 #include <scenefx/types/fx/blur_data.h>
 #include <scenefx/types/fx/shadow_data.h>
 #include <scenefx/types/wlr_scene.h>
@@ -3232,9 +3232,9 @@ setup(void)
 	drag_icon = wlr_scene_tree_create(&scene->tree);
 	wlr_scene_node_place_below(&drag_icon->node, &layers[LyrBlock]->node);
 
-	if (blur) {
-		wlr_scene_set_blur_data(scene, blur_data);
-	}
+	// if (blur) {
+	// 	wlr_scene_set_blur_data(scene, blur_data);
+	// }
 
 	/* Autocreates a renderer, either Pixman, GLES2 or Vulkan for us. The user
 	 * can also specify a renderer using the WLR_RENDERER env var.
@@ -4311,11 +4311,11 @@ iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *us
 				wlr_scene_buffer_set_shadow_data(buffer, c->shadow_data);
 			}
 
-			if (blur) {
-				wlr_scene_buffer_set_backdrop_blur(buffer, 1);
-				wlr_scene_buffer_set_backdrop_blur_optimized(buffer, blur_optimized);
-				wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, blur_ignore_transparent);
-			}
+			// if (blur) {
+			// 	wlr_scene_buffer_set_backdrop_blur(buffer, 1);
+			// 	wlr_scene_buffer_set_backdrop_blur_optimized(buffer, blur_optimized);
+			// 	wlr_scene_buffer_set_backdrop_blur_ignore_transparent(buffer, blur_ignore_transparent);
+			// }
 		}
 	}
 }
