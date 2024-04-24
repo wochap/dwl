@@ -2339,13 +2339,6 @@ mapnotify(struct wl_listener *listener, void *data)
 	wl_list_insert(&clients, &c->link);
 	wl_list_insert(&fstack, &c->flink);
 
-	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
-	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
-		/* client is floating or in floating layout */
-		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
-		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
-	}
-
 	/* Set initial monitor, tags, floating status, and focus:
 	 * we always consider floating, clients that have parent and thus
 	 * we set the same tags and monitor than its parent, if not
@@ -2364,6 +2357,14 @@ mapnotify(struct wl_listener *listener, void *data)
 	} else {
 		applyrules(c);
 	}
+
+	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
+		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
+	}
+
 	printstatus();
 
 unset_fullscreen:
