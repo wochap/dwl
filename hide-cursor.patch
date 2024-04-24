@@ -1,6 +1,6 @@
-From 18ecf29e6d1324b9efecb44433e556be2a9f40f1 Mon Sep 17 00:00:00 2001
+From 969bf166361b295584b78aad63c095ad28770c7e Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
-Date: Thu, 11 Apr 2024 22:40:19 -0500
+Date: Wed, 24 Apr 2024 14:04:14 -0500
 Subject: [PATCH] implement unclutter and xbanish like features
 
 ---
@@ -23,7 +23,7 @@ index 8847e58..1feba6a 100644
  #define MODKEY WLR_MODIFIER_ALT
  
 diff --git a/dwl.c b/dwl.c
-index bf763df..f0b5e39 100644
+index bf763df..96e37f1 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -283,6 +283,8 @@ static void focusmon(const Arg *arg);
@@ -104,7 +104,7 @@ index bf763df..f0b5e39 100644
  	}
  
 +	if (cursor_hide_when_typing)
-+		hidecursor(cursor);
++		wl_event_source_timer_update(hide_source, 0);
 +
  	if (handled)
  		return;
