@@ -19,7 +19,7 @@ index 8847e58..aef51c8 100644
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
  	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
 diff --git a/dwl.c b/dwl.c
-index bf763df..cd3a3ae 100644
+index bf763df..6c0c5b3 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -332,6 +332,8 @@ static void tagmon(const Arg *arg);
@@ -39,10 +39,11 @@ index bf763df..cd3a3ae 100644
  
  	/* Create scene tree for this client and its border */
  	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
-@@ -1608,6 +1611,13 @@ mapnotify(struct wl_listener *listener, void *data)
- 	wl_list_insert(&clients, &c->link);
- 	wl_list_insert(&fstack, &c->flink);
- 
+@@ -1618,6 +1621,14 @@ mapnotify(struct wl_listener *listener, void *data)
+ 	} else {
+ 		applyrules(c);
+ 	}
++
 +	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 +	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 +		/* client is floating or in floating layout */
@@ -50,10 +51,10 @@ index bf763df..cd3a3ae 100644
 +		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
 +	}
 +
- 	/* Set initial monitor, tags, floating status, and focus:
- 	 * we always consider floating, clients that have parent and thus
- 	 * we set the same tags and monitor than its parent, if not
-@@ -2240,6 +2250,10 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
+ 	printstatus();
+ 
+ unset_fullscreen:
+@@ -2240,6 +2251,10 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
  		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
  		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
  		setfloating(c, c->isfloating);
@@ -64,7 +65,7 @@ index bf763df..cd3a3ae 100644
  	}
  	focusclient(focustop(selmon), 1);
  }
-@@ -2620,6 +2634,35 @@ togglefullscreen(const Arg *arg)
+@@ -2620,6 +2635,35 @@ togglefullscreen(const Arg *arg)
  		setfullscreen(sel, !sel->isfullscreen);
  }
  
