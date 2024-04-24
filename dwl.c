@@ -605,14 +605,17 @@ applyrules(Client *c)
 				if (r->monitor == i++)
 					mon = m;
 			}
-			if (c->isfloating) {
-				struct wlr_box b = floating_relative_to_monitor ? mon->m : mon->w;
+			if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+				/* client is floating or in floating layout */
+				struct wlr_box b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 				int newwidth = ROUND(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
 				int newheight = ROUND(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
+				int newx = ROUND(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
+				int newy = ROUND(r->y ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
 
 				resize(c, (struct wlr_box){
-					.x = r->x ? r->x + b.x : (b.width - newwidth) / 2 + b.x,
-					.y = r->y ? r->y + b.y : (b.height - newheight) / 2 + b.y,
+					.x = newx,
+					.y = newy,
 					.width = newwidth,
 					.height = newheight,
 				}, 1);
