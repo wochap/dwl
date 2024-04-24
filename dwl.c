@@ -2292,9 +2292,9 @@ mapnotify(struct wl_listener *listener, void *data)
 	/* Called when the surface is mapped, or ready to display on-screen. */
 	Client *p = NULL;
 	Client *w, *c = wl_container_of(listener, c, map);
-	Monitor *m = selmon;
+	Monitor *m;
 	int i;
-	struct wlr_box b = floating_relative_to_monitor ? m->m : m->w; 
+	struct wlr_box b;
 
 	/* Create scene tree for this client and its border */
 	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
@@ -2336,8 +2336,12 @@ mapnotify(struct wl_listener *listener, void *data)
 	wl_list_insert(&clients, &c->link);
 	wl_list_insert(&fstack, &c->flink);
 
-	c->geom.x = (b.width - c->geom.width) / 2 + b.x;
-	c->geom.y = (b.height - c->geom.height) / 2 + b.y;
+	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
+		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
+	}
 
 	/* Set initial monitor, tags, floating status, and focus:
 	 * we always consider floating, clients that have parent and thus
@@ -3167,7 +3171,8 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
-		if (c->isfloating) {
+		if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+			/* client is floating or in floating layout */
 			_movecenter(c, 0);
 		}
 	}
@@ -3653,9 +3658,9 @@ togglefakefullscreen(const Arg *arg)
 void
 _movecenter(Client *c, int interact)
 {
-	Monitor *m = selmon;
+	struct wlr_box b;
 
-	if (!m) {
+	if (!c || !c->mon) {
 		return;
 	}
 
@@ -3663,15 +3668,13 @@ _movecenter(Client *c, int interact)
 		return;
 	}
 
-	if (c) {
-		struct wlr_box b = floating_relative_to_monitor ? m->m : m->w; 
-		resize(c, (struct wlr_box){
-			.x = (b.width - c->geom.width) / 2 + b.x,
-			.y = (b.height - c->geom.height) / 2 + b.y,
-			.width = c->geom.width,
-			.height = c->geom.height,
-		}, interact);
-	}
+	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+	resize(c, (struct wlr_box){
+		.x = (b.width - c->geom.width) / 2 + b.x,
+		.y = (b.height - c->geom.height) / 2 + b.y,
+		.width = c->geom.width,
+		.height = c->geom.height,
+	}, interact);
 }
 
 void
