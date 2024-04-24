@@ -190,7 +190,7 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 #include "shiftview.c"
 
 /* named scratchpads - First arg only serves to match against key in rules*/
-static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
+static const char *scratchpadcmd[] = { "s", "foot", "-T", "scratchpad", NULL };
 
 #include "keys.h"
 static const Key keys[] = {
