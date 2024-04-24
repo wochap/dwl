@@ -1,6 +1,6 @@
-From 391c3ca4ecf41a30463e72812050d616877a9d04 Mon Sep 17 00:00:00 2001
+From be21737964fde62e6ba43235dcbaebde55b0cc2d Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
-Date: Wed, 24 Apr 2024 10:22:24 -0500
+Date: Wed, 24 Apr 2024 11:01:06 -0500
 Subject: [PATCH] add rules for floating windows to support x, y, width, height
  If x, y, width or height is less than or equal to 1, then the value will be
  interpreted as a percentage. For example, 0.5 represents 50%, 0.25 represents
@@ -39,7 +39,7 @@ index 8847e58..8bd398a 100644
  
  /* layout(s) */
 diff --git a/dwl.c b/dwl.c
-index bf763df..eb69f04 100644
+index bf763df..9dfc8f3 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -228,6 +228,10 @@ typedef struct {
@@ -57,9 +57,9 @@ index bf763df..eb69f04 100644
  				if (r->monitor == i++)
  					mon = m;
  			}
-+			if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
++			if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
 +				/* client is floating or in floating layout */
-+				struct wlr_box b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
++				struct wlr_box b = respect_monitor_reserved_area ? mon->w : mon->m;
 +				int newwidth = ROUND(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
 +				int newheight = ROUND(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
 +				int newx = ROUND(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
