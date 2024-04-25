@@ -2703,14 +2703,14 @@ printstatus(void)
 	Client *csel;
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
-	char *visible_appids;
 	int namedscratchpads_count;
 	int scratchpads_count;
 
 	wl_list_for_each(m, &mons, link) {
+		char *visible_appids = NULL;
+		int ret_asprintf;
 		occ = urg = 0;
 	  csel = focustop(m);
-		visible_appids = NULL;
 		namedscratchpads_count = 0;
 		scratchpads_count = 0;
 		wl_list_for_each(c, &clients, link) {
@@ -2723,7 +2723,14 @@ printstatus(void)
 			if (c->mon != m)
 				continue;
 			if (VISIBLEON(c, m)) {
-				asprintf(&visible_appids, "%s%s %s ", visible_appids ? visible_appids : "", client_get_appid(c), c == csel ? "true" : "false");
+				appid = client_get_appid(c);
+				ret_asprintf = asprintf(&visible_appids, "%s%s %s ", visible_appids ? visible_appids : "", appid ? appid : broken, c == csel ? "true" : "false");
+				if (ret_asprintf == -1) {
+					if (visible_appids) {
+						free(visible_appids);
+						visible_appids = NULL;
+					}
+				}
 			}
 			occ |= c->tags;
 			if (c->isurgent)
@@ -2754,7 +2761,8 @@ printstatus(void)
 		printf("%s scratchpads_count %d\n", m->wlr_output->name, scratchpads_count);
 
 		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
-		free(visible_appids);
+		if (visible_appids)
+			free(visible_appids);
 	}
 	fflush(stdout);
 }
