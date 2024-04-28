@@ -96,6 +96,9 @@ client_activate_surface(struct wlr_surface *s, int activated)
 #ifdef XWAYLAND
 	struct wlr_xwayland_surface *xsurface;
 	if ((xsurface = wlr_xwayland_surface_try_from_wlr_surface(s))) {
+		if (activated && xsurface->minimized) {
+			wlr_xwayland_surface_set_minimized(xsurface, false);
+		}
 		wlr_xwayland_surface_activate(xsurface, activated);
 		return;
 	}
@@ -342,6 +345,19 @@ client_set_fullscreen(Client *c, int fullscreen)
 	}
 #endif
 	wlr_xdg_toplevel_set_fullscreen(c->surface.xdg->toplevel, fullscreen);
+}
+
+static inline void
+client_set_minimized(struct wlr_surface *s, int minimized)
+{
+#ifdef XWAYLAND
+	struct wlr_xwayland_surface *xsurface;
+	if ((xsurface = wlr_xwayland_surface_try_from_wlr_surface(s))) {
+		int focused = seat->keyboard_state.focused_surface == xsurface->surface;
+		wlr_xwayland_surface_set_minimized(xsurface, !focused && minimized);
+		return;
+	}
+#endif
 }
 
 static inline uint32_t

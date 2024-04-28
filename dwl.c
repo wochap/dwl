@@ -22,6 +22,7 @@
 #include <wlr/types/wlr_data_device.h>
 #include <wlr/types/wlr_drm.h>
 #include <wlr/types/wlr_export_dmabuf_v1.h>
+#include <wlr/types/wlr_foreign_toplevel_management_v1.h>
 #include <wlr/types/wlr_fractional_scale_v1.h>
 #include <wlr/types/wlr_gamma_control_v1.h>
 #include <wlr/types/wlr_idle_inhibit_v1.h>
@@ -71,7 +72,7 @@
 #define MIN(A, B)               ((A) < (B) ? (A) : (B))
 #define ROUND(X)                ((int)((X < 0) ? (X - 0.5) : (X + 0.5)))
 #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
-#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
+#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]) && (!(C)->isminimized))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define END(A)                  ((A) + LENGTH(A))
 #define TAGMASK                 ((1u << TAGCOUNT) - 1)
@@ -120,12 +121,19 @@ typedef struct {
 	struct wl_listener commit;
 	struct wl_listener map;
 	struct wl_listener maximize;
+	struct wl_listener minimize;
 	struct wl_listener unmap;
 	struct wl_listener destroy;
 	struct wl_listener set_title;
 	struct wl_listener fullscreen;
 	struct wl_listener set_decoration_mode;
 	struct wl_listener destroy_decoration;
+	struct wlr_foreign_toplevel_handle_v1 *foreign_toplevel;
+	struct wl_listener foreign_activate_request;
+	struct wl_listener foreign_close_request;
+	struct wl_listener foreign_fullscreen_request;
+	struct wl_listener foreign_destroy;
+	struct wl_listener foreign_minimize;
 	struct wlr_box prev; /* layout-relative, includes border */
 	struct wlr_box bounds;
 #ifdef XWAYLAND
@@ -137,7 +145,7 @@ typedef struct {
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen;
+	int isfloating, isurgent, isfullscreen, isminimized;
 	uint32_t resize; /* configure serial of a pending resize */
 } Client;
 
@@ -295,6 +303,7 @@ static void locksession(struct wl_listener *listener, void *data);
 static void maplayersurfacenotify(struct wl_listener *listener, void *data);
 static void mapnotify(struct wl_listener *listener, void *data);
 static void maximizenotify(struct wl_listener *listener, void *data);
+static void minimizenotify(struct wl_listener *listener, void *data);
 static void monocle(Monitor *m);
 static void motionabsolute(struct wl_listener *listener, void *data);
 static void motionnotify(uint32_t time, struct wlr_input_device *device, double sx,
@@ -318,6 +327,7 @@ static void setcursor(struct wl_listener *listener, void *data);
 static void setcursorshape(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
+static void setminimized(Client *c, int minimized);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -332,6 +342,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void toggleminimized(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
@@ -347,6 +358,11 @@ static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
 static void zoom(const Arg *arg);
+static void handle_foreign_activate_request(struct wl_listener *listener, void *data);
+static void handle_foreign_close_request(struct wl_listener *listener, void *data);
+static void handle_foreign_destroy(struct wl_listener *listener, void *data);
+static void handle_foreign_fullscreen_request(struct wl_listener *listener, void *data);
+static void handle_foreign_minimize(struct wl_listener *listener, void *data);
 
 /* variables */
 static const char broken[] = "broken";
@@ -391,6 +407,8 @@ static struct wlr_session_lock_manager_v1 *session_lock_mgr;
 static struct wlr_scene_rect *locked_bg;
 static struct wlr_session_lock_v1 *cur_lock;
 static struct wl_listener lock_listener = {.notify = locksession};
+
+static struct wlr_foreign_toplevel_manager_v1 *foreign_toplevel_manager;
 
 static struct wlr_seat *seat;
 static KeyboardGroup kb_group = {0};
@@ -457,6 +475,9 @@ applyrules(Client *c)
 		appid = broken;
 	if (!(title = client_get_title(c)))
 		title = broken;
+
+	wlr_foreign_toplevel_handle_v1_set_app_id(c->foreign_toplevel, appid);
+	wlr_foreign_toplevel_handle_v1_set_title(c->foreign_toplevel, title);
 
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
@@ -975,7 +996,8 @@ createnotify(struct wl_listener *listener, void *data)
 	c->bw = borderpx;
 
 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
-			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
+			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN |
+			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_MINIMIZE);
 
 	LISTEN(&xdg_surface->events.destroy, &c->destroy, destroynotify);
 	LISTEN(&xdg_surface->surface->events.commit, &c->commit, commitnotify);
@@ -985,6 +1007,8 @@ createnotify(struct wl_listener *listener, void *data)
 			fullscreennotify);
 	LISTEN(&xdg_surface->toplevel->events.request_maximize, &c->maximize,
 			maximizenotify);
+	LISTEN(&xdg_surface->toplevel->events.request_minimize, &c->minimize,
+			minimizenotify);
 	LISTEN(&xdg_surface->toplevel->events.set_title, &c->set_title, updatetitle);
 }
 
@@ -1288,6 +1312,8 @@ focusclient(Client *c, int lift)
 			client_set_border_color(old_c, bordercolor);
 
 			client_activate_surface(old, 0);
+			if (old_c->foreign_toplevel)
+				wlr_foreign_toplevel_handle_v1_set_activated(old_c->foreign_toplevel, 0);
 		}
 	}
 	printstatus();
@@ -1306,6 +1332,8 @@ focusclient(Client *c, int lift)
 
 	/* Activate the new client */
 	client_activate_surface(client_surface(c), 1);
+	if (c->foreign_toplevel)
+		wlr_foreign_toplevel_handle_v1_set_activated(c->foreign_toplevel, 1);
 }
 
 void
@@ -1599,6 +1627,20 @@ mapnotify(struct wl_listener *listener, void *data)
 		c->border[i]->node.data = c;
 	}
 
+	c->foreign_toplevel =
+		wlr_foreign_toplevel_handle_v1_create(foreign_toplevel_manager);
+
+	LISTEN(&c->foreign_toplevel->events.request_activate, &c->foreign_activate_request,
+			handle_foreign_activate_request);
+	LISTEN(&c->foreign_toplevel->events.request_close, &c->foreign_close_request,
+			handle_foreign_close_request);
+	LISTEN(&c->foreign_toplevel->events.request_fullscreen, &c->foreign_fullscreen_request,
+			handle_foreign_fullscreen_request);
+	LISTEN(&c->foreign_toplevel->events.destroy, &c->foreign_destroy,
+			handle_foreign_destroy);
+	LISTEN(&c->foreign_toplevel->events.request_minimize, &c->foreign_minimize,
+			handle_foreign_minimize);
+
 	/* Initialize client geometry with room for border */
 	client_set_tiled(c, WLR_EDGE_TOP | WLR_EDGE_BOTTOM | WLR_EDGE_LEFT | WLR_EDGE_RIGHT);
 	c->geom.width += 2 * c->bw;
@@ -1640,6 +1682,24 @@ maximizenotify(struct wl_listener *listener, void *data)
 	 * protocol version
 	 * wlr_xdg_surface_schedule_configure() is used to send an empty reply. */
 	Client *c = wl_container_of(listener, c, maximize);
+	if (wl_resource_get_version(c->surface.xdg->toplevel->resource)
+			< XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION)
+		wlr_xdg_surface_schedule_configure(c->surface.xdg);
+}
+
+void
+minimizenotify(struct wl_listener *listener, void *data)
+{
+	/* This event is raised when a client would like to maximize itself,
+	 * typically because the user clicked on the maximize button on
+	 * client-side decorations. dwl doesn't support maximization, but
+	 * to conform to xdg-shell protocol we still must send a configure.
+	 * Since xdg-shell protocol v5 we should ignore request of unsupported
+	 * capabilities, just schedule a empty configure when the client uses <5
+	 * protocol version
+	 * wlr_xdg_surface_schedule_configure() is used to send an empty reply. */
+	Client *c = wl_container_of(listener, c, minimize);
+	setminimized(c, !c->isminimized);
 	if (wl_resource_get_version(c->surface.xdg->toplevel->resource)
 			< XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION)
 		wlr_xdg_surface_schedule_configure(c->surface.xdg);
@@ -1928,6 +1988,7 @@ printstatus(void)
 			printf("%s appid %s\n", m->wlr_output->name, appid ? appid : broken);
 			printf("%s fullscreen %d\n", m->wlr_output->name, c->isfullscreen);
 			printf("%s floating %d\n", m->wlr_output->name, c->isfloating);
+			printf("%s minimized %d\n", m->wlr_output->name, c->isminimized);
 			sel = c->tags;
 		} else {
 			printf("%s title \n", m->wlr_output->name);
@@ -2182,6 +2243,25 @@ setfullscreen(Client *c, int fullscreen)
 }
 
 void
+setminimized(Client *c, int minimized)
+{
+	if (c->isminimized == minimized)
+		return;
+
+	c->isminimized = minimized;
+	if (!c->mon)
+		return;
+	client_set_minimized(client_surface(c), minimized);
+	// wlr_scene_node_reparent(&c->scene->node,
+	// 	layers[c->isminimized    ? LyrBottom
+	// 				 : c->isfullscreen ? LyrFS
+	// 				 : c->isfloating   ? LyrFloat
+	// 													 : LyrTile]);
+	focusclient(focustop(c->mon), 1);
+	arrange(c->mon);
+}
+
+void
 setgamma(struct wl_listener *listener, void *data)
 {
 	struct wlr_gamma_control_manager_v1_set_gamma_event *event = data;
@@ -2232,14 +2312,20 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 	c->prev = c->geom;
 
 	/* Scene graph sends surface leave/enter events on move and resize */
-	if (oldmon)
+	if (oldmon) {
+		if (c->foreign_toplevel)
+			wlr_foreign_toplevel_handle_v1_output_leave(c->foreign_toplevel, oldmon->wlr_output);
 		arrange(oldmon);
+	}
 	if (m) {
 		/* Make sure window actually overlaps with the monitor */
 		resize(c, c->geom, 0);
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
+		if (c->foreign_toplevel)
+			wlr_foreign_toplevel_handle_v1_output_enter(c->foreign_toplevel, m->wlr_output);
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
+		setminimized(c, c->isminimized);
 	}
 	focusclient(focustop(selmon), 1);
 }
@@ -2350,6 +2436,9 @@ setup(void)
 
 	gamma_control_mgr = wlr_gamma_control_manager_v1_create(dpy);
 	LISTEN_STATIC(&gamma_control_mgr->events.set_gamma, setgamma);
+
+	/* Initializes foreign toplevel management */
+	foreign_toplevel_manager = wlr_foreign_toplevel_manager_v1_create(dpy);
 
 	/* Creates an output layout, which a wlroots utility for working with an
 	 * arrangement of screens in a physical layout. */
@@ -2621,6 +2710,14 @@ togglefullscreen(const Arg *arg)
 }
 
 void
+toggleminimized(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		setminimized(sel, !sel->isminimized);
+}
+
+void
 toggletag(const Arg *arg)
 {
 	uint32_t newtags;
@@ -2689,6 +2786,11 @@ unmapnotify(struct wl_listener *listener, void *data)
 		wl_list_remove(&c->link);
 		setmon(c, NULL, 0);
 		wl_list_remove(&c->flink);
+	}
+
+	if (c->foreign_toplevel) {
+		wlr_foreign_toplevel_handle_v1_destroy(c->foreign_toplevel);
+		c->foreign_toplevel = NULL;
 	}
 
 	wlr_scene_node_destroy(&c->scene->node);
@@ -2802,6 +2904,12 @@ void
 updatetitle(struct wl_listener *listener, void *data)
 {
 	Client *c = wl_container_of(listener, c, set_title);
+	if (c->foreign_toplevel) {
+		const char *title;
+		if (!(title = client_get_title(c)))
+			title = broken;
+		wlr_foreign_toplevel_handle_v1_set_title(c->foreign_toplevel, title);
+	}
 	if (c == focustop(c->mon))
 		printstatus();
 }
@@ -2816,6 +2924,8 @@ urgent(struct wl_listener *listener, void *data)
 		return;
 
 	c->isurgent = 1;
+	if (c->isminimized)
+		setminimized(c, 0);
 	printstatus();
 
 	if (client_surface(c)->mapped)
@@ -2929,6 +3039,64 @@ zoom(const Arg *arg)
 	arrange(selmon);
 }
 
+void
+handle_foreign_activate_request(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_activate_request);
+
+	if (!c) 
+		return;
+	if (c->isminimized)
+		setminimized(c, 0);
+	if (c->mon == selmon) {
+		c->tags = c->mon->tagset[c->mon->seltags];
+	} else {
+		setmon(c, selmon, 0);
+	}
+	focusclient(c, 1);
+	arrange(c->mon);
+}
+
+void
+handle_foreign_close_request(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_close_request);
+
+	if (c)
+		client_send_close(c);
+}
+
+void
+handle_foreign_fullscreen_request(struct wl_listener *listener, void *data) {
+	Client *c = wl_container_of(listener, c, foreign_fullscreen_request);
+	struct wlr_foreign_toplevel_handle_v1_fullscreen_event *event = data;
+
+	if (c)
+		setfullscreen(c, event->fullscreen);
+}
+
+void
+handle_foreign_destroy(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_destroy);
+
+	wl_list_remove(&c->foreign_activate_request.link);
+	wl_list_remove(&c->foreign_close_request.link);
+	wl_list_remove(&c->foreign_fullscreen_request.link);
+	wl_list_remove(&c->foreign_destroy.link);
+	wl_list_remove(&c->foreign_minimize.link);
+}
+
+void
+handle_foreign_minimize(struct wl_listener *listener, void *data)
+{
+	Client *c = wl_container_of(listener, c, foreign_minimize);
+	struct wlr_foreign_toplevel_handle_v1_minimized_event *event = data;
+
+	if (c)
+		setminimized(c, event->minimized);
+}
+
 #ifdef XWAYLAND
 void
 activatex11(struct wl_listener *listener, void *data)
@@ -2936,8 +3104,11 @@ activatex11(struct wl_listener *listener, void *data)
 	Client *c = wl_container_of(listener, c, activate);
 
 	/* Only "managed" windows can be activated */
-	if (!client_is_unmanaged(c))
+	if (!client_is_unmanaged(c)) {
+		if (c->isminimized)
+			setminimized(c, 0);
 		wlr_xwayland_surface_activate(c->surface.xwayland, 1);
+	}
 }
 
 void
@@ -2986,6 +3157,7 @@ createnotifyx11(struct wl_listener *listener, void *data)
 	LISTEN(&xsurface->events.request_activate, &c->activate, activatex11);
 	LISTEN(&xsurface->events.request_configure, &c->configure, configurex11);
 	LISTEN(&xsurface->events.request_fullscreen, &c->fullscreen, fullscreennotify);
+	LISTEN(&xsurface->events.request_minimize, &c->foreign_minimize, handle_foreign_minimize);
 	LISTEN(&xsurface->events.set_hints, &c->set_hints, sethints);
 	LISTEN(&xsurface->events.set_title, &c->set_title, updatetitle);
 }
