@@ -2807,6 +2807,7 @@ toggleinscratchpad(const Arg *arg)
 	sel->inscratchpad = !sel->inscratchpad;
 	if (sel->inscratchpad) {
 		sel->tags = 0;
+		focusclient(focustop(selmon), 1);
 	} else {
 		sel->tags = selmon->tagset[selmon->seltags];
 	}
