@@ -1,7 +1,7 @@
 From 1b03fdfeb024b61c6705885113580a5bf64d6061 Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
 Date: Thu, 11 Apr 2024 10:57:33 -0500
-Subject: [PATCH 1/2] implement scratchpads and namedscratchpads
+Subject: [PATCH 1/3] implement scratchpads and namedscratchpads
 
 apply scratchpads
 apply reporting-namedscratchpads
@@ -310,7 +310,7 @@ index bf763df..5ea71a4 100644
 From b02f1cd7c3d0160bfab383d3f5d9200ea02980bf Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
 Date: Fri, 12 Apr 2024 19:17:58 -0500
-Subject: [PATCH 2/2] togglescratchpad() hides namedscratchpad
+Subject: [PATCH 2/3] togglescratchpad() hides namedscratchpad
 
 if focused window is namedscratchpad then hide it
 ---
@@ -336,6 +336,32 @@ index 5ea71a4..91bf8ec 100644
  	wl_list_for_each(c, &clients, link) {
  		if (c->inscratchpad) {
  			found = 1;
+-- 
+2.43.2
+
+
+From cbd4d444dbe358f4a35e6ff678959cfc37f78584 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Wed, 8 May 2024 17:44:52 -0500
+Subject: [PATCH 3/3] fix: focus next client after sending selected client to
+ scratchpad
+
+---
+ dwl.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/dwl.c b/dwl.c
+index 91bf8ec..632c149 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -2807,6 +2807,7 @@ toggleinscratchpad(const Arg *arg)
+ 	sel->inscratchpad = !sel->inscratchpad;
+ 	if (sel->inscratchpad) {
+ 		sel->tags = 0;
++		focusclient(focustop(selmon), 1);
+ 	} else {
+ 		sel->tags = selmon->tagset[selmon->seltags];
+ 	}
 -- 
 2.43.2
 
