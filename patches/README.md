@@ -66,7 +66,7 @@
 - [scenefx](https://github.com/wochap/dwl/blob/v0.6-a/scenefx/scenefx-diff.patch)
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.6-a/env/env-diff.patch)
-- [headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)
+- ~~[headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)~~
 - [xwayland-handle-minimize](https://codeberg.org/dwl/dwl-patches/src/commit/47258482e2854164b7b1bd01e2a763445b690590/xwayland-handle-minimize/xwayland-handle-minimize.patch)
 - [toggle_constraints](https://codeberg.org/dwl/dwl-patches/src/commit/8287f9b148ede54ddc3a339f3f64436582d9f7ef/toggle_constraints/toggle_constraints.patch)
 
@@ -93,7 +93,7 @@ Order (preferably, from smallest to largest):
 - [x] xkb-rules-switcher-diff.patch
 - [x] centeredmaster-diff.patch
 - [x] relative-mouse-resize-diff.patch
-- [x] headless-diff.patch
+- [x] ~~headless-diff.patch~~
 - [x] center-diff.patch
 - [x] bottomstack-diff.patch
 - [x] autostart.patch
