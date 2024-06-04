@@ -63,7 +63,7 @@
 - [gestures](https://github.com/wochap/dwl/blob/v0.6-a/gestures/gestures-diff.patch)
 - [minimalborders](https://github.com/wochap/dwl/blob/v0.6-a/minimalborders/minimalborders-diff.patch)
 - [reporting](https://github.com/wochap/dwl/blob/v0.5/reporting/reporting-diff.patch)
-- [scenefx](https://github.com/wochap/dwl/blob/v0.6-a/scenefx/scenefx-diff.patch)
+- ~~[scenefx](https://github.com/wochap/dwl/blob/v0.6-a/scenefx/scenefx-diff.patch)~~
 - [fakefullscreenclient](https://codeberg.org/dwl/dwl-patches/src/commit/5368aa392c7ebf8d7d24c232b80cfae1be457d41/fakefullscreenclient/fakefullscreenclient.patch)
 - [env](https://github.com/wochap/dwl/blob/v0.6-a/env/env-diff.patch)
 - ~~[headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)~~
@@ -107,7 +107,7 @@ Order (preferably, from smallest to largest):
 - [x] swapandfocusdir-diff.patch
 - [x] scratchpads-diff.patch
 - [x] output-power-management-diff.patch
-- [x] scenefx-diff.patch
+- [x] ~~scenefx-diff.patch~~
 - [x] keycodes-diff.patch
 - [x] modes-keycodes-diff.patch
 - [x] lockedkeys-keycodes-diff.patch
