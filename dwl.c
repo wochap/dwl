@@ -86,6 +86,7 @@ enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock,
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
 #endif
+enum { BrdOriginal, BrdStart, BrdEnd, BrdStartEnd };
 
 typedef union {
 	int i;
@@ -109,6 +110,8 @@ typedef struct {
 	Monitor *mon;
 	struct wlr_scene_tree *scene;
 	struct wlr_scene_rect *border[4]; /* top, bottom, left, right */
+	struct wlr_scene_rect *borders[4]; /* top, bottom, left, right */
+	struct wlr_scene_rect *bordere[4]; /* top, bottom, left, right */
 	struct wlr_scene_tree *scene_surface;
 	struct wl_list link;
 	struct wl_list flink;
@@ -136,6 +139,8 @@ typedef struct {
 	struct wl_listener set_hints;
 #endif
 	unsigned int bw;
+	unsigned int bws;
+	unsigned int bwe;
 	uint32_t tags;
 	int isfloating, isurgent, isfullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
@@ -973,6 +978,8 @@ createnotify(struct wl_listener *listener, void *data)
 	c = xdg_surface->data = ecalloc(1, sizeof(*c));
 	c->surface.xdg = xdg_surface;
 	c->bw = borderpx;
+	c->bws = borders_only_floating ? 0 : borderspx;
+	c->bwe = borders_only_floating ? 0 : borderepx;
 
 	wlr_xdg_toplevel_set_wm_capabilities(xdg_surface->toplevel,
 			WLR_XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN);
@@ -1268,7 +1275,7 @@ focusclient(Client *c, int lift)
 		/* Don't change border color if there is an exclusive focus or we are
 		 * handling a drag operation */
 		if (!exclusive_focus && !seat->drag)
-			client_set_border_color(c, focuscolor);
+			client_set_border_color(c, focuscolor, focuscolor, focuscolor);
 	}
 
 	/* Deactivate old client if focus is changing */
@@ -1285,7 +1292,7 @@ focusclient(Client *c, int lift)
 		/* Don't deactivate old client if the new one wants focus, as this causes issues with winecfg
 		 * and probably other clients */
 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
-			client_set_border_color(old_c, bordercolor);
+			client_set_border_color(old_c, bordercolor, borderscolor, borderecolor);
 
 			client_activate_surface(old, 0);
 		}
@@ -1597,6 +1604,12 @@ mapnotify(struct wl_listener *listener, void *data)
 		c->border[i] = wlr_scene_rect_create(c->scene, 0, 0,
 				c->isurgent ? urgentcolor : bordercolor);
 		c->border[i]->node.data = c;
+
+		c->borders[i] = wlr_scene_rect_create(c->scene, 0, 0, borderscolor);
+		c->borders[i]->node.data = c;
+
+		c->bordere[i] = wlr_scene_rect_create(c->scene, 0, 0, borderecolor);
+		c->bordere[i]->node.data = c;
 	}
 
 	/* Initialize client geometry with room for border */
@@ -1618,6 +1631,12 @@ mapnotify(struct wl_listener *listener, void *data)
 	} else {
 		applyrules(c);
 	}
+
+	if (borders_only_floating) {
+		c->bws = c->isfloating ? borderspx : 0;
+		c->bwe = c->isfloating ? borderepx : 0;
+	}
+
 	printstatus();
 
 unset_fullscreen:
@@ -2051,6 +2070,24 @@ resize(Client *c, struct wlr_box geo, int interact)
 	wlr_scene_node_set_position(&c->border[2]->node, 0, c->bw);
 	wlr_scene_node_set_position(&c->border[3]->node, c->geom.width - c->bw, c->bw);
 
+	wlr_scene_rect_set_size(c->borders[0], c->geom.width - 2 * borderspx_offset, c->bws);
+	wlr_scene_rect_set_size(c->borders[1], c->geom.width - 2 * borderspx_offset, c->bws);
+	wlr_scene_rect_set_size(c->borders[2], c->bws, c->geom.height - 2 * c->bws - 2 * borderspx_offset);
+	wlr_scene_rect_set_size(c->borders[3], c->bws, c->geom.height - 2 * c->bws - 2 * borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[0]->node, borderspx_offset, borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[1]->node, borderspx_offset, c->geom.height - c->bws - borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[2]->node, borderspx_offset, c->bws + borderspx_offset);
+	wlr_scene_node_set_position(&c->borders[3]->node, c->geom.width - c->bws - borderspx_offset, c->bws + borderspx_offset);
+
+	wlr_scene_rect_set_size(c->bordere[0], c->geom.width - (c->bw - c->bwe) * 2 + borderepx_negative_offset * 2, c->bwe);
+	wlr_scene_rect_set_size(c->bordere[1], c->geom.width - (c->bw - c->bwe) * 2 + borderepx_negative_offset * 2, c->bwe);
+	wlr_scene_rect_set_size(c->bordere[2], c->bwe, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_rect_set_size(c->bordere[3], c->bwe, c->geom.height - 2 * c->bw + 2 * borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[0]->node, c->bw - c->bwe - borderepx_negative_offset, c->bw - c->bwe - borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[1]->node, c->bw - c->bwe - borderepx_negative_offset, c->geom.height - c->bw + borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[2]->node, c->bw - c->bwe - borderepx_negative_offset, c->bw - borderepx_negative_offset);
+	wlr_scene_node_set_position(&c->bordere[3]->node, c->geom.width - c->bw + borderepx_negative_offset, c->bw - borderepx_negative_offset);
+
 	/* this is a no-op if size hasn't changed */
 	c->resize = client_set_size(c, c->geom.width - 2 * c->bw,
 			c->geom.height - 2 * c->bw);
@@ -2151,6 +2188,12 @@ setfloating(Client *c, int floating)
 	c->isfloating = floating;
 	if (!c->mon)
 		return;
+
+	if (borders_only_floating) {
+		c->bws = c->isfloating ? borderspx : 0;
+		c->bwe = c->isfloating ? borderepx : 0;
+	}
+
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfullscreen ||
 			(p && p->isfullscreen) ? LyrFS
 			: c->isfloating ? LyrFloat : LyrTile]);
@@ -2165,6 +2208,8 @@ setfullscreen(Client *c, int fullscreen)
 	if (!c->mon)
 		return;
 	c->bw = fullscreen ? 0 : borderpx;
+	c->bws = fullscreen ? 0 : borderspx;
+	c->bwe = fullscreen ? 0 : borderepx;
 	client_set_fullscreen(c, fullscreen);
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfullscreen
 			? LyrFS : c->isfloating ? LyrFloat : LyrTile]);
@@ -2819,7 +2864,7 @@ urgent(struct wl_listener *listener, void *data)
 	printstatus();
 
 	if (client_surface(c)->mapped)
-		client_set_border_color(c, urgentcolor);
+		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 }
 
 void
@@ -3023,7 +3068,7 @@ sethints(struct wl_listener *listener, void *data)
 	printstatus();
 
 	if (c->isurgent && surface && surface->mapped)
-		client_set_border_color(c, urgentcolor);
+		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 }
 
 void
