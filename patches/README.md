@@ -69,6 +69,7 @@
 - ~~[headless](https://github.com/wochap/dwl/blob/v0.5/headless/headless-diff.patch)~~
 - [xwayland-handle-minimize](https://codeberg.org/dwl/dwl-patches/src/commit/47258482e2854164b7b1bd01e2a763445b690590/xwayland-handle-minimize/xwayland-handle-minimize.patch)
 - [toggle_constraints](https://codeberg.org/dwl/dwl-patches/src/commit/8287f9b148ede54ddc3a339f3f64436582d9f7ef/toggle_constraints/toggle_constraints.patch)
+- [borders](https://github.com/wochap/dwl/blob/v0.6-a/borders/borders-diff.patch)
 
 ### How to apply them
 
@@ -114,6 +115,7 @@ Order (preferably, from smallest to largest):
 - [x] ~~hide-cursor-diff.patch~~
 - [x] xwayland-handle-minimize.patch
 - [x] toggle_constraints.patch
+- [x] borders
 
 ### Workflow
 
