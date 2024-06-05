@@ -53,4 +53,5 @@ wget https://codeberg.org/dwl/dwl-patches/raw/commit/5368aa392c7ebf8d7d24c232b80
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/env/env-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/headless/headless-diff.patch
 wget https://codeberg.org/dwl/dwl-patches/raw/commit/47258482e2854164b7b1bd01e2a763445b690590/xwayland-handle-minimize/xwayland-handle-minimize.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/commit/6af0e5e2096f4e13d2a9fd3f638fcde06fdad2c2/patches/rlimit_max/rlimit_max.patch
 
