@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/resource.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
@@ -371,6 +372,7 @@ static void pointerfocus(Client *c, struct wlr_surface *surface,
 static void printstatus(void);
 static void powermgrsetmodenotify(struct wl_listener *listener, void *data);
 static void quit(const Arg *arg);
+static void restorerlimit(void);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requestdecorationmode(struct wl_listener *listener, void *data);
 static void requeststartdrag(struct wl_listener *listener, void *data);
@@ -431,6 +433,7 @@ static void entermode(const Arg *arg);
 
 /* variables */
 static const char broken[] = "broken";
+static struct rlimit og_rlimit;
 static pid_t child_pid = -1;
 static int locked;
 static void *exclusive_focus;
@@ -2739,6 +2742,15 @@ quit(const Arg *arg)
 }
 
 void
+restorerlimit(void)
+{
+	if (og_rlimit.rlim_cur == 0)
+		return;
+	if (setrlimit(RLIMIT_NOFILE, &og_rlimit) < 0)
+		die("setrlimit:");
+}
+
+void
 rendermon(struct wl_listener *listener, void *data)
 {
 	/* This function is called every time an output is ready to display a frame,
@@ -2895,6 +2907,7 @@ run(char *startup_cmd)
 		if ((child_pid = fork()) < 0)
 			die("startup: fork:");
 		if (child_pid == 0) {
+			restorerlimit();
 			dup2(piperw[0], STDIN_FILENO);
 			close(piperw[0]);
 			close(piperw[1]);
@@ -3126,10 +3139,19 @@ setup(void)
 {
 	struct xkb_context *context;
 	struct xkb_keymap *keymap;
+	struct rlimit new_rlimit;
 
 	int i, sig[] = {SIGCHLD, SIGINT, SIGTERM, SIGPIPE};
 	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = handlesig};
 	char cursorsize_str[3];
+
+	if (getrlimit(RLIMIT_NOFILE, &og_rlimit) < 0)
+		die("getrlimit:");
+	new_rlimit = og_rlimit;
+	new_rlimit.rlim_cur = new_rlimit.rlim_max;
+	if (setrlimit(RLIMIT_NOFILE, &new_rlimit) < 0)
+		die("setrlimit:");
+
 	sigemptyset(&sa.sa_mask);
 	sprintf(cursorsize_str, "%d", cursorsize);
 
@@ -3398,6 +3420,7 @@ void
 spawn(const Arg *arg)
 {
 	if (fork() == 0) {
+		restorerlimit();
 		dup2(STDERR_FILENO, STDOUT_FILENO);
 		setsid();
 		execvp(((char **)arg->v)[0], (char **)arg->v);

@@ -1,0 +1,93 @@
+From 1a3a3290f1ecc3afe7d455c05b2742060406dae0 Mon Sep 17 00:00:00 2001
+From: sewn <sewn@disroot.org>
+Date: Sun, 19 May 2024 20:06:32 +0300
+Subject: [PATCH] set max open file descriptors to available max
+
+---
+ dwl.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/dwl.c b/dwl.c
+index bf763df..eabea11 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -7,6 +7,7 @@
+ #include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <sys/resource.h>
+ #include <sys/wait.h>
+ #include <time.h>
+ #include <unistd.h>
+@@ -308,6 +309,7 @@ static void pointerfocus(Client *c, struct wlr_surface *surface,
+ 		double sx, double sy, uint32_t time);
+ static void printstatus(void);
+ static void quit(const Arg *arg);
++static void restorerlimit(void);
+ static void rendermon(struct wl_listener *listener, void *data);
+ static void requestdecorationmode(struct wl_listener *listener, void *data);
+ static void requeststartdrag(struct wl_listener *listener, void *data);
+@@ -350,6 +352,7 @@ static void zoom(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
++static struct rlimit og_rlimit;
+ static pid_t child_pid = -1;
+ static int locked;
+ static void *exclusive_focus;
+@@ -1951,6 +1954,15 @@ quit(const Arg *arg)
+ 	wl_display_terminate(dpy);
+ }
+ 
++void
++restorerlimit(void)
++{
++	if (og_rlimit.rlim_cur == 0)
++		return;
++	if (setrlimit(RLIMIT_NOFILE, &og_rlimit) < 0)
++		die("setrlimit:");
++}
++
+ void
+ rendermon(struct wl_listener *listener, void *data)
+ {
+@@ -2080,6 +2092,7 @@ run(char *startup_cmd)
+ 		if ((child_pid = fork()) < 0)
+ 			die("startup: fork:");
+ 		if (child_pid == 0) {
++			restorerlimit();
+ 			dup2(piperw[0], STDIN_FILENO);
+ 			close(piperw[0]);
+ 			close(piperw[1]);
+@@ -2271,9 +2284,18 @@ setup(void)
+ {
+ 	struct xkb_context *context;
+ 	struct xkb_keymap *keymap;
++	struct rlimit new_rlimit;
+ 
+ 	int i, sig[] = {SIGCHLD, SIGINT, SIGTERM, SIGPIPE};
+ 	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = handlesig};
++
++	if (getrlimit(RLIMIT_NOFILE, &og_rlimit) < 0)
++		die("getrlimit:");
++	new_rlimit = og_rlimit;
++	new_rlimit.rlim_cur = new_rlimit.rlim_max;
++	if (setrlimit(RLIMIT_NOFILE, &new_rlimit) < 0)
++		die("setrlimit:");
++
+ 	sigemptyset(&sa.sa_mask);
+ 
+ 	for (i = 0; i < (int)LENGTH(sig); i++)
+@@ -2530,6 +2552,7 @@ void
+ spawn(const Arg *arg)
+ {
+ 	if (fork() == 0) {
++		restorerlimit();
+ 		dup2(STDERR_FILENO, STDOUT_FILENO);
+ 		setsid();
+ 		execvp(((char **)arg->v)[0], (char **)arg->v);
+-- 
+2.45.0
+
+
+
