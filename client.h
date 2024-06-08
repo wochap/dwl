@@ -335,11 +335,21 @@ client_send_close(Client *c)
 }
 
 static inline void
-client_set_border_color(Client *c, const float color[static 4])
+client_set_border_color(Client *c, const float color[static 4], const float colors[static 4], const float colore[static 4])
 {
 	int i;
-	for (i = 0; i < 4; i++)
-		wlr_scene_rect_set_color(c->border[i], color);
+	for (i = 0; i < 4; i++) {
+		if (border_color_type == BrdOriginal) {
+			wlr_scene_rect_set_color(c->border[i], color);
+		} else if (border_color_type == BrdStart) {
+			wlr_scene_rect_set_color(c->borders[i], colors);
+		} else if (border_color_type == BrdEnd) {
+			wlr_scene_rect_set_color(c->bordere[i], colore);
+		} else if (border_color_type == BrdStartEnd) {
+			wlr_scene_rect_set_color(c->borders[i], colors);
+			wlr_scene_rect_set_color(c->bordere[i], colore);
+		}
+	}
 }
 
 static inline void
