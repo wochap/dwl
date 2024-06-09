@@ -3818,7 +3818,7 @@ togglescratchpad(const Arg *arg)
 	int focus = 0;
 	int hidden_count = 0;
 
-	if (sel->scratchkey != 0) {
+	if (sel && sel->scratchkey != 0) {
 		// hide namedscratchpad
 		sel->tags = 0;
 		focusclient(focustop(selmon), 1);
