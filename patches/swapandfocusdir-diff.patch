@@ -31,7 +31,7 @@ index db0babc..b584f3e 100644
  	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
  	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..8d3540e 100644
+index ef27a1d..bccd560 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -4,6 +4,7 @@
@@ -63,7 +63,7 @@ index ef27a1d..8d3540e 100644
  static Client *focustop(Monitor *m);
  static void fullscreennotify(struct wl_listener *listener, void *data);
  static void handlesig(int signo);
-@@ -1282,6 +1290,161 @@ focusstack(const Arg *arg)
+@@ -1282,6 +1290,163 @@ focusstack(const Arg *arg)
  	focusclient(c, 1);
  }
  
@@ -111,13 +111,15 @@ index ef27a1d..8d3540e 100644
 +client_in_direction(const char *direction, const int *skipfloat)
 +{
 +	Client *cfocused = focustop(selmon);
-+	Vector cfocusedposition = position_of_box(&cfocused->geom);
++	Vector cfocusedposition;
 +	Client *ctarget = NULL;
 +	double targetdistance = INFINITY;
 +	Client *c;
 +
 +	if (!cfocused || cfocused->isfullscreen || (skipfloat && cfocused->isfloating))
 +		return NULL;
++
++	cfocusedposition = position_of_box(&cfocused->geom);
 +
 +	wl_list_for_each(c, &clients, link) {
 +		Vector cposition;

@@ -1874,13 +1874,15 @@ Client *
 client_in_direction(const char *direction, const int *skipfloat)
 {
 	Client *cfocused = focustop(selmon);
-	Vector cfocusedposition = position_of_box(&cfocused->geom);
+	Vector cfocusedposition;
 	Client *ctarget = NULL;
 	double targetdistance = INFINITY;
 	Client *c;
 
 	if (!cfocused || cfocused->isfullscreen || (skipfloat && cfocused->isfloating))
 		return NULL;
+
+	cfocusedposition = position_of_box(&cfocused->geom);
 
 	wl_list_for_each(c, &clients, link) {
 		Vector cposition;
