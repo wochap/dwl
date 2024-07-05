@@ -144,7 +144,7 @@ typedef struct {
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen;
+	int isfloating, isurgent, isfullscreen, isfakefullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
 } Client;
 
@@ -343,6 +343,8 @@ static void setcursor(struct wl_listener *listener, void *data);
 static void setcursorshape(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
+static void setfakefullscreen(Client *c, int fullscreen);
+static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, uint32_t newtags);
@@ -356,6 +358,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void togglefakefullscreen(const Arg *arg);
 static void moveresizekb(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -2424,6 +2427,28 @@ setfullscreen(Client *c, int fullscreen)
 }
 
 void
+setfakefullscreen(Client *c, int fullscreen)
+{
+	c->isfakefullscreen = fullscreen;
+	if (!c->mon)
+		return;
+	if (c->isfullscreen)
+		setfullscreen(c, 0);
+	client_set_fullscreen(c, fullscreen);
+}
+
+void
+setgamma(struct wl_listener *listener, void *data)
+{
+	struct wlr_gamma_control_manager_v1_set_gamma_event *event = data;
+	Monitor *m = event->output->data;
+	if (!m)
+		return;
+	m->gamma_lut_changed = 1;
+	wlr_output_schedule_frame(m->wlr_output);
+}
+
+void
 setlayout(const Arg *arg)
 {
 	if (!selmon)
@@ -2841,6 +2866,14 @@ moveresizekb(const Arg *arg)
 		.width = c->geom.width + ((int *)arg->v)[2],
 		.height = c->geom.height + ((int *)arg->v)[3],
 	}, 1);
+}
+
+void
+togglefakefullscreen(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		setfakefullscreen(sel, !sel->isfakefullscreen);
 }
 
 void
