@@ -300,13 +300,13 @@ static const Key lockedkeys[] = {
 
 static const Modekey modekeys[] = {
 	/* mode      modifier                  key                 function        argument */
-	{ BROWSER, { 0, XKB_KEY_f, spawn, SHCMD("firefox") } },
-	{ BROWSER, { 0, XKB_KEY_f, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_b, spawn, SHCMD("brave") } },
-	{ BROWSER, { 0, XKB_KEY_b, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_g, spawn, SHCMD("google-chrome-stable") } },
-	{ BROWSER, { 0, XKB_KEY_g, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_Escape, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_f, spawn, SHCMD("firefox") } },
+	{ BROWSER, { 0, Key_f, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_b, spawn, SHCMD("brave") } },
+	{ BROWSER, { 0, Key_b, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_g, spawn, SHCMD("google-chrome-stable") } },
+	{ BROWSER, { 0, Key_g, entermode, {.i = NORMAL} } },
+	{ BROWSER, { 0, Key_Escape, entermode, {.i = NORMAL} } },
 };
 
 static const Button buttons[] = {
