@@ -78,43 +78,43 @@ Order (preferably, from smallest to largest):
 $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 ```
 
-- [x] focus-mon-pointer-diff.patch
-- [x] naturalscrolltrackpad.patch
-- [x] reporting-diff.patch
-- [x] zoomswap.patch
-- [x] env-diff.patch
-- [x] cursortheme-diff.patch
-- [x] regexrules-diff.patch
-- [x] movestack-diff.patch
-- [x] moveresizekb-diff.patch
-- [x] lockedkeys-diff.patch
-- [x] rlimit_max.patch
-- [x] customfloat-diff.patch
-- [x] shiftview.patch
-- [x] fakefullscreenclient.patch
-- [x] rotatetags.patch
-- [x] xkb-rules-switcher-diff.patch
-- [x] ~~hide-cursor-diff.patch~~
-- [x] xwayland-handle-minimize.patch
-- [x] autostart.patch
-- [x] center-diff.patch
-- [x] headless-diff.patch
-- [x] relative-mouse-resize-diff.patch
-- [x] bottomstack-diff.patch
-- [x] cfact-diff.patch
-- [x] cfact-bottomstack-diff.patch
-- [x] minimalborders-diff.patch
-- [x] modes-diff.patch
-- [x] pointer-gestures-unstable-v1-diff.patch
-- [x] gestures-diff.patch
-- [x] pertag-diff.patch
-- [x] swapandfocusdir-diff.patch
-- [x] borders.patch
-- [x] scratchpads-diff.patch
-- [x] scenefx-diff.patch
-- [x] keycodes-diff.patch
-- [x] modes-keycodes-diff.patch
-- [x] lockedkeys-keycodes-diff.patch
+- [ ] focus-mon-pointer-diff.patch
+- [ ] naturalscrolltrackpad.patch
+- [ ] reporting-diff.patch
+- [ ] zoomswap-diff.patch
+- [ ] env-diff.patch
+- [ ] cursortheme-diff.patch
+- [ ] regexrules-diff.patch
+- [ ] lockedkeys-diff.patch
+- [ ] movestack-diff.patch
+- [ ] moveresizekb-diff.patch
+- [ ] rlimit_max.patch
+- [ ] customfloat-diff.patch
+- [ ] shiftview.patch
+- [ ] fakefullscreenclient.patch
+- [ ] rotatetags.patch
+- [ ] xkb-rules-switcher-diff.patch
+- [ ] xwayland-handle-minimize.patch
+- [ ] autostart-diff.patch
+- [ ] center-diff.patch
+- [ ] headless-diff.patch
+- [ ] relative-mouse-resize-diff.patch
+- [ ] bottomstack-diff.patch
+- [ ] cfact-diff.patch
+- [ ] cfact-bottomstack-diff.patch
+- [ ] pointer-gestures-unstable-v1-diff.patch
+- [ ] minimalborders-diff.patch
+- [ ] modes-diff.patch
+- [ ] gestures-diff.patch
+- [ ] pertag-diff.patch
+- [ ] swapandfocusdir-diff.patch
+- [ ] borders-diff.patch
+- [ ] scratchpads-diff.patch
+- [ ] scenefx-diff.patch
+- [ ] keycodes-diff.patch
+- [ ] modes-keycodes-diff.patch
+- [ ] lockedkeys-keycodes-diff.patch
+- [ ] ~~hide-cursor-diff.patch~~
 
 ### Workflow
 
