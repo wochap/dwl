@@ -208,6 +208,7 @@ struct Monitor {
 	int nmaster;
 	char ltsymbol[16];
 	int asleep;
+	Client *prevc;
 };
 
 typedef struct {
@@ -944,6 +945,7 @@ createmon(struct wl_listener *listener, void *data)
 
 	m = wlr_output->data = ecalloc(1, sizeof(*m));
 	m->wlr_output = wlr_output;
+	m->prevc = NULL;
 
 	for (i = 0; i < LENGTH(m->layers); i++)
 		wl_list_init(&m->layers[i]);
@@ -2980,7 +2982,7 @@ xytonode(double x, double y, struct wlr_surface **psurface,
 void
 zoom(const Arg *arg)
 {
-	Client *c, *sel = focustop(selmon);
+	Client *c, *sel = focustop(selmon), *tmp = sel;
 
 	if (!sel || !selmon || !selmon->lt[selmon->sellt]->arrange || sel->isfloating)
 		return;
@@ -3002,9 +3004,12 @@ zoom(const Arg *arg)
 	/* If we passed sel, move c to the front; otherwise, move sel to the
 	 * front */
 	if (!sel)
-		sel = c;
+		sel = selmon->prevc ? selmon->prevc : c, c = tmp;
+	wl_list_remove(&c->link);
+	wl_list_insert(&sel->link, &c->link);
 	wl_list_remove(&sel->link);
 	wl_list_insert(&clients, &sel->link);
+	selmon->prevc = c;
 
 	focusclient(sel, 1);
 	arrange(selmon);
