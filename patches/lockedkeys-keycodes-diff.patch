@@ -1,0 +1,62 @@
+diff --git a/config.def.h b/config.def.h
+index 8aa3139..761d090 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -168,10 +168,14 @@ static const Key lockedkeys[] = {
+ 	/* modifier                  key                 function        argument */
+ 
+ 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
+-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
+-#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
+-	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
+-	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
++	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, Key_BackSpace, quit, {0} },
++#define CHVT(KEY,n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, KEY, chvt, {.ui = (n)} }
++	/* Ctrl-Alt-Fx is used to switch to another VT, if you don't know what a VT is
++	 * do not remove them.
++	 */
++	CHVT(Key_F1, 1), CHVT(Key_F2,  2),  CHVT(Key_F3,  3),  CHVT(Key_F4,  4),
++	CHVT(Key_F5, 5), CHVT(Key_F6,  6),  CHVT(Key_F7,  7),  CHVT(Key_F8,  8),
++	CHVT(Key_F9, 9), CHVT(Key_F10, 10), CHVT(Key_F11, 11), CHVT(Key_F12, 12),
+ };
+ 
+ static const Button buttons[] = {
+diff --git a/dwl.c b/dwl.c
+index 428dbe1..8528b15 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -269,7 +269,7 @@ static void handlesig(int signo);
+ static void incnmaster(const Arg *arg);
+ static void inputdevice(struct wl_listener *listener, void *data);
+ static int keybinding(uint32_t mods, xkb_keycode_t keycode);
+-static int lockedkeybinding(uint32_t mods, xkb_keysym_t sym);
++static int lockedkeybinding(uint32_t mods, xkb_keycode_t keycode);
+ static void keypress(struct wl_listener *listener, void *data);
+ static void keypressmod(struct wl_listener *listener, void *data);
+ static int keyrepeat(void *data);
+@@ -1383,13 +1383,13 @@ keybinding(uint32_t mods, xkb_keycode_t keycode)
+ }
+ 
+ int
+-lockedkeybinding(uint32_t mods, xkb_keysym_t sym)
++lockedkeybinding(uint32_t mods, xkb_keycode_t keycode)
+ {
+ 	int handled = 0;
+ 	const Key *k;
+ 	for (k = lockedkeys; k < END(lockedkeys); k++) {
+ 		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
+-				sym == k->keysym && k->func) {
++				keycode == k->keycode && k->func) {
+ 			k->func(&k->arg);
+ 			handled = 1;
+ 		}
+@@ -1418,8 +1418,7 @@ keypress(struct wl_listener *listener, void *data)
+ 		handled = keybinding(mods, keycode);
+ 
+ 	if (locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED)
+-		for (i = 0; i < nsyms; i++)
+-			handled = lockedkeybinding(mods, syms[i]) || handled;
++		handled = lockedkeybinding(mods, keycode);
+ 
+ 	if (handled && kb->wlr_keyboard->repeat_info.delay > 0) {
+ 		kb->mods = mods;
