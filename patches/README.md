@@ -107,13 +107,13 @@ $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 - [X] modes-diff.patch
 - [X] gestures-diff.patch
 - [X] pertag-diff.patch
-- [ ] swapandfocusdir-diff.patch
-- [ ] borders-diff.patch
-- [ ] scratchpads-diff.patch
-- [ ] scenefx-diff.patch
-- [ ] keycodes-diff.patch
-- [ ] modes-keycodes-diff.patch
-- [ ] lockedkeys-keycodes-diff.patch
+- [X] swapandfocusdir-diff.patch
+- [X] borders-diff.patch
+- [X] scratchpads-diff.patch
+- [X] scenefx-diff.patch
+- [X] keycodes-diff.patch
+- [X] modes-keycodes-diff.patch
+- [X] lockedkeys-keycodes-diff.patch
 - [ ] ~~hide-cursor-diff.patch~~
 
 ### Workflow
