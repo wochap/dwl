@@ -78,35 +78,35 @@ Order (preferably, from smallest to largest):
 $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 ```
 
-- [ ] focus-mon-pointer-diff.patch
-- [ ] naturalscrolltrackpad.patch
-- [ ] reporting-diff.patch
-- [ ] zoomswap-diff.patch
-- [ ] env-diff.patch
-- [ ] cursortheme-diff.patch
-- [ ] regexrules-diff.patch
-- [ ] lockedkeys-diff.patch
-- [ ] movestack-diff.patch
-- [ ] moveresizekb-diff.patch
-- [ ] rlimit_max.patch
-- [ ] customfloat-diff.patch
-- [ ] shiftview.patch
-- [ ] fakefullscreenclient.patch
-- [ ] rotatetags.patch
-- [ ] xkb-rules-switcher-diff.patch
-- [ ] xwayland-handle-minimize.patch
-- [ ] autostart-diff.patch
-- [ ] center-diff.patch
-- [ ] headless-diff.patch
-- [ ] relative-mouse-resize-diff.patch
-- [ ] bottomstack-diff.patch
-- [ ] cfact-diff.patch
-- [ ] cfact-bottomstack-diff.patch
-- [ ] pointer-gestures-unstable-v1-diff.patch
-- [ ] minimalborders-diff.patch
-- [ ] modes-diff.patch
-- [ ] gestures-diff.patch
-- [ ] pertag-diff.patch
+- [X] focus-mon-pointer-diff.patch
+- [X] naturalscrolltrackpad.patch
+- [X] reporting-diff.patch
+- [X] zoomswap-diff.patch
+- [X] env-diff.patch
+- [X] cursortheme-diff.patch
+- [X] regexrules-diff.patch
+- [X] lockedkeys-diff.patch
+- [X] movestack-diff.patch
+- [X] moveresizekb-diff.patch
+- [X] rlimit_max.patch
+- [X] customfloat-diff.patch
+- [X] shiftview.patch
+- [X] fakefullscreenclient.patch
+- [X] rotatetags.patch
+- [X] xkb-rules-switcher-diff.patch
+- [X] xwayland-handle-minimize.patch
+- [X] autostart-diff.patch
+- [X] center-diff.patch
+- [X] headless-diff.patch
+- [X] relative-mouse-resize-diff.patch
+- [X] bottomstack-diff.patch
+- [X] cfact-diff.patch
+- [X] cfact-bottomstack-diff.patch
+- [X] pointer-gestures-unstable-v1-diff.patch
+- [X] minimalborders-diff.patch
+- [X] modes-diff.patch
+- [X] gestures-diff.patch
+- [X] pertag-diff.patch
 - [ ] swapandfocusdir-diff.patch
 - [ ] borders-diff.patch
 - [ ] scratchpads-diff.patch
