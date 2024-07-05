@@ -171,6 +171,8 @@ typedef struct {
 	int isfloating, isurgent, isfullscreen, isfakefullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
 	float cweight;
+	char scratchkey;
+	int inscratchpad;
 } Client;
 
 typedef struct {
@@ -272,6 +274,7 @@ typedef struct {
 	int y;
 	float w;
 	float h;
+	const char scratchkey;
 } Rule;
 
 typedef struct {
@@ -402,6 +405,7 @@ static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
 static void spawn(const Arg *arg);
+static void spawnnamedscratchpad(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
 static void switchxkbrule(const Arg *arg);
 static void tag(const Arg *arg);
@@ -409,12 +413,15 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void raiserunnamedscratchpad(const Arg *arg);
 static void togglefakefullscreen(const Arg *arg);
 static void _movecenter(Client *c, int interact);
 static void movecenter(const Arg *arg);
 static void moveresizekb(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglescratchpad(const Arg *arg);
+static void toggleinscratchpad(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
 static void unmaplayersurfacenotify(struct wl_listener *listener, void *data);
 static void unmapnotify(struct wl_listener *listener, void *data);
@@ -568,6 +575,8 @@ applyrules(Client *c)
 	Monitor *mon = selmon, *m;
 
 	c->isfloating = client_is_float_type(c);
+	c->scratchkey = 0;
+	c->inscratchpad = 0;
 	appid = client_get_appid(c);
 	title = client_get_title(c);
 
@@ -575,6 +584,7 @@ applyrules(Client *c)
 		if ((!r->title || regex_match(r->title, title))
 				&& (!r->id || regex_match(r->id, appid))) {
 			c->isfloating = r->isfloating;
+			c->scratchkey = r->scratchkey;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link) {
@@ -2729,12 +2739,22 @@ printstatus(void)
 	uint32_t occ, urg, sel;
 	const char *appid, *title;
 	char *visible_appids;
+	int namedscratchpads_count;
+	int scratchpads_count;
 
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
+		namedscratchpads_count = 0;
+		scratchpads_count = 0;
 	  csel = focustop(m);
 		visible_appids = NULL;
 		wl_list_for_each(c, &clients, link) {
+			if (c->scratchkey != 0) {
+				namedscratchpads_count++;
+			}
+			if (c->inscratchpad != 0) {
+				scratchpads_count++;
+			}
 			if (c->mon != m)
 				continue;
 			if (VISIBLEON(c, m)) {
@@ -2763,6 +2783,8 @@ printstatus(void)
 			m->wlr_output->name, occ, m->tagset[m->seltags], sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
 		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");
+		printf("%s namedscratchpads_count %d\n", m->wlr_output->name, namedscratchpads_count);
+		printf("%s scratchpads_count %d\n", m->wlr_output->name, scratchpads_count);
 
 		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
 		free(visible_appids);
@@ -3438,6 +3460,16 @@ spawn(const Arg *arg)
 	}
 }
 
+void spawnnamedscratchpad(const Arg *arg)
+{
+	if (fork() == 0) {
+		dup2(STDERR_FILENO, STDOUT_FILENO);
+		setsid();
+		execvp(((char **)arg->v)[1], ((char **)arg->v)+1);
+		die("dwl: execvp %s failed:", ((char **)arg->v)[1]);
+	}
+}
+
 void
 startdrag(struct wl_listener *listener, void *data)
 {
@@ -3608,6 +3640,61 @@ movecenter(const Arg *arg)
 }
 
 void
+raiserunnamedscratchpad(const Arg *arg)
+{
+	Client *c;
+	unsigned int found = 0;
+	unsigned int hide = 0;
+
+	wl_list_for_each(c, &clients, link) {
+		if (c->scratchkey == 0) {
+			continue;
+		}
+		if (c->scratchkey == ((char**)arg->v)[0][0]) {
+			if (VISIBLEON(c, selmon)) {
+				if (found == 1) {
+					if (hide == 1) {
+						c->tags = 0;
+						focusclient(focustop(selmon), 1);
+					}
+					continue;
+				}
+				if (focustop(selmon) == c) {
+					// hide
+					c->tags = 0;
+					focusclient(focustop(selmon), 1);
+					hide = 1;
+				} else {
+					// focus
+					focusclient(c, 1);
+				}
+			} else {
+				// show
+				if (c->mon == selmon) {
+					c->tags = selmon->tagset[selmon->seltags];
+				} else {
+					setmon(c, selmon, 0);
+				}
+				// focus
+				focusclient(c, 1);
+			}
+			found = 1;
+			continue;
+		}
+		if (VISIBLEON(c, selmon)) {
+			// hide
+			c->tags = 0;
+		}
+	}
+
+	if (found) {
+		arrange(selmon);
+	} else {
+		spawnnamedscratchpad(arg);
+	}
+}
+
+void
 toggletag(const Arg *arg)
 {
 	uint32_t newtags;
@@ -3650,6 +3737,87 @@ toggleview(const Arg *arg)
 
 	selmon->tagset[selmon->seltags] = newtagset;
 	focusclient(focustop(selmon), 1);
+	arrange(selmon);
+	printstatus();
+}
+
+void
+togglescratchpad(const Arg *arg)
+{
+	Client *c;
+	Client *sel = focustop(selmon);
+	int iscratchpadvisible;
+	int found = 0;
+	int visible = 0;
+	int focus = 0;
+	int hidden_count = 0;
+
+	if (sel && sel->scratchkey != 0) {
+		// hide namedscratchpad
+		sel->tags = 0;
+		focusclient(focustop(selmon), 1);
+		arrange(selmon);
+		return;
+	}
+
+	wl_list_for_each(c, &clients, link) {
+		if (c->inscratchpad) {
+			found = 1;
+			if (sel == c) {
+				focus = 1;
+			}
+			if (VISIBLEON(c, selmon)) {
+				visible = 1;
+			}
+			if (!VISIBLEON(c, selmon)) {
+				hidden_count++;
+			}
+		}
+	}
+
+	if (!found) {
+		return;
+	}
+
+	if (hidden_count > 0) {
+		iscratchpadvisible = 0;
+	} else if (visible) {
+		if (focus) {
+			iscratchpadvisible = 1;
+		} else {
+			iscratchpadvisible = 0;
+		}
+	} else {
+		iscratchpadvisible = 0;
+	}
+
+	wl_list_for_each(c, &clients, link) {
+		if (c->inscratchpad) {
+			c->tags = iscratchpadvisible ? 0 : selmon->tagset[selmon->seltags];
+			if (c->tags != 0 && c->mon != selmon) {
+				setmon(c, selmon, 0);
+			}
+			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
+		}
+	}
+	arrange(selmon);
+}
+
+void
+toggleinscratchpad(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (!sel)
+		return;
+	if (!sel->mon)
+		return;
+	sel->inscratchpad = !sel->inscratchpad;
+	if (sel->inscratchpad) {
+		sel->tags = 0;
+		focusclient(focustop(selmon), 1);
+	} else {
+		sel->tags = selmon->tagset[selmon->seltags];
+	}
 	arrange(selmon);
 	printstatus();
 }

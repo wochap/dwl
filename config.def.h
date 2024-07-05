@@ -61,11 +61,12 @@ static const char *const autostart[] = {
 
 /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
 static const Rule rules[] = {
-	/* app_id             title       tags mask     isfloating   monitor   x   y   width   height */
+	/* app_id             title       tags mask     isfloating   monitor   x   y   width   height   scratchkey */
 	/* examples: */
-	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1,       0,  0,  1000,   0.75 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1,       0,  0,  0,      0 },/* Start on ONLY tag "9" */
-	{ "^kitty_EXAMPLE$",  NULL,       0,            0,           -1,       0,  0,  0,      0 },
+	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1,       0,  0,  1000,   0.75,    0 }, /* Start on currently visible tags floating, not tiled */
+	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1,       0,  0,  0,      0,       0 },/* Start on ONLY tag "9" */
+	{ "^kitty_EXAMPLE$",  NULL,       0,            0,           -1,       0,  0,  0,      0,       0 },
+	{ NULL,               "scratchpad", 1 << 8,     0,           -1,       0,  0,  0,      0,       's' },
 };
 
 /* layout(s) */
@@ -170,11 +171,15 @@ static const char *menucmd[] = { "wmenu-run", NULL };
 
 #include "shiftview.c"
 
+/* named scratchpads - First arg only serves to match against key in rules*/
+static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
+
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
 	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
+	{ MODKEY,                    XKB_KEY_grave,      raiserunnamedscratchpad, {.v = scratchpadcmd } },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_Left,       focusdir,       {.ui = 0} },
@@ -212,6 +217,8 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_E,      togglefakefullscreen, {0} },
+	{ MODKEY,                    XKB_KEY_d,          togglescratchpad, {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_D,          toggleinscratchpad, {0} },
 	{ MODKEY,                    XKB_KEY_x,          movecenter,     {0} },
 	{ MODKEY,                    XKB_KEY_Down,       moveresizekb,   {.v = (int []){ 0, 40, 0, 0 }}},
 	{ MODKEY,                    XKB_KEY_Up,         moveresizekb,   {.v = (int []){ 0, -40, 0, 0 }}},
