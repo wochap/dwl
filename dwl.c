@@ -164,6 +164,11 @@ typedef struct {
 } Key;
 
 typedef struct {
+	int mode_index;
+	Key key;
+} Modekey;
+
+typedef struct {
 	struct wl_list link;
 	struct wlr_keyboard_group *wlr_group;
 
@@ -322,6 +327,7 @@ static void handlesig(int signo);
 static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
+static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
 static int lockedkeybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
 static void keypressmod(struct wl_listener *listener, void *data);
@@ -399,6 +405,7 @@ static void _create_output(struct wlr_backend *backend, void *data);
 static void create_output(const Arg *arg);
 static void bstack(Monitor *m);
 static void bstackhoriz(Monitor *m);
+static void entermode(const Arg *arg);
 
 /* variables */
 static const char broken[] = "broken";
@@ -462,6 +469,9 @@ static struct wl_list mons;
 static Monitor *selmon;
 
 static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
+
+static const int NORMAL = -1;
+static int active_mode_index = NORMAL;
 
 #ifdef XWAYLAND
 static void activatex11(struct wl_listener *listener, void *data);
@@ -1774,6 +1784,11 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	 * processing.
 	 */
 	const Key *k;
+
+	if (active_mode_index >= 0) {
+		return modekeybinding(mods, sym);
+	}
+
 	for (k = keys; k < END(keys); k++) {
 		if (CLEANMASK(mods) == CLEANMASK(k->mod)
 				&& sym == k->keysym && k->func) {
@@ -1796,6 +1811,29 @@ lockedkeybinding(uint32_t mods, xkb_keysym_t sym)
 			handled = 1;
 		}
 	}
+	return handled;
+}
+
+int
+modekeybinding(uint32_t mods, xkb_keysym_t sym)
+{
+	int handled = 0;
+	const Modekey *mk;
+	const Key *k;
+
+	for (mk = modekeys; mk < END(modekeys); mk++) {
+		if (active_mode_index != mk->mode_index) {
+			continue;
+		}
+
+		k = &mk->key;
+		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
+				sym == k->keysym && k->func) {
+			k->func(&k->arg);
+			handled = 1;
+		}
+	}
+
 	return handled;
 }
 
@@ -2404,6 +2442,7 @@ printstatus(void)
 		printf("%s tags %"PRIu32" %"PRIu32" %"PRIu32" %"PRIu32"\n",
 			m->wlr_output->name, occ, m->tagset[m->seltags], sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
+		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");
 
 		printf("%s visible_appids %s\n", m->wlr_output->name, visible_appids ? visible_appids : "");
 		free(visible_appids);
@@ -3638,6 +3677,13 @@ create_output(const Arg *arg)
 	if (!done) {
 		die("Can only create outputs for Wayland, X11 or headless backends");
 	}
+}
+
+void
+entermode(const Arg *arg)
+{
+	active_mode_index = arg->i;
+	printstatus();
 }
 
 #ifdef XWAYLAND
