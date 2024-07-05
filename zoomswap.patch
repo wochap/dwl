@@ -1,0 +1,55 @@
+From 06033696fe5286b43f6605ef9fb4cf75a57a4eb0 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Fri, 5 Jul 2024 10:52:36 -0500
+Subject: [PATCH] implement zoomswap
+
+---
+ dwl.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index dc0437e..b71cef6 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -207,6 +207,7 @@ struct Monitor {
+ 	int nmaster;
+ 	char ltsymbol[16];
+ 	int asleep;
++	Client *prevc;
+ };
+ 
+ typedef struct {
+@@ -943,6 +944,7 @@ createmon(struct wl_listener *listener, void *data)
+ 
+ 	m = wlr_output->data = ecalloc(1, sizeof(*m));
+ 	m->wlr_output = wlr_output;
++	m->prevc = NULL;
+ 
+ 	for (i = 0; i < LENGTH(m->layers); i++)
+ 		wl_list_init(&m->layers[i]);
+@@ -2971,7 +2973,7 @@ xytonode(double x, double y, struct wlr_surface **psurface,
+ void
+ zoom(const Arg *arg)
+ {
+-	Client *c, *sel = focustop(selmon);
++	Client *c, *sel = focustop(selmon), *tmp = sel;
+ 
+ 	if (!sel || !selmon || !selmon->lt[selmon->sellt]->arrange || sel->isfloating)
+ 		return;
+@@ -2993,9 +2995,12 @@ zoom(const Arg *arg)
+ 	/* If we passed sel, move c to the front; otherwise, move sel to the
+ 	 * front */
+ 	if (!sel)
+-		sel = c;
++		sel = selmon->prevc ? selmon->prevc : c, c = tmp;
++	wl_list_remove(&c->link);
++	wl_list_insert(&sel->link, &c->link);
+ 	wl_list_remove(&sel->link);
+ 	wl_list_insert(&clients, &sel->link);
++	selmon->prevc = c;
+ 
+ 	focusclient(sel, 1);
+ 	arrange(selmon);
+-- 
+2.45.1
+
