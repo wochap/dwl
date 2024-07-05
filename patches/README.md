@@ -26,7 +26,7 @@
 - [pertag](https://github.com/wochap/dwl/blob/v0.6-a/pertag/pertag-diff.patch)
 - [moveresizekb](https://github.com/wochap/dwl/blob/v0.5/moveresizekb/moveresizekb-diff.patch)
 - [shiftview](https://codeberg.org/dwl/dwl-patches/src/commit/6a71cf9806d9626501885591b9cd1cda0ec57523/patches/shiftview/shiftview.patch)
-- [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.5/swapandfocusdir/swapandfocusdir-diff.patch)
+- [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.6-b/swapandfocusdir/swapandfocusdir-diff.patch)
 - [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads-diff.patch)
 
 # Rules
