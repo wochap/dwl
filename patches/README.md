@@ -74,45 +74,47 @@ https://dwm.suckless.org/customisation/patches_in_git/
 
 Order (preferably, from smallest to largest):
 
+```
+$ ls -lS | awk '{print $4, $5, $12}' | sort -n
+```
+
 - [x] focus-mon-pointer-diff.patch
 - [x] naturalscrolltrackpad.patch
-- [x] env-diff.patch
 - [x] reporting-diff.patch
 - [x] zoomswap.patch
+- [x] env-diff.patch
 - [x] cursortheme-diff.patch
 - [x] regexrules-diff.patch
-- [x] customfloat-diff.patch
-- [x] lockedkeys-diff.patch
 - [x] movestack-diff.patch
 - [x] moveresizekb-diff.patch
+- [x] lockedkeys-diff.patch
+- [x] rlimit_max.patch
+- [x] customfloat-diff.patch
 - [x] shiftview.patch
 - [x] fakefullscreenclient.patch
 - [x] rotatetags.patch
 - [x] xkb-rules-switcher-diff.patch
-- [x] relative-mouse-resize-diff.patch
-- [x] headless-diff.patch
-- [x] center-diff.patch
-- [x] bottomstack-diff.patch
+- [x] ~~hide-cursor-diff.patch~~
+- [x] xwayland-handle-minimize.patch
 - [x] autostart.patch
+- [x] center-diff.patch
+- [x] headless-diff.patch
+- [x] relative-mouse-resize-diff.patch
+- [x] bottomstack-diff.patch
 - [x] cfact-diff.patch
 - [x] cfact-bottomstack-diff.patch
 - [x] minimalborders-diff.patch
-- [x] pointer-gestures-unstable-v1-diff.patch
 - [x] modes-diff.patch
+- [x] pointer-gestures-unstable-v1-diff.patch
 - [x] gestures-diff.patch
 - [x] pertag-diff.patch
 - [x] swapandfocusdir-diff.patch
+- [x] borders.patch
 - [x] scratchpads-diff.patch
-- [x] output-power-management-diff.patch
 - [x] scenefx-diff.patch
 - [x] keycodes-diff.patch
 - [x] modes-keycodes-diff.patch
 - [x] lockedkeys-keycodes-diff.patch
-- [x] ~~hide-cursor-diff.patch~~
-- [x] xwayland-handle-minimize.patch
-- [x] toggle_constraints.patch
-- [x] rlimit_max.patch
-- [x] borders
 
 ### Workflow
 
