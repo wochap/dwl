@@ -1,0 +1,65 @@
+diff --git a/config.def.h b/config.def.h
+index 81ebf7b..aaf3674 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -174,13 +174,13 @@ static const Key keys[] = {
+ 
+ static const Modekey modekeys[] = {
+ 	/* mode      modifier                  key                 function        argument */
+-	{ BROWSER, { 0, XKB_KEY_f, spawn, SHCMD("firefox") } },
+-	{ BROWSER, { 0, XKB_KEY_f, entermode, {.i = NORMAL} } },
+-	{ BROWSER, { 0, XKB_KEY_b, spawn, SHCMD("brave") } },
+-	{ BROWSER, { 0, XKB_KEY_b, entermode, {.i = NORMAL} } },
+-	{ BROWSER, { 0, XKB_KEY_g, spawn, SHCMD("google-chrome-stable") } },
+-	{ BROWSER, { 0, XKB_KEY_g, entermode, {.i = NORMAL} } },
+-	{ BROWSER, { 0, XKB_KEY_Escape, entermode, {.i = NORMAL} } },
++	{ BROWSER, { 0, Key_f, spawn, SHCMD("firefox") } },
++	{ BROWSER, { 0, Key_f, entermode, {.i = NORMAL} } },
++	{ BROWSER, { 0, Key_b, spawn, SHCMD("brave") } },
++	{ BROWSER, { 0, Key_b, entermode, {.i = NORMAL} } },
++	{ BROWSER, { 0, Key_g, spawn, SHCMD("google-chrome-stable") } },
++	{ BROWSER, { 0, Key_g, entermode, {.i = NORMAL} } },
++	{ BROWSER, { 0, Key_Escape, entermode, {.i = NORMAL} } },
+ };
+ 
+ static const Button buttons[] = {
+diff --git a/dwl.c b/dwl.c
+index 6e9725f..f715b39 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -274,7 +274,7 @@ static void handlesig(int signo);
+ static void incnmaster(const Arg *arg);
+ static void inputdevice(struct wl_listener *listener, void *data);
+ static int keybinding(uint32_t mods, xkb_keycode_t keycode);
+-static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
++static int modekeybinding(uint32_t mods, xkb_keycode_t keycode);
+ static void keypress(struct wl_listener *listener, void *data);
+ static void keypressmod(struct wl_listener *listener, void *data);
+ static int keyrepeat(void *data);
+@@ -1383,7 +1383,7 @@ keybinding(uint32_t mods, xkb_keycode_t keycode)
+ 	const Key *k;
+ 
+ 	if (active_mode_index >= 0) {
+-		return modekeybinding(mods, sym);
++		return modekeybinding(mods, keycode);
+ 	}
+ 
+ 	for (k = keys; k < END(keys); k++) {
+@@ -1397,7 +1397,7 @@ keybinding(uint32_t mods, xkb_keycode_t keycode)
+ }
+ 
+ int
+-modekeybinding(uint32_t mods, xkb_keysym_t sym)
++modekeybinding(uint32_t mods, xkb_keycode_t keycode)
+ {
+ 	int handled = 0;
+ 	const Modekey *mk;
+@@ -1410,7 +1410,7 @@ modekeybinding(uint32_t mods, xkb_keysym_t sym)
+ 
+ 		k = &mk->key;
+ 		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
+-				sym == k->keysym && k->func) {
++				keycode == k->keycode && k->func) {
+ 			k->func(&k->arg);
+ 			handled = 1;
+ 		}
