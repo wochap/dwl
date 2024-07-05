@@ -17,6 +17,13 @@ static const char *cursor_theme            = NULL;
 static const char cursor_size[]            = "24"; /* Make sure it's a valid integer, otherwise things will break */
 static const int respect_monitor_reserved_area = 0;  /* 1 to monitor center while respecting the monitor's reserved area, 0 to monitor center */
 
+enum {
+    VIEW_L = -1,
+    VIEW_R = 1,
+    SHIFT_L = -2,
+    SHIFT_R = 2,
+} RotateTags;
+
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
 
@@ -143,7 +150,11 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_i,          incnmaster,     {.i = -1} },
+	{ MODKEY,                    XKB_KEY_a,          rotatetags,     {.i = VIEW_L} },
+	{ MODKEY,                    XKB_KEY_d,          rotatetags,     {.i = VIEW_R} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_a,          rotatetags,     {.i = SHIFT_L} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_d,          rotatetags,     {.i = SHIFT_R} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
