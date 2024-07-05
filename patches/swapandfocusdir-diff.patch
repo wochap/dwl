@@ -1,21 +1,8 @@
-diff --git a/Makefile b/Makefile
-index 6cde460..22f4372 100644
---- a/Makefile
-+++ b/Makefile
-@@ -11,7 +11,7 @@ DWLDEVCFLAGS = -g -pedantic -Wall -Wextra -Wdeclaration-after-statement -Wno-unu
- # CFLAGS / LDFLAGS
- PKGS      = wlroots wayland-server xkbcommon libinput $(XLIBS)
- DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
--LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
-+LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` -lm $(LIBS)
- 
- all: dwl
- dwl: dwl.o util.o
 diff --git a/config.def.h b/config.def.h
-index db0babc..b584f3e 100644
+index 22d2171..724e15e 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -122,6 +122,14 @@ static const Key keys[] = {
+@@ -129,6 +129,14 @@ static const Key keys[] = {
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
  	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
  	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
@@ -29,20 +16,12 @@ index db0babc..b584f3e 100644
 +	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Down,       swapdir,        {.ui = 3} },
  	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
  	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
- 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
 diff --git a/dwl.c b/dwl.c
-index ef27a1d..bccd560 100644
+index dc0437e..844c1f5 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -4,6 +4,7 @@
- #include <getopt.h>
- #include <libinput.h>
- #include <linux/input-event-codes.h>
-+#include <math.h>
- #include <signal.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -226,6 +227,11 @@ typedef struct {
+@@ -241,6 +241,11 @@ typedef struct {
  	struct wl_listener destroy;
  } SessionLock;
  
@@ -54,7 +33,7 @@ index ef27a1d..bccd560 100644
  /* function declarations */
  static void applybounds(Client *c, struct wlr_box *bbox);
  static void applyrules(Client *c);
-@@ -264,6 +270,8 @@ static Monitor *dirtomon(enum wlr_direction dir);
+@@ -285,6 +290,8 @@ static Monitor *dirtomon(enum wlr_direction dir);
  static void focusclient(Client *c, int lift);
  static void focusmon(const Arg *arg);
  static void focusstack(const Arg *arg);
@@ -63,7 +42,7 @@ index ef27a1d..bccd560 100644
  static Client *focustop(Monitor *m);
  static void fullscreennotify(struct wl_listener *listener, void *data);
  static void handlesig(int signo);
-@@ -1282,6 +1290,163 @@ focusstack(const Arg *arg)
+@@ -1425,6 +1432,163 @@ focusstack(const Arg *arg)
  	focusclient(c, 1);
  }
  

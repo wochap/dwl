@@ -15,7 +15,7 @@ wget https://codeberg.org/dwl/dwl-patches/raw/commit/6a71cf9806d9626501885591b9c
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/pertag/pertag-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/moveresizekb/moveresizekb-diff.patch
 wget https://codeberg.org/dwl/dwl-patches/raw/commit/6a71cf9806d9626501885591b9cd1cda0ec57523/patches/shiftview/shiftview.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.5/swapandfocusdir/swapandfocusdir-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/swapandfocusdir/swapandfocusdir-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scratchpads/scratchpads-diff.patch
 
 # Rules
