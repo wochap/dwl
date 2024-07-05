@@ -1410,6 +1410,7 @@ focusclient(Client *c, int lift)
 void
 focusmon(const Arg *arg)
 {
+	Monitor *prevm = selmon;
 	int i = 0, nmons = wl_list_length(&mons);
 	if (nmons) {
 		do /* don't switch to disabled mons */
@@ -1417,6 +1418,7 @@ focusmon(const Arg *arg)
 		while (!selmon->wlr_output->enabled && i++ < nmons);
 	}
 	focusclient(focustop(selmon), 1);
+	wlr_cursor_move(cursor, NULL, selmon->m.x - prevm->m.x , 0);
 }
 
 void
