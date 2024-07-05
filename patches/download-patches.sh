@@ -20,7 +20,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scratchpads/scratchpads
 
 # Rules
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/regexrules/regexrules-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/customfloat/customfloat-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/customfloat/customfloat-diff.patch
 
 # Input
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/keycodes/keycodes-diff.patch
