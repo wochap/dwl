@@ -32,7 +32,7 @@
 # Rules
 
 - [regexrules](https://github.com/wochap/dwl/blob/v0.6-a/regexrules/regexrules-diff.patch)
-- [customfloat](https://github.com/wochap/dwl/blob/v0.6-a/customfloat/customfloat-diff.patch)
+- [customfloat](https://github.com/wochap/dwl/blob/v0.6-b/customfloat/customfloat-diff.patch)
 
 # Input
 
