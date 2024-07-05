@@ -134,7 +134,7 @@ client_get_appid(Client *c)
 	return c->surface.xdg->toplevel->app_id ? c->surface.xdg->toplevel->app_id : "broken";
 }
 
-static inline void
+static inline int
 client_get_clip(Client *c, struct wlr_box *clip)
 {
 	*clip = (struct wlr_box){
@@ -146,11 +146,18 @@ client_get_clip(Client *c, struct wlr_box *clip)
 
 #ifdef XWAYLAND
 	if (client_is_x11(c))
-		return;
+		return 1;
 #endif
 
 	clip->x = c->surface.xdg->geometry.x;
 	clip->y = c->surface.xdg->geometry.y;
+
+	if (xdg_geom.width <= c->geom.width - (int)c->bw
+			&& xdg_geom.height <= c->geom.height - (int)c->bw) {
+		return 0;
+	}
+
+	return 1;
 }
 
 static inline void
