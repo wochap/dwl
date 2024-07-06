@@ -582,6 +582,11 @@ applyrules(Client *c)
 	int i;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
+	int newwidth;
+	int newheight;
+	int newx;
+	int newy;
+	int apply_resize = 0;
 
 	c->isfloating = client_is_float_type(c);
 	c->scratchkey = 0;
@@ -605,21 +610,23 @@ applyrules(Client *c)
 			if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
 				/* client is floating or in floating layout */
 				struct wlr_box b = respect_monitor_reserved_area ? mon->w : mon->m;
-				int newwidth = (int)round(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
-				int newheight = (int)round(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
-				int newx = (int)round(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
-				int newy = (int)round(r->y ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
-
-				resize(c, (struct wlr_box){
-					.x = newx,
-					.y = newy,
-					.width = newwidth,
-					.height = newheight,
-				}, 1);
+				newwidth = (int)round(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
+				newheight = (int)round(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
+				newx = (int)round(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
+				newy = (int)round(r->y ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
+				apply_resize = 1;
 			}
 		}
 	}
 	setmon(c, mon, newtags);
+	if (apply_resize) {
+		resize(c, (struct wlr_box){
+			.x = newx,
+			.y = newy,
+			.width = newwidth,
+			.height = newheight,
+		}, 1);
+	}
 }
 
 void
