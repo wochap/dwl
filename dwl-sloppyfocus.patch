@@ -1,0 +1,27 @@
+From 618cfe48b8965abad3dfb76fecd3bda3dece22fa Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Tue, 9 Jul 2024 08:28:42 -0500
+Subject: [PATCH] revert dwm sloppyfocus behavior
+
+reverts
+https://codeberg.org/dwl/dwl/commit/0047ff740a4f8da430cecdb19084f626bf535b21
+---
+ dwl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dwl.c b/dwl.c
+index dc0437e..e0e9362 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1961,7 +1961,7 @@ pointerfocus(Client *c, struct wlr_surface *surface, double sx, double sy,
+ {
+ 	struct timespec now;
+ 
+-	if (surface != seat->pointer_state.focused_surface &&
++	if ((!active_constraint || active_constraint->surface != surface) &&
+ 			sloppyfocus && time && c && !client_is_unmanaged(c))
+ 		focusclient(c, 0);
+ 
+-- 
+2.45.1
+
