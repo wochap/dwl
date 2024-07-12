@@ -317,6 +317,8 @@ static void swipe_end(struct wl_listener *listener, void *data);
 static void pinch_begin(struct wl_listener *listener, void *data);
 static void pinch_update(struct wl_listener *listener, void *data);
 static void pinch_end(struct wl_listener *listener, void *data);
+static void hold_begin(struct wl_listener *listener, void *data);
+static void hold_end(struct wl_listener *listener, void *data);
 static void chvt(const Arg *arg);
 static void checkidleinhibitor(struct wlr_surface *exclude);
 static void cleanup(void);
@@ -995,6 +997,34 @@ pinch_end(struct wl_listener *listener, void *data)
 
 	// Forward pinch end event to client
 	wlr_pointer_gestures_v1_send_pinch_end(
+		pointer_gestures,
+		seat,
+		event->time_msec,
+		event->cancelled
+	);
+}
+
+void
+hold_begin(struct wl_listener *listener, void *data)
+{
+	struct wlr_pointer_hold_begin_event *event = data;
+
+	// Forward hold begin event to client
+	wlr_pointer_gestures_v1_send_hold_begin(
+		pointer_gestures,
+		seat,
+		event->time_msec,
+		event->fingers
+	);
+}
+
+void
+hold_end(struct wl_listener *listener, void *data)
+{
+	struct wlr_pointer_hold_end_event *event = data;
+
+	// Forward hold end event to client
+	wlr_pointer_gestures_v1_send_hold_end(
 		pointer_gestures,
 		seat,
 		event->time_msec,
@@ -3450,6 +3480,8 @@ setup(void)
 	LISTEN_STATIC(&cursor->events.pinch_begin, pinch_begin);
 	LISTEN_STATIC(&cursor->events.pinch_update, pinch_update);
 	LISTEN_STATIC(&cursor->events.pinch_end, pinch_end);
+	LISTEN_STATIC(&cursor->events.hold_begin, hold_begin);
+	LISTEN_STATIC(&cursor->events.hold_end, hold_end);
 
 	seat = wlr_seat_create(dpy, "seat0");
 	LISTEN_STATIC(&seat->events.request_set_cursor, setcursor);
