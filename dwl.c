@@ -229,6 +229,11 @@ typedef struct {
 	void (*arrange)(Monitor *);
 } Layout;
 
+typedef struct {
+	float w;
+	float h;
+} Size;
+
 struct Monitor {
 	struct wl_list link;
 	struct wlr_output *wlr_output;
@@ -276,6 +281,10 @@ typedef struct {
 	uint32_t tags;
 	int isfloating;
 	int monitor;
+	float x;
+	float y;
+	float w;
+	float h;
 	const char scratchkey;
 } Rule;
 
@@ -403,6 +412,7 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setfakefullscreen(Client *c, int fullscreen);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
+static void setsize(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, uint32_t newtags);
 static void setpsel(struct wl_listener *listener, void *data);
@@ -417,6 +427,8 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void _movecenter(Client *c, int interact);
+static void movecenter(const Arg *arg);
 static void raiserunnamedscratchpad(const Arg *arg);
 static void togglefakefullscreen(const Arg *arg);
 static void moveresizekb(const Arg *arg);
@@ -578,6 +590,12 @@ applyrules(Client *c)
 	int i;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
+	struct wlr_box b;
+	int newx;
+	int newy;
+	int neww;
+	int newh;
+	int apply_resize = 0;
 
 	c->isfloating = client_is_float_type(c);
 	c->scratchkey = 0;
@@ -596,9 +614,27 @@ applyrules(Client *c)
 				if (r->monitor == i++)
 					mon = m;
 			}
+			if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
+				/* client is floating or in floating layout */
+				b = respect_monitor_reserved_area ? mon->w : mon->m;
+				newx = (int)round(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
+				newy = (int)round(r->y ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
+				neww = (int)round(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
+				newh = (int)round(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
+				apply_resize = 1;
+			}
 		}
 	}
 	setmon(c, mon, newtags);
+
+	if (apply_resize) {
+		resize(c, (struct wlr_box){
+			.x = newx,
+			.y = newy,
+			.width = neww,
+			.height = newh,
+		}, 1);
+	}
 }
 
 void
@@ -2316,6 +2352,7 @@ mapnotify(struct wl_listener *listener, void *data)
 	Client *w, *c = wl_container_of(listener, c, map);
 	Monitor *m;
 	int i;
+	struct wlr_box b;
 
 	/* Create scene tree for this client and its border */
 	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
@@ -2373,6 +2410,13 @@ mapnotify(struct wl_listener *listener, void *data)
 		setmon(c, p->mon, p->tags);
 	} else {
 		applyrules(c);
+	}
+
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
+		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
 	}
 
 	if (borders_only_floating) {
@@ -3189,6 +3233,33 @@ setlayout(const Arg *arg)
 	printstatus();
 }
 
+void
+setsize(const Arg *arg)
+{
+	const Size *size = (const Size *)arg->v;
+	Client *c = focustop(selmon);
+	struct wlr_box b;
+	int neww;
+	int newh;
+
+	if (!selmon || !arg || !arg->v || !c || !c->mon) {
+		return;
+	}
+
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+		neww = (int)round(size->w ? (size->w <= 1 ? b.width * size->w : size->w) : c->geom.width);
+		newh = (int)round(size->h ? (size->h <= 1 ? b.height * size->h : size->h) : c->geom.height);
+		resize(c, (struct wlr_box){
+			.x = (b.width - neww) / 2 + b.x,
+			.y = (b.height - newh) / 2 + b.y,
+			.width = neww,
+			.height = newh,
+		}, 1);
+	}
+}
+
 /* arg > 1.0 will set mfact absolutely */
 void
 setmfact(const Arg *arg)
@@ -3223,6 +3294,10 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
+		if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+			/* client is floating or in floating layout */
+			_movecenter(c, 0);
+		}
 	}
 	focusclient(focustop(selmon), 1);
 }
@@ -3721,6 +3796,34 @@ raiserunnamedscratchpad(const Arg *arg)
 	} else {
 		spawnnamedscratchpad(arg);
 	}
+}
+
+void
+_movecenter(Client *c, int interact)
+{
+	struct wlr_box b;
+
+	if (!c || !c->mon) {
+		return;
+	}
+
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+		resize(c, (struct wlr_box){
+			.x = (b.width - c->geom.width) / 2 + b.x,
+			.y = (b.height - c->geom.height) / 2 + b.y,
+			.width = c->geom.width,
+			.height = c->geom.height,
+		}, interact);
+	}
+}
+
+void
+movecenter(const Arg *arg)
+{
+	Client *c = focustop(selmon);
+	_movecenter(c, 1);
 }
 
 void
