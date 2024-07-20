@@ -14,7 +14,6 @@
 
 # Clients placement
 
-- [center](https://github.com/wochap/dwl/blob/v0.6-a/center/center-diff.patch)
 - [cfact](https://github.com/wochap/dwl/blob/v0.6-b/cfact/cfact-diff.patch)
 - [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.6-b/cfact-bottomstack/cfact-bottomstack-diff.patch)
 
@@ -97,7 +96,6 @@ $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 - [X] xkb-rules-switcher-diff.patch
 - [X] xwayland-handle-minimize.patch
 - [X] autostart-diff.patch
-- [X] center-diff.patch
 - [X] headless-diff.patch
 - [X] relative-mouse-resize-diff.patch
 - [X] bottomstack-diff.patch
