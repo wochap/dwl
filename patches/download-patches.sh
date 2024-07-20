@@ -20,7 +20,6 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/dwl-sloppyfocus/dwl-slo
 
 # Rules
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/regexrules/regexrules-diff.patch
-wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/customfloat/customfloat-diff.patch
 
 # Input
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/keycodes/keycodes-diff.patch
