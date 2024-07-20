@@ -37,6 +37,13 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 };
 
+/* size(s) */
+static const Size sizes[] = {
+  /* width   height */
+	{ 1000,    0.75f },
+	{ 500,     0.5f },
+};
+
 /* monitors */
 /* (x=-1, y=-1) is reserved as an "autoconfigure" monitor position indicator
  * WARNING: negative values other than (-1, -1) cause problems with Xwayland clients
@@ -141,6 +148,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
+	{ MODKEY,                    XKB_KEY_b,          setsize,        {.v = &sizes[0]} },
+	{ MODKEY,                    XKB_KEY_n,          setsize,        {.v = &sizes[1]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
 	{ MODKEY,                    XKB_KEY_x,          movecenter,     {0} },

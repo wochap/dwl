@@ -185,6 +185,11 @@ typedef struct {
 	void (*arrange)(Monitor *);
 } Layout;
 
+typedef struct {
+	float newwidth;
+	float newheight;
+} Size;
+
 struct Monitor {
 	struct wl_list link;
 	struct wlr_output *wlr_output;
@@ -324,6 +329,7 @@ static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
+static void setsize(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, uint32_t newtags);
 static void setpsel(struct wl_listener *listener, void *data);
@@ -2322,6 +2328,29 @@ setlayout(const Arg *arg)
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, LENGTH(selmon->ltsymbol));
 	arrange(selmon);
 	printstatus();
+}
+
+void
+setsize(const Arg *arg)
+{
+	const Size *size = (const Size *)arg->v;
+	Client *c = focustop(selmon);
+	struct wlr_box b;
+	int newwidth;
+	int newheight;
+
+	if (!selmon || !arg || !arg->v || !c || !c->mon || !c->isfloating)
+		return;
+
+	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+	newwidth = (int)round(size->newwidth ? (size->newwidth <= 1 ? b.width * size->newwidth : size->newwidth) : c->geom.width);
+	newheight = (int)round(size->newheight ? (size->newheight <= 1 ? b.height * size->newheight : size->newheight) : c->geom.height);
+	resize(c, (struct wlr_box){
+		.x = (b.width - newwidth) / 2 + b.x,
+		.y = (b.height - newheight) / 2 + b.y,
+		.width = newwidth,
+		.height = newheight,
+	}, 1);
 }
 
 /* arg > 1.0 will set mfact absolutely */
