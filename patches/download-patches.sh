@@ -7,6 +7,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/bottomstack/bottomstack
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/cfact/cfact-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/cfact-bottomstack/cfact-bottomstack-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-c/betterfloat/betterfloat-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/v0.6-c/sticky/sticky-diff.patch
 
 # Clients & tags manipulation
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/movestack/movestack-diff.patch
