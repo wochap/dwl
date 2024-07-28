@@ -87,12 +87,12 @@ static const char *const autostart[] = {
 
 /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
 static const Rule rules[] = {
-	/* app_id             title       tags mask     isfloating   monitor   x   y   width   height   scratchkey */
+	/* app_id             title       tags mask     isfloating   issticky   monitor   x   y   width   height   scratchkey */
 	/* examples: */
-	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1,       0,  0,  1000,   0.75,    0 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1,       0,  0,  0,      0,       0 },/* Start on ONLY tag "9" */
-	{ "^kitty_EXAMPLE$",  NULL,       0,            0,           -1,       0,  0,  0,      0,       0 },
-	{ NULL,               "scratchpad", 1 << 8,     0,           -1,       0,  0,  0,      0,       's' },
+	{ "Gimp_EXAMPLE",     NULL,       0,            1,           0,         -1,       0,  0,  1000,   0.75,    0 }, /* Start on currently visible tags floating, not tiled */
+	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           0,         -1,       0,  0,  0,      0,       0 },/* Start on ONLY tag "9" */
+	{ "^kitty_EXAMPLE$",  NULL,       0,            0,           0,         -1,       0,  0,  0,      0,       0 },
+	{ NULL,               "scratchpad", 1 << 8,     0,           0,         -1,       0,  0,  0,      0,       's' },
 };
 
 /* layout(s) */
@@ -250,6 +250,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_space,      setlayout,      {0} },
 	{ MODKEY,                    Key_b,          setsize,        {.v = &sizes[0]} },
 	{ MODKEY,                    Key_n,          setsize,        {.v = &sizes[1]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_y,          togglesticky, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,      togglefloating, {0} },
 	{ MODKEY,                    Key_e,         togglefullscreen, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_e,      togglefakefullscreen, {0} },

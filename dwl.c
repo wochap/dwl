@@ -88,7 +88,7 @@ enum { BrdOriginal, BrdStart, BrdEnd, BrdStartEnd };
 #define MAX(A, B)               ((A) > (B) ? (A) : (B))
 #define MIN(A, B)               ((A) < (B) ? (A) : (B))
 #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
-#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
+#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && (((C)->tags & (M)->tagset[(M)->seltags]) || C->issticky))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define END(A)                  ((A) + LENGTH(A))
 #define TAGMASK                 ((1u << TAGCOUNT) - 1)
@@ -171,7 +171,7 @@ typedef struct {
 	unsigned int bws;
 	unsigned int bwe;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen, isfakefullscreen;
+	int isfloating, isurgent, isfullscreen, isfakefullscreen, issticky;
 	uint32_t resize; /* configure serial of a pending resize */
 	float cweight;
 	char scratchkey;
@@ -279,6 +279,7 @@ typedef struct {
 	const char *title;
 	uint32_t tags;
 	int isfloating;
+	int issticky;
 	int monitor;
 	float x;
 	float y;
@@ -408,6 +409,7 @@ static void setcursor(struct wl_listener *listener, void *data);
 static void setcursorshape(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
+static void setsticky(Client *c, int sticky);
 static void setfakefullscreen(Client *c, int fullscreen);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
@@ -425,6 +427,7 @@ static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
+static void togglesticky(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void _movecenter(Client *c, int interact);
 static void movecenter(const Arg *arg);
@@ -610,6 +613,7 @@ applyrules(Client *c)
 				&& (!r->id || regex_match(r->id, appid))) {
 			c->isfloating = r->isfloating;
 			c->scratchkey = r->scratchkey;
+			c->issticky = r->issticky;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link) {
@@ -3247,6 +3251,17 @@ setgamma(struct wl_listener *listener, void *data)
 }
 
 void
+setsticky(Client *c, int sticky)
+{
+	if(sticky && !c->issticky) {
+		c->issticky = 1;
+	} else if(!sticky && c->issticky) {
+		c->issticky = 0;
+		arrange(c->mon);
+	}
+}
+
+void
 setlayout(const Arg *arg)
 {
 	if (!selmon)
@@ -3849,6 +3864,16 @@ movecenter(const Arg *arg)
 {
 	Client *c = focustop(selmon);
 	_movecenter(c, 1);
+}
+
+void
+togglesticky(const Arg *arg)
+{
+	Client *c = focustop(selmon);
+	if(!c)
+		return;
+
+	setsticky(c, !c->issticky);
 }
 
 void
