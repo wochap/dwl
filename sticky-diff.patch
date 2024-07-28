@@ -1,0 +1,115 @@
+diff --git a/config.def.h b/config.def.h
+index 22d2171..cda3b65 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -22,10 +22,10 @@ static int log_level = WLR_ERROR;
+ 
+ /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
+ static const Rule rules[] = {
+-	/* app_id             title       tags mask     isfloating   monitor */
++	/* app_id             title       tags mask     isfloating   monitor   issticky */
+ 	/* examples: */
+-	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
+-	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1 }, /* Start on ONLY tag "9" */
++	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1,       0 }, /* Start on currently visible tags floating, not tiled */
++	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1,       1 }, /* Start on ONLY tag "9" */
+ };
+ 
+ /* layout(s) */
+@@ -140,6 +140,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
+ 	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Y,          togglesticky, {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
+ 	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
+ 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
+diff --git a/dwl.c b/dwl.c
+index 145fd01..5396b85 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -72,7 +72,7 @@
+ #define MAX(A, B)               ((A) > (B) ? (A) : (B))
+ #define MIN(A, B)               ((A) < (B) ? (A) : (B))
+ #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
+-#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
++#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && (((C)->tags & (M)->tagset[(M)->seltags]) || C->issticky))
+ #define LENGTH(X)               (sizeof X / sizeof X[0])
+ #define END(A)                  ((A) + LENGTH(A))
+ #define TAGMASK                 ((1u << TAGCOUNT) - 1)
+@@ -138,7 +138,7 @@ typedef struct {
+ #endif
+ 	unsigned int bw;
+ 	uint32_t tags;
+-	int isfloating, isurgent, isfullscreen;
++	int isfloating, isurgent, isfullscreen, issticky;
+ 	uint32_t resize; /* configure serial of a pending resize */
+ } Client;
+ 
+@@ -230,6 +230,7 @@ typedef struct {
+ 	uint32_t tags;
+ 	int isfloating;
+ 	int monitor;
++	int issticky;
+ } Rule;
+ 
+ typedef struct {
+@@ -322,6 +323,7 @@ static void setcursor(struct wl_listener *listener, void *data);
+ static void setcursorshape(struct wl_listener *listener, void *data);
+ static void setfloating(Client *c, int floating);
+ static void setfullscreen(Client *c, int fullscreen);
++static void setsticky(Client *c, int sticky);
+ static void setgamma(struct wl_listener *listener, void *data);
+ static void setlayout(const Arg *arg);
+ static void setmfact(const Arg *arg);
+@@ -335,6 +337,7 @@ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+ static void tile(Monitor *m);
+ static void togglefloating(const Arg *arg);
++static void togglesticky(const Arg *arg);
+ static void togglefullscreen(const Arg *arg);
+ static void toggletag(const Arg *arg);
+ static void toggleview(const Arg *arg);
+@@ -465,6 +468,7 @@ applyrules(Client *c)
+ 		if ((!r->title || strstr(title, r->title))
+ 				&& (!r->id || strstr(appid, r->id))) {
+ 			c->isfloating = r->isfloating;
++			c->issticky = r->issticky;
+ 			newtags |= r->tags;
+ 			i = 0;
+ 			wl_list_for_each(m, &mons, link) {
+@@ -2299,6 +2303,17 @@ setgamma(struct wl_listener *listener, void *data)
+ 	wlr_output_schedule_frame(m->wlr_output);
+ }
+ 
++void
++setsticky(Client *c, int sticky)
++{
++	if(sticky && !c->issticky) {
++		c->issticky = 1;
++	} else if(!sticky && c->issticky) {
++		c->issticky = 0;
++		arrange(c->mon);
++	}
++}
++
+ void
+ setlayout(const Arg *arg)
+ {
+@@ -2683,6 +2698,16 @@ togglefullscreen(const Arg *arg)
+ 		setfullscreen(sel, !sel->isfullscreen);
+ }
+ 
++void
++togglesticky(const Arg *arg)
++{
++	Client *c = focustop(selmon);
++	if(!c)
++		return;
++
++	setsticky(c, !c->issticky);
++}
++
+ void
+ toggletag(const Arg *arg)
+ {
