@@ -17,6 +17,7 @@
 - [cfact](https://github.com/wochap/dwl/blob/v0.6-b/cfact/cfact-diff.patch)
 - [cfact-bottomstack](https://github.com/wochap/dwl/blob/v0.6-b/cfact-bottomstack/cfact-bottomstack-diff.patch)
 - [betterfloat](https://github.com/wochap/dwl/blob/v0.6-c/betterfloat/betterfloat-diff.patch)
+- [sticky](https://github.com/wochap/dwl/blob/v0.6-c/sticky/sticky-diff.patch)
 
 # Clients & tags manipulation
 
@@ -115,6 +116,7 @@ $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 - [X] dwl-sloppyfocus-diff.patch
 - [ ] ~~hide-cursor-diff.patch~~
 - [X] betterfloat-diff.patch
+- [X] sticky-diff.patch
 
 ### Workflow
 
