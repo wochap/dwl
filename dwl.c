@@ -1702,8 +1702,8 @@ mapnotify(struct wl_listener *listener, void *data)
 	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 		/* client is floating or in floating layout */
-		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
-		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
+		c->geom.x = c->geom.x == 0 ? (b.width - c->geom.width) / 2 + b.x : c->geom.x;
+		c->geom.y = c->geom.y == 0 ? (b.height - c->geom.height) / 2 + b.y : c->geom.y;
 	}
 
 	printstatus();
