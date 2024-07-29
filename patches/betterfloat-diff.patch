@@ -89,7 +89,7 @@ index 22d2171..00f5f56 100644
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
  	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
 diff --git a/dwl.c b/dwl.c
-index 145fd01..76c42dd 100644
+index 145fd01..d4f3603 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -185,6 +185,11 @@ typedef struct {
@@ -199,8 +199,8 @@ index 145fd01..76c42dd 100644
 +	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 +		/* client is floating or in floating layout */
 +		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
-+		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
-+		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
++		c->geom.x = c->geom.x == 0 ? (b.width - c->geom.width) / 2 + b.x : c->geom.x;
++		c->geom.y = c->geom.y == 0 ? (b.height - c->geom.height) / 2 + b.y : c->geom.y;
 +	}
 +
  	printstatus();
