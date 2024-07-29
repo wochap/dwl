@@ -414,6 +414,8 @@ static void setfakefullscreen(Client *c, int fullscreen);
 static void setgamma(struct wl_listener *listener, void *data);
 static void setlayout(const Arg *arg);
 static void setsize(const Arg *arg);
+static void setminsize(const Arg *arg);
+static void setmaxsize(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, uint32_t newtags);
 static void setpsel(struct wl_listener *listener, void *data);
@@ -623,10 +625,18 @@ applyrules(Client *c)
 			if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
 				/* client is floating or in floating layout */
 				b = respect_monitor_reserved_area ? mon->w : mon->m;
-				newx = (int)round(r->x ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
-				newy = (int)round(r->y ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
 				neww = (int)round(r->w ? (r->w <= 1 ? b.width * r->w : r->w) : c->geom.width);
 				newh = (int)round(r->h ? (r->h <= 1 ? b.height * r->h : r->h) : c->geom.height);
+				newx = (int)round(r->x
+					? (r->x > 0
+						? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x)
+						: (r->x >= -1 ? b.width + b.width * r->x + b.x - neww : b.width + r->x + b.x - neww))
+					: c->geom.x);
+				newy = (int)round(r->y
+					? (r->y > 0
+						? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y)
+						: (r->y >= -1 ? b.height + b.height * r->y + b.y - newh : b.height + r->y + b.y - newh))
+					: c->geom.y);
 				apply_resize = 1;
 			}
 		}
@@ -3293,6 +3303,64 @@ setsize(const Arg *arg)
 		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 		neww = (int)round(size->w ? (size->w <= 1 ? b.width * size->w : size->w) : c->geom.width);
 		newh = (int)round(size->h ? (size->h <= 1 ? b.height * size->h : size->h) : c->geom.height);
+		resize(c, (struct wlr_box){
+			.x = (b.width - neww) / 2 + b.x,
+			.y = (b.height - newh) / 2 + b.y,
+			.width = neww,
+			.height = newh,
+		}, 1);
+	}
+}
+
+void
+setminsize(const Arg *arg)
+{
+	struct wlr_box min = {0}, max = {0};
+	Client *c = focustop(selmon);
+	struct wlr_box b;
+	int neww;
+	int newh;
+
+	if (!selmon || !c || !c->mon) {
+		return;
+	}
+
+	client_get_size_hints(c, &max, &min);
+
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+		neww = (int)round(min.width == 0 ? c->geom.width : MAX(50, min.width));
+		newh = (int)round(min.height == 0 ? c->geom.height : MAX(50, min.height));
+		resize(c, (struct wlr_box){
+			.x = (b.width - neww) / 2 + b.x,
+			.y = (b.height - newh) / 2 + b.y,
+			.width = neww,
+			.height = newh,
+		}, 1);
+	}
+}
+
+void
+setmaxsize(const Arg *arg)
+{
+	struct wlr_box min = {0}, max = {0};
+	Client *c = focustop(selmon);
+	struct wlr_box b;
+	int neww;
+	int newh;
+
+	if (!selmon || !c || !c->mon) {
+		return;
+	}
+
+	client_get_size_hints(c, &max, &min);
+
+	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+		/* client is floating or in floating layout */
+		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
+		neww = (int)round(max.width == 0 ? c->geom.width : max.width);
+		newh = (int)round(max.height == 0 ? c->geom.height : max.height);
 		resize(c, (struct wlr_box){
 			.x = (b.width - neww) / 2 + b.x,
 			.y = (b.height - newh) / 2 + b.y,
