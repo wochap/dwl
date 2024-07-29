@@ -250,6 +250,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_space,      setlayout,      {0} },
 	{ MODKEY,                    Key_b,          setsize,        {.v = &sizes[0]} },
 	{ MODKEY,                    Key_n,          setsize,        {.v = &sizes[1]} },
+	{ MODKEY,                    Key_c,          setminsize,     {0} },
+	{ MODKEY,                    Key_v,          setmaxsize,     {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_y,          togglesticky, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,      togglefloating, {0} },
 	{ MODKEY,                    Key_e,         togglefullscreen, {0} },
