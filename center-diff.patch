@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 8847e58..aef51c8 100644
+index 22d2171..3d89fed 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -13,6 +13,7 @@ static const float focuscolor[]            = COLOR(0x005577ff);
@@ -10,8 +10,26 @@ index 8847e58..aef51c8 100644
  
  /* tagging - TAGCOUNT must be no greater than 31 */
  #define TAGCOUNT (9)
-@@ -137,6 +138,7 @@ static const Key keys[] = {
+@@ -36,6 +37,13 @@ static const Layout layouts[] = {
+ 	{ "[M]",      monocle },
+ };
+ 
++/* size(s) */
++static const Size sizes[] = {
++  /* width   height */
++	{ 1000,    0.75f },
++	{ 500,     0.5f },
++};
++
+ /* monitors */
+ /* (x=-1, y=-1) is reserved as an "autoconfigure" monitor position indicator
+  * WARNING: negative values other than (-1, -1) cause problems with Xwayland clients
+@@ -140,8 +148,11 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
  	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
++	{ MODKEY,                    XKB_KEY_b,          setsize,        {.v = &sizes[0]} },
++	{ MODKEY,                    XKB_KEY_n,          setsize,        {.v = &sizes[1]} },
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
  	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
 +	{ MODKEY,                    XKB_KEY_x,          movecenter,     {0} },
@@ -19,10 +37,30 @@ index 8847e58..aef51c8 100644
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
  	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
 diff --git a/dwl.c b/dwl.c
-index bf763df..6c0c5b3 100644
+index 145fd01..61c5c82 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -332,6 +332,8 @@ static void tagmon(const Arg *arg);
+@@ -185,6 +185,11 @@ typedef struct {
+ 	void (*arrange)(Monitor *);
+ } Layout;
+ 
++typedef struct {
++	float newwidth;
++	float newheight;
++} Size;
++
+ struct Monitor {
+ 	struct wl_list link;
+ 	struct wlr_output *wlr_output;
+@@ -324,6 +329,7 @@ static void setfloating(Client *c, int floating);
+ static void setfullscreen(Client *c, int fullscreen);
+ static void setgamma(struct wl_listener *listener, void *data);
+ static void setlayout(const Arg *arg);
++static void setsize(const Arg *arg);
+ static void setmfact(const Arg *arg);
+ static void setmon(Client *c, Monitor *m, uint32_t newtags);
+ static void setpsel(struct wl_listener *listener, void *data);
+@@ -336,6 +342,8 @@ static void tagmon(const Arg *arg);
  static void tile(Monitor *m);
  static void togglefloating(const Arg *arg);
  static void togglefullscreen(const Arg *arg);
@@ -31,15 +69,15 @@ index bf763df..6c0c5b3 100644
  static void toggletag(const Arg *arg);
  static void toggleview(const Arg *arg);
  static void unlocksession(struct wl_listener *listener, void *data);
-@@ -1569,6 +1571,7 @@ mapnotify(struct wl_listener *listener, void *data)
- 	Client *w, *c = wl_container_of(listener, c, map);
+@@ -1641,6 +1649,7 @@ mapnotify(struct wl_listener *listener, void *data)
+ 	Client *p, *w, *c = wl_container_of(listener, c, map);
  	Monitor *m;
  	int i;
 +	struct wlr_box b;
  
  	/* Create scene tree for this client and its border */
  	c->scene = client_surface(c)->data = wlr_scene_tree_create(layers[LyrTile]);
-@@ -1618,6 +1621,14 @@ mapnotify(struct wl_listener *listener, void *data)
+@@ -1689,6 +1698,14 @@ mapnotify(struct wl_listener *listener, void *data)
  	} else {
  		applyrules(c);
  	}
@@ -47,14 +85,44 @@ index bf763df..6c0c5b3 100644
 +	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 +	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 +		/* client is floating or in floating layout */
-+		c->geom.x = (b.width - c->geom.width) / 2 + b.x;
-+		c->geom.y = (b.height - c->geom.height) / 2 + b.y;
++		c->geom.x = c->geom.x == 0 ? (b.width - c->geom.width) / 2 + b.x : c->geom.x;
++		c->geom.y = c->geom.y == 0 ? (b.height - c->geom.height) / 2 + b.y : c->geom.y;
 +	}
 +
  	printstatus();
  
  unset_fullscreen:
-@@ -2240,6 +2251,10 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
+@@ -2313,6 +2330,29 @@ setlayout(const Arg *arg)
+ 	printstatus();
+ }
+ 
++void
++setsize(const Arg *arg)
++{
++	const Size *size = (const Size *)arg->v;
++	Client *c = focustop(selmon);
++	struct wlr_box b;
++	int newwidth;
++	int newheight;
++
++	if (!selmon || !arg || !arg->v || !c || !c->mon || !c->isfloating)
++		return;
++
++	b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
++	newwidth = (int)round(size->newwidth ? (size->newwidth <= 1 ? b.width * size->newwidth : size->newwidth) : c->geom.width);
++	newheight = (int)round(size->newheight ? (size->newheight <= 1 ? b.height * size->newheight : size->newheight) : c->geom.height);
++	resize(c, (struct wlr_box){
++		.x = (b.width - newwidth) / 2 + b.x,
++		.y = (b.height - newheight) / 2 + b.y,
++		.width = newwidth,
++		.height = newheight,
++	}, 1);
++}
++
+ /* arg > 1.0 will set mfact absolutely */
+ void
+ setmfact(const Arg *arg)
+@@ -2347,6 +2387,10 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
  		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
  		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
  		setfloating(c, c->isfloating);
@@ -65,7 +133,7 @@ index bf763df..6c0c5b3 100644
  	}
  	focusclient(focustop(selmon), 1);
  }
-@@ -2620,6 +2635,35 @@ togglefullscreen(const Arg *arg)
+@@ -2683,6 +2727,35 @@ togglefullscreen(const Arg *arg)
  		setfullscreen(sel, !sel->isfullscreen);
  }
  
