@@ -629,12 +629,12 @@ applyrules(Client *c)
 					? (r->x > 0
 						? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x)
 						: (r->x >= -1 ? b.width + b.width * r->x + b.x - neww : b.width + r->x + b.x - neww))
-					: c->geom.x);
+					: 0);
 				newy = (int)round(r->y
 					? (r->y > 0
 						? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y)
 						: (r->y >= -1 ? b.height + b.height * r->y + b.y - newh : b.height + r->y + b.y - newh))
-					: c->geom.y);
+					: 0);
 				apply_resize = 1;
 			}
 		}
