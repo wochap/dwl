@@ -89,7 +89,7 @@ index 22d2171..00f5f56 100644
  	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
  	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
 diff --git a/dwl.c b/dwl.c
-index 145fd01..d4f3603 100644
+index 145fd01..4969f06 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -185,6 +185,11 @@ typedef struct {
@@ -160,12 +160,12 @@ index 145fd01..d4f3603 100644
 +					? (r->x > 0
 +						? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x)
 +						: (r->x >= -1 ? b.width + b.width * r->x + b.x - neww : b.width + r->x + b.x - neww))
-+					: c->geom.x);
++					: 0);
 +				newy = (int)round(r->y
 +					? (r->y > 0
 +						? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y)
 +						: (r->y >= -1 ? b.height + b.height * r->y + b.y - newh : b.height + r->y + b.y - newh))
-+					: c->geom.y);
++					: 0);
 +				apply_resize = 1;
 +			}
  		}
