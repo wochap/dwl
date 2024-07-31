@@ -3941,7 +3941,7 @@ toggleview(const Arg *arg)
 	if (!(newtagset = selmon ? selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK) : 0))
 		return;
 
-	if (newtagset == TAGMASK) {
+	if (newtagset == (uint32_t)~0) {
 		selmon->pertag->prevtag = selmon->pertag->curtag;
 		selmon->pertag->curtag = 0;
 	}
@@ -4240,7 +4240,7 @@ view(const Arg *arg)
 	if (!selmon || (arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
 	selmon->seltags ^= 1; /* toggle sel tagset */
-	if (arg->ui & TAGMASK) {
+	if (arg->ui & ~0) {
 		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
 		selmon->pertag->prevtag = selmon->pertag->curtag;
 
