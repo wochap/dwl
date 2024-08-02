@@ -3626,7 +3626,7 @@ setup(void)
 	/**
 	 * Initialize headless backend
 	 */ 
-	headless_backend = wlr_headless_backend_create(dpy);
+	headless_backend = wlr_headless_backend_create(event_loop);
 	if (!headless_backend) {
 		die("Failed to create secondary headless backend");
 	} else {
