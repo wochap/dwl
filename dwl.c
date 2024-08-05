@@ -1833,7 +1833,7 @@ printstatus(void)
 			if (c->mon != m)
 				continue;
 			if (VISIBLEON(c, m)) {
-				asprintf(&visible_appids, "%s%s %s ", visible_appids ? visible_appids : "", client_get_appid(c), c == csel ? "true" : "false");
+				asprintf(&visible_appids, "%s%s %s %s ", visible_appids ? visible_appids : "", client_get_appid(c), c == csel ? "true" : "false", c->isfloating ? "true" : "false");
 			}
 			occ |= c->tags;
 			if (c->isurgent)
