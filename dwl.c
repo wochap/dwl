@@ -915,6 +915,7 @@ buttonpress(struct wl_listener *listener, void *data)
 			/* Drop the window off on its new monitor */
 			selmon = xytomon(cursor->x, cursor->y);
 			setmon(grabc, selmon, 0);
+			grabc = NULL;
 			return;
 		} else {
 			cursor_mode = CurNormal;
@@ -4909,7 +4910,7 @@ configurex11(struct wl_listener *listener, void *data)
 				event->x, event->y, event->width, event->height);
 		return;
 	}
-	if (c->isfloating)
+	if ((c->isfloating && c != grabc) || !c->mon->lt[c->mon->sellt]->arrange)
 		resize(c, (struct wlr_box){.x = event->x, .y = event->y,
 				.width = event->width + c->bw * 2, .height = event->height + c->bw * 2}, 0);
 	else
