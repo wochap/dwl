@@ -487,7 +487,6 @@ static void update_client_blur(Client *c);
 static void update_buffer_corner_radius(Client *c, struct wlr_scene_buffer *buffer);
 
 /* variables */
-static const char broken[] = "broken";
 static struct rlimit og_rlimit;
 static pid_t child_pid = -1;
 static int locked;
@@ -631,10 +630,8 @@ applyrules(Client *c)
 	c->isfloating = client_is_float_type(c);
 	c->scratchkey = 0;
 	c->inscratchpad = 0;
-	if (!(appid = client_get_appid(c)))
-		appid = broken;
-	if (!(title = client_get_title(c)))
-		title = broken;
+	appid = client_get_appid(c);
+	title = client_get_title(c);
 
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || regex_match(r->title, title))
@@ -2903,7 +2900,6 @@ printstatus(void)
 	Client *c;
 	Client *csel;
 	uint32_t occ, urg, sel;
-	const char *appid, *title;
 	char *visible_appids;
 	int namedscratchpads_count;
 	int scratchpads_count;
@@ -2931,10 +2927,8 @@ printstatus(void)
 				urg |= c->tags;
 		}
 		if ((c = focustop(m))) {
-			title = client_get_title(c);
-			appid = client_get_appid(c);
-			printf("%s title %s\n", m->wlr_output->name, title ? title : broken);
-			printf("%s appid %s\n", m->wlr_output->name, appid ? appid : broken);
+			printf("%s title %s\n", m->wlr_output->name, client_get_title(c));
+			printf("%s appid %s\n", m->wlr_output->name, client_get_appid(c));
 			printf("%s fullscreen %d\n", m->wlr_output->name, c->isfullscreen);
 			printf("%s floating %d\n", m->wlr_output->name, c->isfloating);
 			sel = c->tags;
