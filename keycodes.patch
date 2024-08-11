@@ -1,3 +1,17 @@
+From 70ae7b4826fa2a3932ef1853f921590affa71e99 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Sun, 11 Aug 2024 10:04:12 -0500
+Subject: [PATCH] apply keycodes
+
+---
+ config.def.h    |  82 ++++++++--------
+ dwl.c           |  32 +++----
+ generate-keys.c |  82 ++++++++++++++++
+ keys.h          | 242 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 377 insertions(+), 61 deletions(-)
+ create mode 100644 generate-keys.c
+ create mode 100644 keys.h
+
 diff --git a/config.def.h b/config.def.h
 index 22d2171..ce78a9f 100644
 --- a/config.def.h
@@ -554,3 +568,6 @@ index 0000000..e732f80
 +#define Key_XF86MonBrightnessCycle   251
 +#define Key_XF86WWAN                 254
 +#define Key_XF86RFKill               255
+-- 
+2.45.2
+
