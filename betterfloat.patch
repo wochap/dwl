@@ -1,7 +1,7 @@
 From b1a3628d4e78a5ff620d720dd3330a792d3dffcd Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
 Date: Sun, 28 Jul 2024 18:58:33 -0500
-Subject: [PATCH 1/3] implement betterfloat
+Subject: [PATCH 1/4] implement betterfloat
 
 ---
  client.h     |  25 ++++++++
@@ -362,7 +362,7 @@ index 145fd01..76c42dd 100644
 From b95f9bad72b20e079fee43c802b73d8bffafba47 Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
 Date: Sun, 28 Jul 2024 19:34:00 -0500
-Subject: [PATCH 2/3] f
+Subject: [PATCH 2/4] f
 
 ---
  dwl.c | 4 ++--
@@ -390,7 +390,7 @@ index 76c42dd..d4f3603 100644
 From a257d41d76c83a0972d58cc2cef7e51aa401b438 Mon Sep 17 00:00:00 2001
 From: wochap <gean.marroquin@gmail.com>
 Date: Wed, 31 Jul 2024 08:46:14 -0500
-Subject: [PATCH 3/3] fix
+Subject: [PATCH 3/4] fix
 
 ---
  dwl.c | 4 ++--
@@ -415,6 +415,34 @@ index d4f3603..4969f06 100644
  				apply_resize = 1;
  			}
  		}
+-- 
+2.45.2
+
+
+From 32884d29d07e78f7517cc4e30b36afc7fa697581 Mon Sep 17 00:00:00 2001
+From: wochap <gean.marroquin@gmail.com>
+Date: Sun, 11 Aug 2024 09:26:49 -0500
+Subject: [PATCH 4/4] feat: make window float on setsize
+
+---
+ dwl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/dwl.c b/dwl.c
+index 4969f06..f9f5d53 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -2381,6 +2381,10 @@ setsize(const Arg *arg)
+ 		return;
+ 	}
+ 
++	if (!c->isfloating && !c->isfullscreen) {
++		setfloating(c, 1);
++	}
++
+ 	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
+ 		/* client is floating or in floating layout */
+ 		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
 -- 
 2.45.2
 
