@@ -3206,6 +3206,10 @@ setsize(const Arg *arg)
 		return;
 	}
 
+	if (!c->isfloating && !c->isfullscreen) {
+		setfloating(c, 1);
+	}
+
 	if (c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 		/* client is floating or in floating layout */
 		b = respect_monitor_reserved_area ? c->mon->w : c->mon->m;
