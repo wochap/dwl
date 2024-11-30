@@ -21,33 +21,7 @@ static const int borders_only_floating     = 0;
 static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 0.0f}; /* You can also use glsl colors */
-
-static const int opacity = 0; /* flag to enable opacity */
-static const float opacity_inactive = 0.5;
-static const float opacity_active = 1.0;
-
-static const int shadow = 1; /* flag to enable shadow */
-static const int shadow_only_floating = 0; /* only apply shadow to floating windows */
-static const struct wlr_render_color shadow_color = COLOR(0x0000FFff);
-static const struct wlr_render_color shadow_color_focus = COLOR(0xFF0000ff);
-static const int shadow_blur_sigma = 20;
-static const int shadow_blur_sigma_focus = 40;
-static const char *const shadow_ignore_list[] = { "xdg-desktop-portal-gtk", NULL }; /* list of app-id to ignore */
-
-static const int corner_radius = 0; /* 0 disables corner_radius */
-
-static const int blur = 1; /* flag to enable blur */
-static const int blur_optimized = 1;
-static const int blur_ignore_transparent = 1;
-static const struct blur_data blur_data = {
-	.radius = 5,
-	.num_passes = 3,
-	.noise = (float)0.02,
-	.brightness = (float)0.9,
-	.contrast = (float)0.9,
-	.saturation = (float)1.1,
-};
+static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You can also use glsl colors */
 static const char *cursor_theme            = NULL;
 static const char cursor_size[]            = "24"; /* Make sure it's a valid integer, otherwise things will break */
 static const int respect_monitor_reserved_area = 0;  /* 1 to monitor center while respecting the monitor's reserved area, 0 to monitor center */
