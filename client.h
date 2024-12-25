@@ -356,6 +356,12 @@ static inline void
 client_set_border_color(Client *c, const float color[static 4], const float colors[static 4], const float colore[static 4])
 {
 	int i;
+
+	if (corner_radius > 0) {
+		wlr_scene_rect_set_color(c->round_border, color);
+		return;
+	}
+
 	for (i = 0; i < 4; i++) {
 		if (border_color_type == BrdOriginal) {
 			wlr_scene_rect_set_color(c->border[i], color);
