@@ -3226,7 +3226,9 @@ setfloating(Client *c, int floating)
 	if (shadow && shadow_only_floating) {
 		if (c->isfloating) {
 			c->has_shadow_enabled = 1;
-			wlr_scene_shadow_set_color(c->shadow, focustop(c->mon) == c ? shadow_color_focus : shadow_color);
+			if (c->shadow != NULL) {
+				wlr_scene_shadow_set_color(c->shadow, focustop(c->mon) == c ? shadow_color_focus : shadow_color);
+			}
 		} else {
 			c->has_shadow_enabled = 0;
 			if (c->shadow != NULL) {
