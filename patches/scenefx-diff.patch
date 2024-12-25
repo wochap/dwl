@@ -12,9 +12,20 @@ index 3358bae..20b15bb 100644
  LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` -lm $(LIBS)
  
 diff --git a/client.h b/client.h
-index 42f225f..7d37a38 100644
+index 42f225f..12faec4 100644
 --- a/client.h
 +++ b/client.h
+@@ -138,8 +138,8 @@ client_get_clip(Client *c, struct wlr_box *clip)
+ 	*clip = (struct wlr_box){
+ 		.x = 0,
+ 		.y = 0,
+-		.width = c->geom.width - c->bw,
+-		.height = c->geom.height - c->bw,
++		.width = c->geom.width - c->bw * 2,
++		.height = c->geom.height - c->bw * 2,
+ 	};
+ 
+ #ifdef XWAYLAND
 @@ -328,6 +328,12 @@ static inline void
  client_set_border_color(Client *c, const float color[static 4])
  {
