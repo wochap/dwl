@@ -2458,7 +2458,7 @@ mapnotify(struct wl_listener *listener, void *data)
 
 	if (corner_radius > 0) {
 		int radius = c->corner_radius + c->bw;
-		if (corner_radius_only_floating && !c->isfloating) {
+		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 			radius = 0;
 		}
 		wlr_scene_rect_set_corner_radius(c->round_border, radius);
@@ -2467,7 +2467,7 @@ mapnotify(struct wl_listener *listener, void *data)
 	if (shadow) {
 		const float *color = focustop(c->mon) == c ? shadow_color_focus : shadow_color;
 		int has_shadow_enabled = 1;
-		if ((shadow_only_floating && !c->isfloating) || in_shadow_ignore_list(client_get_appid(c))) {
+		if ((shadow_only_floating && !c->isfloating) || in_shadow_ignore_list(client_get_appid(c)) || c->isfullscreen) {
 			color = transparent;
 			has_shadow_enabled = 0;
 		}
