@@ -466,7 +466,9 @@ static void bstackhoriz(Monitor *m);
 static void entermode(const Arg *arg);
 static void iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
 static void iter_xdg_scene_buffers_opacity(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
+static void iter_xdg_scene_buffers_corner_radius(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
 static void output_configure_scene(struct wlr_scene_node *node, Client *c);
+static int in_shadow_ignore_list(const char *str);
 
 /* variables */
 static const char broken[] = "broken";
@@ -2381,8 +2383,6 @@ mapnotify(struct wl_listener *listener, void *data)
 
 	client_get_geometry(c, &c->geom);
 
-	wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers, c);
-
 	/* Handle unmanaged clients first so we can return prior create borders */
 	if (client_is_unmanaged(c)) {
 		/* Unmanaged clients always are floating */
@@ -2407,20 +2407,17 @@ mapnotify(struct wl_listener *listener, void *data)
 		c->bordere[i]->node.data = c;
 	}
 
+	wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers, c);
+
 	if (corner_radius > 0) {
 		c->round_border = wlr_scene_rect_create(c->scene, 0, 0, c->isurgent ? urgentcolor : bordercolor);
 		c->round_border->node.data = c;
-		wlr_scene_rect_set_corner_radius(c->round_border, c->corner_radius + c->bw);
 		/* Lower the border below the XDG scene tree */
 		wlr_scene_node_lower_to_bottom(&c->round_border->node);
 	}
 
 	if (shadow) {
 		c->shadow = wlr_scene_shadow_create(c->scene, 0, 0, c->corner_radius, shadow_blur_sigma, shadow_color);
-		c->has_shadow_enabled = shadow_only_floating != 1;
-		if (!c->has_shadow_enabled) {
-			wlr_scene_shadow_set_color(c->shadow, transparent);
-		}
 		/* Lower the shadow below the border */
 		wlr_scene_node_lower_to_bottom(&c->shadow->node);
 	}
@@ -2459,14 +2456,23 @@ mapnotify(struct wl_listener *listener, void *data)
 
 	printstatus();
 
-	if (shadow && shadow_only_floating) {
-		if (c->isfloating) {
-			c->has_shadow_enabled = 1;
-			wlr_scene_shadow_set_color(c->shadow, focustop(c->mon) == c ? shadow_color_focus : shadow_color);
-		} else {
-			c->has_shadow_enabled = 0;
-			wlr_scene_shadow_set_color(c->shadow, transparent);
+	if (corner_radius > 0) {
+		int radius = c->corner_radius + c->bw;
+		if (corner_radius_only_floating && !c->isfloating) {
+			radius = 0;
 		}
+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+	}
+
+	if (shadow) {
+		const float *color = focustop(c->mon) == c ? shadow_color_focus : shadow_color;
+		int has_shadow_enabled = 1;
+		if ((shadow_only_floating && !c->isfloating) || in_shadow_ignore_list(client_get_appid(c))) {
+			color = transparent;
+			has_shadow_enabled = 0;
+		}
+		wlr_scene_shadow_set_color(c->shadow, color);
+		c->has_shadow_enabled = has_shadow_enabled;
 	}
 
 unset_fullscreen:
@@ -3086,6 +3092,7 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	if (corner_radius > 0) {
 		wlr_scene_node_set_position(&c->round_border->node, 0, 0);
 		wlr_scene_rect_set_size(c->round_border, c->geom.width, c->geom.height);
+		/* hide original border */
 		for (i = 0; i < 4; i++)
 			wlr_scene_rect_set_color(c->border[i], transparent);
 	}
@@ -3224,18 +3231,26 @@ setfloating(Client *c, int floating)
 	Client *p = client_get_parent(c);
 	c->isfloating = floating;
 
-	if (shadow && shadow_only_floating) {
-		if (c->isfloating) {
-			c->has_shadow_enabled = 1;
-			if (c->shadow != NULL) {
-				wlr_scene_shadow_set_color(c->shadow, focustop(c->mon) == c ? shadow_color_focus : shadow_color);
-			}
-		} else {
-			c->has_shadow_enabled = 0;
-			if (c->shadow != NULL) {
-				wlr_scene_shadow_set_color(c->shadow, transparent);
-			}
+	if (corner_radius > 0 && c->round_border != NULL) {
+		int radius = c->corner_radius + c->bw;
+		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
+			radius = 0;
 		}
+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+	}
+	if (corner_radius_inner > 0 && c->round_border != NULL) {
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);
+	}
+
+	if (shadow && c->shadow != NULL) {
+		const float *color = focustop(c->mon) == c ? shadow_color_focus : shadow_color;
+		int has_shadow_enabled = 1;
+		if ((shadow_only_floating && !c->isfloating) || in_shadow_ignore_list(client_get_appid(c)) || c->isfullscreen) {
+			color = transparent;
+			has_shadow_enabled = 0;
+		}
+		wlr_scene_shadow_set_color(c->shadow, color);
+		c->has_shadow_enabled = has_shadow_enabled;
 	}
 
 	/* If in floating layout do not change the client's layer */
@@ -3275,6 +3290,29 @@ setfullscreen(Client *c, int fullscreen)
 		 * client positions are set by the user and cannot be recalculated */
 		resize(c, c->prev, 0);
 	}
+
+	if (corner_radius > 0 && c->round_border != NULL) {
+		int radius = c->corner_radius + c->bw;
+		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
+			radius = 0;
+		}
+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+	}
+	if (corner_radius_inner > 0 && c->round_border != NULL) {
+		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);
+	}
+
+	if (shadow && c->shadow != NULL) {
+		const float *color = focustop(c->mon) == c ? shadow_color_focus : shadow_color;
+		int has_shadow_enabled = 1;
+		if ((shadow_only_floating && !c->isfloating) || in_shadow_ignore_list(client_get_appid(c)) || c->isfullscreen) {
+			color = transparent;
+			has_shadow_enabled = 0;
+		}
+		wlr_scene_shadow_set_color(c->shadow, color);
+		c->has_shadow_enabled = has_shadow_enabled;
+	}
+
 	arrange(c->mon);
 	printstatus();
 }
@@ -4305,7 +4343,7 @@ urgent(struct wl_listener *listener, void *data)
 	if (client_surface(c)->mapped) {
 		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 
-		if (shadow) {
+		if (shadow && c->shadow != NULL) {
 			wlr_scene_shadow_set_blur_sigma(c->shadow, shadow_blur_sigma_focus);
 			if (c->has_shadow_enabled) {
 				wlr_scene_shadow_set_color(c->shadow, shadow_color_focus);
@@ -4557,7 +4595,11 @@ iter_xdg_scene_buffers(struct wlr_scene_buffer *buffer, int sx, int sy, void *us
 
 		if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
 			if (corner_radius_inner > 0) {
-				wlr_scene_buffer_set_corner_radius(buffer, corner_radius_inner, CORNER_LOCATION_ALL);
+				int radius = corner_radius_inner;
+				if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
+					radius = 0;
+				}
+				wlr_scene_buffer_set_corner_radius(buffer, radius, CORNER_LOCATION_ALL);
 			}
 
 			if (blur) {
@@ -4587,6 +4629,32 @@ iter_xdg_scene_buffers_opacity(struct wlr_scene_buffer *buffer, int sx, int sy, 
 		/* each individually? */
 		if (opacity) {
 			wlr_scene_buffer_set_opacity(buffer, c->opacity);
+		}
+	}
+}
+
+void
+iter_xdg_scene_buffers_corner_radius(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data)
+{
+	Client *c = user_data;
+	struct wlr_scene_surface * scene_surface = wlr_scene_surface_try_from_buffer(buffer);
+	struct wlr_xdg_surface *xdg_surface;
+
+	if (!scene_surface) {
+		return;
+	}
+
+	xdg_surface = wlr_xdg_surface_try_from_wlr_surface(scene_surface->surface);
+
+	if (c && xdg_surface && xdg_surface->role == WLR_XDG_SURFACE_ROLE_TOPLEVEL) {
+		/* TODO: Be able to set whole decoration_data instead of calling */
+		/* each individually? */
+		if (corner_radius_inner > 0) {
+			int radius = corner_radius_inner;
+			if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
+				radius = 0;
+			}
+			wlr_scene_buffer_set_corner_radius(buffer, radius, CORNER_LOCATION_ALL);
 		}
 	}
 }
@@ -4624,7 +4692,11 @@ output_configure_scene(struct wlr_scene_node *node, Client *c)
 
 			if (!wlr_subsurface_try_from_wlr_surface(xdg_surface->surface)) {
 				if (corner_radius_inner > 0) {
-					wlr_scene_buffer_set_corner_radius(buffer, corner_radius_inner, CORNER_LOCATION_ALL);
+					int radius = corner_radius_inner;
+					if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
+						radius = 0;
+					}
+					wlr_scene_buffer_set_corner_radius(buffer, radius, CORNER_LOCATION_ALL);
 				}
 			}
 		}
@@ -4635,6 +4707,18 @@ output_configure_scene(struct wlr_scene_node *node, Client *c)
 		}
 	}
 }
+
+int
+in_shadow_ignore_list(const char *str)
+{
+	for (int i = 0; shadow_ignore_list[i] != NULL; i++) {
+		if (strcmp(shadow_ignore_list[i], str) == 0) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 
 #ifdef XWAYLAND
 void

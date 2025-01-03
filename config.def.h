@@ -37,9 +37,11 @@ static const float shadow_color[4] = COLOR(0x0000FFff);
 static const float shadow_color_focus[4] = COLOR(0xFF0000ff);
 static const int shadow_blur_sigma = 20;
 static const int shadow_blur_sigma_focus = 40;
+static const char *const shadow_ignore_list[] = { NULL }; /* list of app-id to ignore */
 
-static const int corner_radius = 4; /* 0 disables corner_radius */
-static const int corner_radius_inner = 3; /* 0 disables corner_radius */
+static const int corner_radius = 8; /* 0 disables corner_radius */
+static const int corner_radius_inner = 4; /* 0 disables corner_radius */
+static const int corner_radius_only_floating = 0; /* only apply corner_radius and corner_radius_inner to floating windows */
 
 static const int blur = 1; /* flag to enable blur */
 static const int blur_optimized = 1;

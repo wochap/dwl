@@ -164,8 +164,8 @@ client_get_clip(Client *c, struct wlr_box *clip)
 {
 	struct wlr_box xdg_geom = {0};
 	*clip = (struct wlr_box){
-		.x = 0,
-		.y = 0,
+		.x = c->bw,
+		.y = c->bw,
 		.width = c->geom.width - c->bw * 2,
 		.height = c->geom.height - c->bw * 2,
 	};
