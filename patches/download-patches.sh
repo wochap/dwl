@@ -32,6 +32,7 @@ wget https://raw.githubusercontent.com/wochap/dwl/v0.5/modes-keycodes/modes-keyc
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/lockedkeys/lockedkeys-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.5/lockedkeys-keycodes/lockedkeys-keycodes-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/xkb-rules-switcher/xkb-rules-switcher-diff.patch
+wget https://codeberg.org/dwl/dwl-patches/raw/branch/main/patches/scroll-factor/scroll-factor.patch
 
 # Cursor
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/cursortheme/cursortheme-diff.patch

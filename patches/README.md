@@ -45,6 +45,7 @@
 - [lockedkeys](https://github.com/wochap/dwl/blob/v0.6-a/lockedkeys/lockedkeys-diff.patch)
 - [lockedkeys-keycodes](https://github.com/wochap/dwl/blob/v0.5/lockedkeys-keycodes/lockedkeys-keycodes-diff.patch)
 - [xkb-rules-switcher](https://github.com/wochap/dwl/blob/v0.6-b/xkb-rules-switcher/xkb-rules-switcher-diff.patch)
+- [scroll-factor](https://codeberg.org/dwl/dwl-patches/raw/branch/main/patches/scroll-factor/scroll-factor.patch)
 
 # Cursor
 
@@ -117,6 +118,7 @@ $ ls -lS | awk '{print $4, $5, $12}' | sort -n
 - [ ] ~~hide-cursor-diff.patch~~
 - [X] betterfloat-diff.patch
 - [X] sticky-diff.patch
+- [X] scroll-factor.patch
 
 ### Workflow
 
