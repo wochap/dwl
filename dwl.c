@@ -838,13 +838,19 @@ axisnotify(struct wl_listener *listener, void *data)
 	/* This event is forwarded by the cursor when a pointer emits an axis event,
 	 * for example when you move the scroll wheel. */
 	struct wlr_pointer_axis_event *event = data;
+	double delta = event->delta;
+	int32_t delta_disc = event->delta_discrete;
+	if(event->source == WL_POINTER_AXIS_SOURCE_FINGER) {
+		delta *= scroll_factor;
+		delta_disc = (int32_t)round(scroll_factor * delta_disc);
+	}
 	wlr_idle_notifier_v1_notify_activity(idle_notifier, seat);
 	/* TODO: allow usage of scroll whell for mousebindings, it can be implemented
 	 * checking the event's orientation and the delta of the event */
 	/* Notify the client with pointer focus of the axis event. */
 	wlr_seat_pointer_notify_axis(seat,
-			event->time_msec, event->orientation, event->delta,
-			event->delta_discrete, event->source, event->relative_direction);
+			event->time_msec, event->orientation, delta,
+			delta_disc, event->source, event->relative_direction);
 }
 
 void
