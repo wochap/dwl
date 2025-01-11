@@ -44,7 +44,7 @@ index 42f225f..e3cef30 100644
  		wlr_scene_rect_set_color(c->border[i], color);
  }
 diff --git a/config.def.h b/config.def.h
-index 22d2171..39c3d60 100644
+index 22d2171..4ec6adb 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -12,7 +12,35 @@ static const float bordercolor[]           = COLOR(0x444444ff);
@@ -59,7 +59,7 @@ index 22d2171..39c3d60 100644
 +static const float opacity_active = 1.0;
 +
 +static const int shadow = 1; /* flag to enable shadow */
-+static const int shadow_only_floating = 1; /* only apply shadow to floating windows */
++static const int shadow_only_floating = 0; /* only apply shadow to floating windows */
 +static const float shadow_color[4] = COLOR(0x0000FFff);
 +static const float shadow_color_focus[4] = COLOR(0xFF0000ff);
 +static const int shadow_blur_sigma = 20;
@@ -67,7 +67,7 @@ index 22d2171..39c3d60 100644
 +static const char *const shadow_ignore_list[] = { NULL }; /* list of app-id to ignore */
 +
 +static const int corner_radius = 8; /* 0 disables corner_radius */
-+static const int corner_radius_inner = 8; /* 0 disables corner_radius */
++static const int corner_radius_inner = 9; /* 0 disables corner_radius */
 +static const int corner_radius_only_floating = 0; /* only apply corner_radius and corner_radius_inner to floating windows */
 +
 +static const int blur = 1; /* flag to enable blur */
@@ -85,7 +85,7 @@ index 22d2171..39c3d60 100644
  /* tagging - TAGCOUNT must be no greater than 31 */
  #define TAGCOUNT (9)
 diff --git a/dwl.c b/dwl.c
-index 5bf995e..3c551dc 100644
+index 5bf995e..305412c 100644
 --- a/dwl.c
 +++ b/dwl.c
 @@ -10,8 +10,13 @@
@@ -234,7 +234,7 @@ index 5bf995e..3c551dc 100644
 +		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 +			radius = 0;
 +		}
-+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
++		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 +	}
 +
 +	if (shadow) {
@@ -300,7 +300,7 @@ index 5bf995e..3c551dc 100644
 +		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 +			radius = 0;
 +		}
-+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
++		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 +	}
 +	if (corner_radius_inner > 0 && c->round_border != NULL) {
 +		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);
@@ -330,7 +330,7 @@ index 5bf995e..3c551dc 100644
 +		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 +			radius = 0;
 +		}
-+		wlr_scene_rect_set_corner_radius(c->round_border, radius);
++		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 +	}
 +	if (corner_radius_inner > 0 && c->round_border != NULL) {
 +		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);

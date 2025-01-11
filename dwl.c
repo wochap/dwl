@@ -2467,7 +2467,7 @@ mapnotify(struct wl_listener *listener, void *data)
 		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 			radius = 0;
 		}
-		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 	}
 
 	if (shadow) {
@@ -3242,7 +3242,7 @@ setfloating(Client *c, int floating)
 		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 			radius = 0;
 		}
-		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 	}
 	if (corner_radius_inner > 0 && c->round_border != NULL) {
 		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);
@@ -3302,7 +3302,7 @@ setfullscreen(Client *c, int fullscreen)
 		if ((corner_radius_only_floating && !c->isfloating) || c->isfullscreen) {
 			radius = 0;
 		}
-		wlr_scene_rect_set_corner_radius(c->round_border, radius);
+		wlr_scene_rect_set_corner_radius(c->round_border, radius, CORNER_LOCATION_ALL);
 	}
 	if (corner_radius_inner > 0 && c->round_border != NULL) {
 		wlr_scene_node_for_each_buffer(&c->scene_surface->node, iter_xdg_scene_buffers_corner_radius, c);
