@@ -469,6 +469,7 @@ static void iter_xdg_scene_buffers_opacity(struct wlr_scene_buffer *buffer, int 
 static void iter_xdg_scene_buffers_corner_radius(struct wlr_scene_buffer *buffer, int sx, int sy, void *user_data);
 static void output_configure_scene(struct wlr_scene_node *node, Client *c);
 static int in_shadow_ignore_list(const char *str);
+static void client_set_shadow_blur_sigma(Client *c, int blur_sigma);
 
 /* variables */
 static const char broken[] = "broken";
@@ -1829,7 +1830,7 @@ focusclient(Client *c, int lift)
 			client_set_border_color(c, focuscolor, focuscolor, focuscolor);
 
 			if (shadow) {
-				wlr_scene_shadow_set_blur_sigma(c->shadow, shadow_blur_sigma_focus);
+				client_set_shadow_blur_sigma(c, (int)round(shadow_blur_sigma_focus));
 				if (c->has_shadow_enabled) {
 					wlr_scene_shadow_set_color(c->shadow, shadow_color_focus);
 				}
@@ -1858,7 +1859,7 @@ focusclient(Client *c, int lift)
 			client_set_border_color(old_c, bordercolor, borderscolor, borderecolor);
 
 			if (shadow) {
-				wlr_scene_shadow_set_blur_sigma(old_c->shadow, shadow_blur_sigma);
+				client_set_shadow_blur_sigma(old_c, (int)round(shadow_blur_sigma));
 				if (old_c->has_shadow_enabled) {
 					wlr_scene_shadow_set_color(old_c->shadow, shadow_color);
 				}
@@ -4350,7 +4351,7 @@ urgent(struct wl_listener *listener, void *data)
 		client_set_border_color(c, urgentcolor, urgentcolor, urgentcolor);
 
 		if (shadow && c->shadow != NULL) {
-			wlr_scene_shadow_set_blur_sigma(c->shadow, shadow_blur_sigma_focus);
+			client_set_shadow_blur_sigma(c, (int)round(shadow_blur_sigma_focus));
 			if (c->has_shadow_enabled) {
 				wlr_scene_shadow_set_color(c->shadow, shadow_color_focus);
 			}
@@ -4725,6 +4726,13 @@ in_shadow_ignore_list(const char *str)
 	return 0;
 }
 
+void
+client_set_shadow_blur_sigma(Client *c, int blur_sigma)
+{
+	wlr_scene_shadow_set_blur_sigma(c->shadow, blur_sigma);
+	wlr_scene_node_set_position(&c->shadow->node, -blur_sigma, -blur_sigma);
+	wlr_scene_shadow_set_size(c->shadow, c->geom.width + (blur_sigma) * 2, c->geom.height + (blur_sigma) * 2);
+}
 
 #ifdef XWAYLAND
 void
