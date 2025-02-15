@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 3358bae..20b15bb 100644
+index 3358bae..8dc79bd 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -12,7 +12,7 @@ DWLDEVCFLAGS = -g -pedantic -Wall -Wextra -Wdeclaration-after-statement \
@@ -7,7 +7,7 @@ index 3358bae..20b15bb 100644
  
  # CFLAGS / LDFLAGS
 -PKGS      = wlroots-0.18 wayland-server xkbcommon libinput $(XLIBS)
-+PKGS      = scenefx wlroots-0.18 wayland-server xkbcommon libinput $(XLIBS)
++PKGS      = scenefx-0.2 wlroots-0.18 wayland-server xkbcommon libinput $(XLIBS)
  DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
  LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` -lm $(LIBS)
  
@@ -85,15 +85,16 @@ index 22d2171..4ec6adb 100644
  /* tagging - TAGCOUNT must be no greater than 31 */
  #define TAGCOUNT (9)
 diff --git a/dwl.c b/dwl.c
-index 5bf995e..b5e8151 100644
+index 5bf995e..eb12234 100644
 --- a/dwl.c
 +++ b/dwl.c
-@@ -10,8 +10,13 @@
+@@ -10,8 +10,14 @@
  #include <stdlib.h>
  #include <sys/wait.h>
  #include <time.h>
 +#include <scenefx/render/fx_renderer/fx_renderer.h>
 +#include <scenefx/types/fx/blur_data.h>
++#include <scenefx/types/fx/clipped_region.h>
 +#include <scenefx/types/fx/corner_location.h>
 +#include <scenefx/types/wlr_scene.h>
  #include <unistd.h>
@@ -102,7 +103,7 @@ index 5bf995e..b5e8151 100644
  #include <wlr/backend.h>
  #include <wlr/backend/libinput.h>
  #include <wlr/render/allocator.h>
-@@ -43,7 +48,6 @@
+@@ -43,7 +49,6 @@
  #include <wlr/types/wlr_primary_selection.h>
  #include <wlr/types/wlr_primary_selection_v1.h>
  #include <wlr/types/wlr_relative_pointer_v1.h>
@@ -110,7 +111,7 @@ index 5bf995e..b5e8151 100644
  #include <wlr/types/wlr_screencopy_v1.h>
  #include <wlr/types/wlr_seat.h>
  #include <wlr/types/wlr_server_decoration.h>
-@@ -141,6 +145,12 @@ typedef struct {
+@@ -141,6 +146,12 @@ typedef struct {
  	uint32_t tags;
  	int isfloating, isurgent, isfullscreen;
  	uint32_t resize; /* configure serial of a pending resize */
@@ -123,7 +124,7 @@ index 5bf995e..b5e8151 100644
  } Client;
  
  typedef struct {
-@@ -355,6 +365,12 @@ static Monitor *xytomon(double x, double y);
+@@ -355,6 +366,12 @@ static Monitor *xytomon(double x, double y);
  static void xytonode(double x, double y, struct wlr_surface **psurface,
  		Client **pc, LayerSurface **pl, double *nx, double *ny);
  static void zoom(const Arg *arg);
@@ -136,7 +137,7 @@ index 5bf995e..b5e8151 100644
  
  /* variables */
  static const char broken[] = "broken";
-@@ -366,6 +382,8 @@ static struct wl_event_loop *event_loop;
+@@ -366,6 +383,8 @@ static struct wl_event_loop *event_loop;
  static struct wlr_backend *backend;
  static struct wlr_scene *scene;
  static struct wlr_scene_tree *layers[NUM_LAYERS];
@@ -145,7 +146,7 @@ index 5bf995e..b5e8151 100644
  static struct wlr_scene_tree *drag_icon;
  /* Map from ZWLR_LAYER_SHELL_* constants to Lyr* enum */
  static const int layermap[] = { LyrBg, LyrBottom, LyrTop, LyrOverlay };
-@@ -413,6 +431,8 @@ static struct wlr_box sgeom;
+@@ -413,6 +432,8 @@ static struct wlr_box sgeom;
  static struct wl_list mons;
  static Monitor *selmon;
  
@@ -154,7 +155,7 @@ index 5bf995e..b5e8151 100644
  #ifdef XWAYLAND
  static void activatex11(struct wl_listener *listener, void *data);
  static void associatex11(struct wl_listener *listener, void *data);
-@@ -1061,6 +1081,9 @@ createnotify(struct wl_listener *listener, void *data)
+@@ -1061,6 +1082,9 @@ createnotify(struct wl_listener *listener, void *data)
  	c->surface.xdg = toplevel->base;
  	c->bw = borderpx;
  
@@ -164,7 +165,7 @@ index 5bf995e..b5e8151 100644
  	LISTEN(&toplevel->base->surface->events.commit, &c->commit, commitnotify);
  	LISTEN(&toplevel->base->surface->events.map, &c->map, mapnotify);
  	LISTEN(&toplevel->base->surface->events.unmap, &c->unmap, unmapnotify);
-@@ -1369,8 +1392,20 @@ focusclient(Client *c, int lift)
+@@ -1369,8 +1393,20 @@ focusclient(Client *c, int lift)
  
  		/* Don't change border color if there is an exclusive focus or we are
  		 * handling a drag operation */
@@ -186,7 +187,7 @@ index 5bf995e..b5e8151 100644
  	}
  
  	/* Deactivate old client if focus is changing */
-@@ -1389,6 +1424,17 @@ focusclient(Client *c, int lift)
+@@ -1389,6 +1425,17 @@ focusclient(Client *c, int lift)
  		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
  			client_set_border_color(old_c, bordercolor);
  
@@ -204,7 +205,7 @@ index 5bf995e..b5e8151 100644
  			client_activate_surface(old, 0);
  		}
  	}
-@@ -1718,6 +1764,21 @@ mapnotify(struct wl_listener *listener, void *data)
+@@ -1718,6 +1765,21 @@ mapnotify(struct wl_listener *listener, void *data)
  		c->border[i]->node.data = c;
  	}
  
@@ -226,7 +227,7 @@ index 5bf995e..b5e8151 100644
  	/* Initialize client geometry with room for border */
  	client_set_tiled(c, WLR_EDGE_TOP | WLR_EDGE_BOTTOM | WLR_EDGE_LEFT | WLR_EDGE_RIGHT);
  	c->geom.width += 2 * c->bw;
-@@ -1739,6 +1800,25 @@ mapnotify(struct wl_listener *listener, void *data)
+@@ -1739,6 +1801,25 @@ mapnotify(struct wl_listener *listener, void *data)
  	}
  	printstatus();
  
@@ -252,7 +253,7 @@ index 5bf995e..b5e8151 100644
  unset_fullscreen:
  	m = c->mon ? c->mon : xytomon(c->geom.x, c->geom.y);
  	wl_list_for_each(w, &clients, link) {
-@@ -2113,6 +2193,8 @@ rendermon(struct wl_listener *listener, void *data)
+@@ -2113,6 +2194,8 @@ rendermon(struct wl_listener *listener, void *data)
  			goto skip;
  	}
  
@@ -261,7 +262,7 @@ index 5bf995e..b5e8151 100644
  	/*
  	 * HACK: The "correct" way to set the gamma is to commit it together with
  	 * the rest of the state in one go, but to do that we would need to rewrite
-@@ -2181,6 +2263,8 @@ resize(Client *c, struct wlr_box geo, int interact)
+@@ -2181,6 +2264,8 @@ resize(Client *c, struct wlr_box geo, int interact)
  {
  	struct wlr_box *bbox;
  	struct wlr_box clip;
@@ -270,7 +271,7 @@ index 5bf995e..b5e8151 100644
  
  	if (!c->mon || !c->scene)
  		return;
-@@ -2207,6 +2291,20 @@ resize(Client *c, struct wlr_box geo, int interact)
+@@ -2207,6 +2292,30 @@ resize(Client *c, struct wlr_box geo, int interact)
  			c->geom.height - 2 * c->bw);
  	client_get_clip(c, &clip);
  	wlr_scene_subsurface_tree_set_clip(&c->scene_surface->node, &clip);
@@ -278,6 +279,11 @@ index 5bf995e..b5e8151 100644
 +	if (corner_radius > 0) {
 +		wlr_scene_node_set_position(&c->round_border->node, 0, 0);
 +		wlr_scene_rect_set_size(c->round_border, c->geom.width, c->geom.height);
++		wlr_scene_rect_set_clipped_region(c->round_border, (struct clipped_region) {
++			.corner_radius = c->corner_radius,
++			.corners = CORNER_LOCATION_ALL,
++			.area = { c->bw, c->bw, c->geom.width - c->bw * 2, c->geom.height - c->bw * 2 }
++		});
 +		/* hide original border */
 +		for (i = 0; i < 4; i++)
 +			wlr_scene_rect_set_color(c->border[i], transparent);
@@ -286,12 +292,17 @@ index 5bf995e..b5e8151 100644
 +	if (shadow) {
 +		blur_sigma = (int)round(c->shadow->blur_sigma);
 +		wlr_scene_node_set_position(&c->shadow->node, -blur_sigma, -blur_sigma);
-+		wlr_scene_shadow_set_size(c->shadow, c->geom.width + (blur_sigma) * 2, c->geom.height + (blur_sigma) * 2);
++		wlr_scene_shadow_set_size(c->shadow, c->geom.width + blur_sigma * 2, c->geom.height + blur_sigma * 2);
++		wlr_scene_shadow_set_clipped_region(c->shadow, (struct clipped_region) {
++			.corner_radius = c->corner_radius + c->bw,
++			.corners = CORNER_LOCATION_ALL,
++			.area = { blur_sigma, blur_sigma, c->geom.width, c->geom.height }
++		});
 +	}
  }
  
  void
-@@ -2307,6 +2405,29 @@ setfloating(Client *c, int floating)
+@@ -2307,6 +2416,29 @@ setfloating(Client *c, int floating)
  {
  	Client *p = client_get_parent(c);
  	c->isfloating = floating;
@@ -321,7 +332,7 @@ index 5bf995e..b5e8151 100644
  	/* If in floating layout do not change the client's layer */
  	if (!c->mon || !client_surface(c)->mapped || !c->mon->lt[c->mon->sellt]->arrange)
  		return;
-@@ -2336,6 +2457,29 @@ setfullscreen(Client *c, int fullscreen)
+@@ -2336,6 +2468,29 @@ setfullscreen(Client *c, int fullscreen)
  		 * client positions are set by the user and cannot be recalculated */
  		resize(c, c->prev, 0);
  	}
@@ -351,7 +362,7 @@ index 5bf995e..b5e8151 100644
  	arrange(c->mon);
  	printstatus();
  }
-@@ -2457,11 +2601,17 @@ setup(void)
+@@ -2457,11 +2612,17 @@ setup(void)
  	drag_icon = wlr_scene_tree_create(&scene->tree);
  	wlr_scene_node_place_below(&drag_icon->node, &layers[LyrBlock]->node);
  
@@ -370,7 +381,7 @@ index 5bf995e..b5e8151 100644
  		die("couldn't create renderer");
  	LISTEN_STATIC(&drw->events.lost, gpureset);
  
-@@ -2871,6 +3021,14 @@ updatemons(struct wl_listener *listener, void *data)
+@@ -2871,6 +3032,14 @@ updatemons(struct wl_listener *listener, void *data)
  		wlr_scene_node_set_position(&m->fullscreen_bg->node, m->m.x, m->m.y);
  		wlr_scene_rect_set_size(m->fullscreen_bg, m->m.width, m->m.height);
  
@@ -385,7 +396,7 @@ index 5bf995e..b5e8151 100644
  		if (m->lock_surface) {
  			struct wlr_scene_tree *scene_tree = m->lock_surface->surface->data;
  			wlr_scene_node_set_position(&scene_tree->node, m->m.x, m->m.y);
-@@ -2940,8 +3098,16 @@ urgent(struct wl_listener *listener, void *data)
+@@ -2940,8 +3109,16 @@ urgent(struct wl_listener *listener, void *data)
  	c->isurgent = 1;
  	printstatus();
  
@@ -403,7 +414,7 @@ index 5bf995e..b5e8151 100644
  }
  
  void
-@@ -3053,6 +3219,160 @@ zoom(const Arg *arg)
+@@ -3053,6 +3230,165 @@ zoom(const Arg *arg)
  	arrange(selmon);
  }
  
@@ -558,9 +569,15 @@ index 5bf995e..b5e8151 100644
 +{
 +	wlr_scene_shadow_set_blur_sigma(c->shadow, blur_sigma);
 +	wlr_scene_node_set_position(&c->shadow->node, -blur_sigma, -blur_sigma);
-+	wlr_scene_shadow_set_size(c->shadow, c->geom.width + (blur_sigma) * 2, c->geom.height + (blur_sigma) * 2);
++	wlr_scene_shadow_set_size(c->shadow, c->geom.width + blur_sigma * 2, c->geom.height + blur_sigma * 2);
++	wlr_scene_shadow_set_clipped_region(c->shadow, (struct clipped_region) {
++		.corner_radius = c->corner_radius + c->bw,
++		.corners = CORNER_LOCATION_ALL,
++		.area = { blur_sigma, blur_sigma, c->geom.width, c->geom.height }
++	});
 +}
 +
  #ifdef XWAYLAND
  void
  activatex11(struct wl_listener *listener, void *data)
+

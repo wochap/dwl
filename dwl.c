@@ -14,6 +14,7 @@
 #include <time.h>
 #include <scenefx/render/fx_renderer/fx_renderer.h>
 #include <scenefx/types/fx/blur_data.h>
+#include <scenefx/types/fx/clipped_region.h>
 #include <scenefx/types/fx/corner_location.h>
 #include <scenefx/types/wlr_scene.h>
 #include <unistd.h>
@@ -3099,6 +3100,11 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	if (corner_radius > 0) {
 		wlr_scene_node_set_position(&c->round_border->node, 0, 0);
 		wlr_scene_rect_set_size(c->round_border, c->geom.width, c->geom.height);
+		wlr_scene_rect_set_clipped_region(c->round_border, (struct clipped_region) {
+			.corner_radius = c->corner_radius,
+			.corners = CORNER_LOCATION_ALL,
+			.area = { c->bw, c->bw, c->geom.width - c->bw * 2, c->geom.height - c->bw * 2 }
+		});
 		/* hide original border */
 		for (i = 0; i < 4; i++)
 			wlr_scene_rect_set_color(c->border[i], transparent);
@@ -3107,7 +3113,12 @@ resizeapply(Client *c, struct wlr_box geo, int interact)
 	if (shadow) {
 		blur_sigma = (int)round(c->shadow->blur_sigma);
 		wlr_scene_node_set_position(&c->shadow->node, -blur_sigma, -blur_sigma);
-		wlr_scene_shadow_set_size(c->shadow, c->geom.width + (blur_sigma) * 2, c->geom.height + (blur_sigma) * 2);
+		wlr_scene_shadow_set_size(c->shadow, c->geom.width + blur_sigma * 2, c->geom.height + blur_sigma * 2);
+		wlr_scene_shadow_set_clipped_region(c->shadow, (struct clipped_region) {
+			.corner_radius = c->corner_radius + c->bw,
+			.corners = CORNER_LOCATION_ALL,
+			.area = { blur_sigma, blur_sigma, c->geom.width, c->geom.height }
+		});
 	}
 }
 
@@ -4731,7 +4742,12 @@ client_set_shadow_blur_sigma(Client *c, int blur_sigma)
 {
 	wlr_scene_shadow_set_blur_sigma(c->shadow, blur_sigma);
 	wlr_scene_node_set_position(&c->shadow->node, -blur_sigma, -blur_sigma);
-	wlr_scene_shadow_set_size(c->shadow, c->geom.width + (blur_sigma) * 2, c->geom.height + (blur_sigma) * 2);
+	wlr_scene_shadow_set_size(c->shadow, c->geom.width + blur_sigma * 2, c->geom.height + blur_sigma * 2);
+	wlr_scene_shadow_set_clipped_region(c->shadow, (struct clipped_region) {
+		.corner_radius = c->corner_radius + c->bw,
+		.corners = CORNER_LOCATION_ALL,
+		.area = { blur_sigma, blur_sigma, c->geom.width, c->geom.height }
+	});
 }
 
 #ifdef XWAYLAND
