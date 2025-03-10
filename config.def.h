@@ -220,6 +220,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_p,          spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,     spawn,          {.v = termcmd} },
 	{ MODKEY,                    Key_grave,      raiserunnamedscratchpad, {.v = scratchpadcmd } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_grave,      focusprevnamedscratchpad, {0} },
 	{ MODKEY,                    Key_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    Key_k,          focusstack,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Left,       focusdir,       {.ui = 0} },

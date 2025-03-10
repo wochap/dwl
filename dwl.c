@@ -446,6 +446,7 @@ static void togglefullscreen(const Arg *arg);
 static void _movecenter(Client *c, int interact);
 static void movecenter(const Arg *arg);
 static void raiserunnamedscratchpad(const Arg *arg);
+static void focusprevnamedscratchpad(const Arg *arg);
 static void togglefakefullscreen(const Arg *arg);
 static void moveresizekb(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -546,6 +547,8 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
+
+static Arg lastraiserunnamedscratchpadarg;
 
 static void (*resize)(Client *c, struct wlr_box geo, int interact) = resizeapply;
 
@@ -3982,6 +3985,7 @@ raiserunnamedscratchpad(const Arg *arg)
 	Client *c;
 	unsigned int found = 0;
 	unsigned int hide = 0;
+	lastraiserunnamedscratchpadarg = *arg;
 
 	wl_list_for_each(c, &clients, link) {
 		if (c->scratchkey == 0) {
@@ -4029,6 +4033,12 @@ raiserunnamedscratchpad(const Arg *arg)
 	} else {
 		spawnnamedscratchpad(arg);
 	}
+}
+
+void
+focusprevnamedscratchpad(const Arg *arg)
+{
+	raiserunnamedscratchpad(&lastraiserunnamedscratchpadarg);
 }
 
 void
