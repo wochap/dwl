@@ -30,6 +30,7 @@
 - [swapandfocusdir](https://github.com/wochap/dwl/blob/v0.6-b/swapandfocusdir/swapandfocusdir-diff.patch)
 - [scratchpads](https://github.com/wochap/dwl/blob/v0.6-a/scratchpads/scratchpads-diff.patch)
 - [dwl-sloppyfocus](https://github.com/wochap/dwl/blob/v0.6-b/dwl-sloppyfocus/dwl-sloppyfocus-diff.patch)
+- [remembertags](https://github.com/wochap/dwl/blob/v0.8-a/remembertags/remembertags-diff.patch)
 
 # Rules
 
