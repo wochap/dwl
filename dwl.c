@@ -263,6 +263,11 @@ struct Monitor {
 	int asleep;
 	Client *prevc;
 	struct wlr_scene_optimized_blur *blur_layer;
+	unsigned int createtag[2]; /* Create windows on the last tag directly selected, not all selected */
+	struct {
+		unsigned int tagset;
+		Client *zoomed;
+	} remembered[31];
 };
 
 typedef struct {
@@ -402,6 +407,7 @@ static void pointerfocus(Client *c, struct wlr_surface *surface,
 static void printstatus(void);
 static void powermgrsetmode(struct wl_listener *listener, void *data);
 static void quit(const Arg *arg);
+static void remembertagsview(const Arg *arg);
 static void restorerlimit(void);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requestdecorationmode(struct wl_listener *listener, void *data);
@@ -2978,6 +2984,48 @@ restorerlimit(void)
 		return;
 	if (setrlimit(RLIMIT_NOFILE, &og_rlimit) < 0)
 		die("setrlimit:");
+}
+
+void
+remembertagsview(const Arg *arg) {
+	unsigned newtags = (1 << arg->i) & TAGMASK;
+	int oldtag;
+	int active;
+	unsigned int newcreate;
+
+	if (!selmon || newtags == selmon->tagset[selmon->seltags]) {
+		return;
+	}
+
+	oldtag = selmon->createtag[selmon->seltags];
+	active = (oldtag == arg->i);
+
+	if (oldtag < TAGCOUNT) {
+		selmon->remembered[oldtag].tagset = selmon->tagset[selmon->seltags];
+	}
+
+	selmon->seltags ^= 1;	/*toggle tagset*/
+
+	if (-1 == arg->i) {
+		/* A specific tag was not specified */
+		active = 0;
+		newcreate = selmon->createtag[selmon->seltags];
+	} else {
+		newcreate = arg->i & TAGMASK;
+	}
+
+	if (active) {
+		/* Select twice to isolate the tag */
+		selmon->tagset[selmon->seltags] = newtags;
+	} else if (arg->i < TAGCOUNT) {
+		/* Restore whatever was previously on this tag */
+		selmon->tagset[selmon->seltags] = newtags | selmon->remembered[newcreate].tagset;
+	}
+
+	selmon->createtag[selmon->seltags] = newcreate;
+	focusclient(focustop(selmon), 1);
+	arrange(selmon);
+	printstatus();
 }
 
 void

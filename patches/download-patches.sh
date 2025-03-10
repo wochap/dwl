@@ -19,6 +19,7 @@ wget https://codeberg.org/dwl/dwl-patches/raw/commit/6a71cf9806d9626501885591b9c
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/swapandfocusdir/swapandfocusdir-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/scratchpads/scratchpads-diff.patch
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-b/dwl-sloppyfocus/dwl-sloppyfocus-diff.patch
+wget https://raw.githubusercontent.com/wochap/dwl/refs/heads/v0.8-a/remembertags/remembertags-diff.patch
 
 # Rules
 wget https://raw.githubusercontent.com/wochap/dwl/v0.6-a/regexrules/regexrules-diff.patch
