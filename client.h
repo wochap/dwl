@@ -124,14 +124,27 @@ client_set_bounds(Client *c, int32_t width, int32_t height)
 	return 0;
 }
 
+static inline char *
+replace_spaces(char *str)
+{
+    char *orig = str;
+    while (*str) {
+        if (*str == ' ') {
+            *str = '-';
+        }
+        str++;
+    }
+    return orig;
+}
+
 static inline const char *
 client_get_appid(Client *c)
 {
 #ifdef XWAYLAND
 	if (client_is_x11(c))
-		return c->surface.xwayland->class;
+		return replace_spaces(c->surface.xwayland->class);
 #endif
-	return c->surface.xdg->toplevel->app_id;
+	return replace_spaces(c->surface.xdg->toplevel->app_id);
 }
 
 static inline void
