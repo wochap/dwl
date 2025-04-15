@@ -1,0 +1,65 @@
+diff --git a/config.def.h b/config.def.h
+index 9608025..26fd57e 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -134,7 +134,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+-	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
++	{ MODKEY,                    XKB_KEY_Tab,        view,           {.ui = 0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
+ 	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
+diff --git a/dwl.c b/dwl.c
+index 30a5e41..eacb8e9 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -3039,26 +3039,43 @@ void
+ view(const Arg *arg)
+ {
+ 	size_t i, tmptag;
++	int oldtag;
++	unsigned int newcreate;
+ 
+ 	if (!selmon || (arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
+ 		return;
++
++	oldtag = selmon->createtag[selmon->seltags];
++	if (oldtag < TAGCOUNT) {
++		selmon->remembered[oldtag].tagset = selmon->tagset[selmon->seltags];
++	}
++
+ 	selmon->seltags ^= 1; /* toggle sel tagset */
+ 	if (arg->ui & ~0) {
+-		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
++		for (i = 0; !(arg->ui & 1 << i); i++) {};
++		newcreate = arg->ui & TAGMASK;
++		if (oldtag == (int)i + 1) {
++			/* Select twice to isolate the tag */
++			selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
++		} else {
++			/* Restore whatever was previously on this tag */
++			selmon->tagset[selmon->seltags] = (arg->ui & TAGMASK) | selmon->remembered[newcreate].tagset;
++		}
++
+ 		selmon->pertag->prevtag = selmon->pertag->curtag;
+ 
+ 		if (arg->ui == TAGMASK)
+ 			selmon->pertag->curtag = 0;
+-		else {
+-			for (i = 0; !(arg->ui & 1 << i); i++) ;
++		else
+ 			selmon->pertag->curtag = i + 1;
+-		}
+ 	} else {
++		newcreate = selmon->createtag[selmon->seltags];
+ 		tmptag = selmon->pertag->prevtag;
+ 		selmon->pertag->prevtag = selmon->pertag->curtag;
+ 		selmon->pertag->curtag = tmptag;
+ 	}
+ 
++	selmon->createtag[selmon->seltags] = newcreate;
+ 	selmon->nmaster = selmon->pertag->nmasters[selmon->pertag->curtag];
+ 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag];
+ 	selmon->sellt = selmon->pertag->sellts[selmon->pertag->curtag];
