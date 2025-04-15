@@ -245,7 +245,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,          setcfact,       {.f = -0.25} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,          setcfact,       {.f = 0} },
 	{ MODKEY,                    Key_Return,     zoom,           {0} },
-	{ MODKEY,                    Key_Tab,        view,           {0} },
+	{ MODKEY,                    Key_Tab,        view,           {.ui = 0} },
 	{ MODKEY,                    Key_a,          shiftview,      { .i = -1 } },
 	{ MODKEY,                    Key_semicolon,  shiftview,      { .i = 1 } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,          killclient,     {0} },

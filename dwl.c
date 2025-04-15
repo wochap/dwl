@@ -4403,26 +4403,43 @@ void
 view(const Arg *arg)
 {
 	size_t i, tmptag;
+	int oldtag;
+	unsigned int newcreate;
 
 	if (!selmon || (arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
+
+	oldtag = selmon->createtag[selmon->seltags];
+	if (oldtag < TAGCOUNT) {
+		selmon->remembered[oldtag].tagset = selmon->tagset[selmon->seltags];
+	}
+
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	if (arg->ui & ~0) {
-		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
+		for (i = 0; !(arg->ui & 1 << i); i++) {};
+		newcreate = arg->ui & TAGMASK;
+		if (oldtag == (int)i + 1) {
+			/* Select twice to isolate the tag */
+			selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
+		} else {
+			/* Restore whatever was previously on this tag */
+			selmon->tagset[selmon->seltags] = (arg->ui & TAGMASK) | selmon->remembered[newcreate].tagset;
+		}
+
 		selmon->pertag->prevtag = selmon->pertag->curtag;
 
 		if (arg->ui == TAGMASK)
 			selmon->pertag->curtag = 0;
-		else {
-			for (i = 0; !(arg->ui & 1 << i); i++) ;
+		else
 			selmon->pertag->curtag = i + 1;
-		}
 	} else {
+		newcreate = selmon->createtag[selmon->seltags];
 		tmptag = selmon->pertag->prevtag;
 		selmon->pertag->prevtag = selmon->pertag->curtag;
 		selmon->pertag->curtag = tmptag;
 	}
 
+	selmon->createtag[selmon->seltags] = newcreate;
 	selmon->nmaster = selmon->pertag->nmasters[selmon->pertag->curtag];
 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag];
 	selmon->sellt = selmon->pertag->sellts[selmon->pertag->curtag];
